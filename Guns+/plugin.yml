@@ -1,0 +1,20 @@
+name: GunsPlus
+main: team.GunsPlus.GunsPlus
+version: 1.6
+depend: [Spout]
+load: startup
+authors: [Atlan1, SirTyler]
+description: >
+             GunPack - Create your own guns! [SPOUT]
+commands:
+    gunpack:
+        description: Admin commands.
+        aliases: gp
+        usage: /gunpack reload - Reloads the config files.
+permissions:
+    gunpack.hud:
+        description: Give permission for showing the hud.
+        default: true
+    gunpack.reload:
+        description: Give permission for the reload command.
+        default: op
