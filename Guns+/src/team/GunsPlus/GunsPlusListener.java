@@ -3,6 +3,7 @@ package team.GunsPlus;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -32,12 +33,14 @@ public class GunsPlusListener implements Listener{
 		plugin = g;
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent e){
 		Player p = e.getPlayer();
 		Action a = e.getAction();
+		//CHECK IF THE PLAYER IS HOLDING A GUN
 		if(plugin.util.holdsGun(p)){
 			Gun g = plugin.util.getGunInHand(p);
+			//SWITCH THE THREE BUTTON TYPES AND PERFORM THE MATCHING ACTION
 			switch(plugin.zoomtype) {
 				case 0:
 					if(a.equals(Action.RIGHT_CLICK_AIR)||a.equals(Action.RIGHT_CLICK_BLOCK))g.zoom(p);break;
@@ -70,8 +73,8 @@ public class GunsPlusListener implements Listener{
 			}
 		}
 	}
-	
-	@EventHandler
+	//ZOOMS OUT AND REMOVES THE PLAYER FROM THE RELOAD HASHMAP
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerRespawn(PlayerRespawnEvent e){
 		if(plugin.zoom.containsKey(e.getPlayer())){
 			plugin.util.zoomOut(e.getPlayer());
@@ -80,7 +83,8 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	//ZOOMS OUT IF THE PLAYER TOGGLES SHIFT, WAS SNEAKING BEFORE AND HAD THE ZOOMKEY 2 OR 3 (2=RIGHT+SHIFT, 3=LEFT+SHIFT)
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void  onPlayerToggleSneak(PlayerToggleSneakEvent e){
 		if((plugin.zoomtype==2||plugin.zoomtype==3)&&e.getPlayer().isSneaking()&&plugin.zoom.containsKey(e.getPlayer())&&plugin.util.holdsGun(e.getPlayer())){
 			Gun g = plugin.util.getGunInHand(e.getPlayer());
@@ -88,7 +92,8 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	//ZOOMS OUT IF THE PLAYER CHANGES THE HELD ITEM
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void  onItemHeldChange(PlayerItemHeldEvent e){
 		
 		if(plugin.zoom.containsKey(e.getPlayer())){
@@ -96,7 +101,8 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	//START DRAWING THE HUD IF THE PLAYER HAS THE PERMISSIONS AND HAS SPOUTCRAFT
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e){
 		if(plugin.hudenabled&&SpoutManager.getPlayer(e.getPlayer()).isSpoutCraftEnabled()){
 			Task t  = new Task (plugin, (SpoutPlayer)e.getPlayer()){
@@ -113,7 +119,8 @@ public class GunsPlusListener implements Listener{
 		
 	}
 	
-	@EventHandler
+	//REMOVE THE PLAYER FROM THE HUD HASHMAP
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent e){
 		if(plugin.hudPlayers.containsKey(e.getPlayer())){
 			plugin.hudPlayers.get(e.getPlayer()).stop();
@@ -121,27 +128,31 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	//ZOOMS OUT IF THE PLAYER ENTERS A BED
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void  onPlayerBedEnter(PlayerBedEnterEvent e){
 		if(plugin.zoom.containsKey(e.getPlayer())){
 			plugin.util.zoomOut(e.getPlayer());
 		}
 	}
 	
-	@EventHandler
+	//ZOOMS OUT IF THE PLAYER ENTERS A PORTAL
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void  onPlayerPortal(PlayerPortalEvent e){
 		if(plugin.zoom.containsKey(e.getPlayer())){
 			plugin.util.zoomOut(e.getPlayer());
 		}
 	}
 	
-	
-	@EventHandler
+	//CHECK THE THREE KEY TYPES AND PERFORM THE MATCHING ACTION
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onKeyPressedEvent(KeyPressedEvent e){
 		SpoutPlayer p = e.getPlayer();
 		Keyboard k = e.getKey();
+		//CHECKS IF THE PLAYER IS HOLDING A GUN AND IS IN GAME
 		if(plugin.util.holdsGun(p)&&e.getScreenType().toString().equals("GAME_SCREEN")){
 			Gun g = plugin.util.getGunInHand(p);
+			//TYPE 4 MEANS A CUSTOM KEY
 			if(plugin.zoomtype==4&&k.toString().equalsIgnoreCase(plugin.zoomkey)){
 				g.zoom(p);
 			}else if(plugin.shottype==4&&k.toString().equalsIgnoreCase(plugin.shotkey)){
@@ -154,7 +165,8 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	@EventHandler
+	//IF THE ZOOMKEY IS A TOGGLE (SPECIFIED BY A _ BEHIND THE ZOOMKEY IN THE CONFIG), ZOOM OUT ON RELEASE
+	@EventHandler(priority=EventPriority.NORMAL)
 	public void onKeyReleasedEvent(KeyReleasedEvent e){
 		SpoutPlayer p = e.getPlayer();
 		Keyboard k = e.getKey();
