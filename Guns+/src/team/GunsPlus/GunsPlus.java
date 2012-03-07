@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import me.znickq.furnaceapi.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,29 +43,6 @@ public class GunsPlus extends JavaPlugin{
 	public Util util;
 	public MaterialParser mparser;
 	private String PRE = "[Guns+]";
-	
-	/*
-	 * ***TO-DO***
-	 * ---NEWS---
-	 * 1. Better fire rate...
-	 * 2. Combine Accuracy and Bullet Spread
-	 * 3. Ranged damages
-	 * 4. Improve bullet hits, option to define bullet number
-	 * 5. Placeable Guns: make guns mountable on a tripod and make tripod-gun combination
-	 * 6. Explosion damage protect
-	 * 7. Gun weight to specify the walk speed
-	 * 8. Disable HUD for specific guns
-	 * 9. Hook into certain plugins: Citizens, Chestshop, MoreMaterials
-	 * 
-	 * ---FIX---
-	 * 1. Permissions ?
-	 * 2. Sound texture precache
-	 * 3. HUD should overlay the zoomtexture
-	 * 4. make shorter smoke trail; less density
-	 * 5. Bypassing reload time if you switch weapons #
-	 * 6. Reload command  #
-	 * 7. Fireballs, Projectiles #
-	 */
 	
 	//DATA STORAGE SECTION
 	public HashMap<Player, Boolean> reload = new HashMap<Player, Boolean>();
@@ -98,31 +77,35 @@ public class GunsPlus extends JavaPlugin{
 	 public File generalFile;
 	 public FileConfiguration generalConfig;
 	
-	 //basically for debugging
+	 //debugging and log
 	public final Logger log = Bukkit.getLogger();
 	public boolean debug = false;
 	
 	
-	//well the name says everything...
 	@Override
 	public void onDisable() {
-		//saveYamls();
 		PluginDescriptionFile pdfFile= getDescription();
 		log.log(Level.INFO, PRE + " version " + pdfFile.getVersion() + " is now disabled.");
 	}
 	
 	@Override
 	public void onEnable() {
+		//utilities
 		util = new Util(this);
+		//the material parser for loading recipes and such
 		mparser = new MaterialParser(this);
+		//init the plugin (load guns, ammo , recipes, config)
 		init();
+		//register the listener
 		getServer().getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		
 		if(debug) log.setLevel(Level.ALL);
 		log.log(Level.INFO, PRE + " version " + this.getDescription().getVersion() + " is now enabled.");
 	}
 	
+	//Initiates the plugin
 	public void init(){
+		
 		config();
 		
 		loadAmmo();
@@ -134,36 +117,45 @@ public class GunsPlus extends JavaPlugin{
 		performGeneral();
 	}
 	
+	//Commands
 	public boolean onCommand(CommandSender sender, Command cmd, String CommandLabel, String[] args){
-		if(CommandLabel.equalsIgnoreCase("GunPack")||CommandLabel.equalsIgnoreCase("gp")){
+		if(CommandLabel.equalsIgnoreCase("GunsPlus")||CommandLabel.equalsIgnoreCase("gp")){
 			if(args[0].equalsIgnoreCase("reload")){
-				
+				//if its a player check the permissions
 				if(sender instanceof Player){
 					if(((Player)sender).hasPermission("gunpack.reload")){
-						sender.sendMessage(ChatColor.GREEN + PRE + " Configuration files reloaded!");
+						//reload the config files into the yaml configs
 						config();
+						//reset the data storage
 						this.allGuns = new ArrayList<Gun>();
 						this.allCustomAmmo = new ArrayList<Ammo>();
 						this.zoomTextures = new HashMap<Player, Widget>();
 						this.hudElements = new HashMap<Player, HashMap<String, Widget>>();
 						this.globalTransparentMats = new ArrayList<Material>();
+						//reload guns ammo and recipes
 						loadAmmo();
 						loadGuns();
 						loadRecipes();
+						//load the general settings
 						performGeneral();
+						sender.sendMessage(ChatColor.GREEN + PRE + " Configuration files reloaded!");
 					}
 				}else{
-					sender.sendMessage(PRE + " Configuration files reloaded!");
+					//reload the config files into the yaml configs
 					config();
+					//reset the data storage
 					this.allGuns = new ArrayList<Gun>();
 					this.allCustomAmmo = new ArrayList<Ammo>();
 					this.zoomTextures = new HashMap<Player, Widget>();
 					this.hudElements = new HashMap<Player, HashMap<String, Widget>>();
 					this.globalTransparentMats = new ArrayList<Material>();
+					//reload guns ammo and recipes
 					loadAmmo();
 					loadGuns();
 					loadRecipes();
+					//load the general settings
 					performGeneral();
+					sender.sendMessage(PRE + " Configuration files reloaded!");
 				}
 				
 			}
@@ -174,6 +166,8 @@ public class GunsPlus extends JavaPlugin{
 	
 	public void performGeneral()
 	{
+		
+		//Check and set global settings
 		if(generalConfig.isBoolean("hud.enabled")){
 			hudenabled = generalConfig.getBoolean("hud.enabled");
 		}else{
@@ -195,7 +189,10 @@ public class GunsPlus extends JavaPlugin{
 				log.log(Level.WARNING, PRE + " Can't find x/y value for HUD, disableing!");
 			hudenabled = false;
 		}
+
+		debug = generalConfig.getBoolean("show-debug");
 		
+		//print id's of items if enabled
 		if(generalConfig.getBoolean("id-info-guns")==true){
 			log.log(Level.FINE, PRE + " ------------  ID's of the guns: -----------------");
 			for(int i=0;i<allGuns.size();i++){
@@ -203,19 +200,20 @@ public class GunsPlus extends JavaPlugin{
 			}
 		}
 		
-		
 		if(generalConfig.getBoolean("id-info-ammo")==true){
 			log.log(Level.FINE, PRE + " ------------  ID's of the ammo: -----------------");
 			for(int i=0;i<allCustomAmmo.size();i++){
 				log.log(Level.FINE, "ID of "+allCustomAmmo.get(i).getName()+": "+Material.FLINT.getId()+":"+new SpoutItemStack(allCustomAmmo.get(i)).getDurability());
 			}
 		}
+		
+		//set the reload/zoom/shot keys/buttons
 		String z = generalConfig.getString("zoom");
 		String s = generalConfig.getString("shot");
 		String r = generalConfig.getString("reload");
-		debug = generalConfig.getBoolean("show-debug");
 		
 		
+		//@SirTyler perhaps you can write this a bit shorter than me :D
 		if(z.equalsIgnoreCase("right")){
 			zoomtype=0;
 			zoomkey="right";
@@ -292,9 +290,10 @@ public class GunsPlus extends JavaPlugin{
 			log.log(Level.WARNING, PRE + " Your value for reloading is not available. Setting to default...");
 		}
 		
+		//check if key's/button's are the same for shooting/zooming/reloading
 		if(zoomkey.equals(shotkey)||shotkey.equals(rkey)||rkey.equals(zoomkey)){
 			if(generalConfig.getBoolean("show-warnings"))
-			log.log(Level.WARNING, PRE + " You can't use the same combination for zooming and shooting! Setting to default...");
+			log.log(Level.WARNING, PRE + " You can't use the same combination for two actions! Setting to default...");
 			shottype=0;
 			shotkey="right";
 			rtype=4;
@@ -303,6 +302,7 @@ public class GunsPlus extends JavaPlugin{
 			zoomkey="left";
 		}
 		
+		//load shot-permeable materials from general.yml
 		List<ItemStack> il = MaterialParser.parseItems(generalConfig.getString("transparent-materials"));
 		for(int m=0;m<il.size();m++){
 			this.globalTransparentMats.add(il.get(m).getType());
@@ -310,11 +310,14 @@ public class GunsPlus extends JavaPlugin{
 		
 	}
 	
-	
+	//loads the effects specified for each gun
 	public Effect getEffects(String path, int type){
+		//getting the key's in the effects section of the gun
 		ConfigurationSection cs = gunsConfig.getConfigurationSection(path);
 		Object[] effectsArray = cs.getKeys(false).toArray();
+		//the effect
 		Effect e = new Effect(type);
+		//loop through the key's and add effects to 'e'
 		for(Object o : effectsArray){
 			if(o.toString().toLowerCase().equals("explosion")&&(type==0||type==2)){
 				e.addValue(o.toString().toLowerCase(), 0, gunsConfig.getInt(path+"."+(String)o+".size"));
@@ -581,7 +584,7 @@ public class GunsPlus extends JavaPlugin{
 			}else{
 				projectile = gunsConfig.getString((String) gunsArray[i]+".projectile.type");
 			}
-			
+			//CREATING GUN
 			Gun g = new Gun(this,
 							damage,
 							range,
@@ -606,8 +609,10 @@ public class GunsPlus extends JavaPlugin{
 							this,
 							texture,
 							(String)gunsArray[i]);
+			//ADD GUN-TYPE TO THE GUN LIST
 			allGuns.add(g);
 		}
+		//IF ENABLED PRINT THE LOADED GUNS
 		if(generalConfig.getBoolean("loaded-guns")==true){
 			log.log(Level.FINE, PRE + " -------------- Guns loaded: ---------------");
 			for(int k=0;k<allGuns.size();k++){
@@ -620,14 +625,18 @@ public class GunsPlus extends JavaPlugin{
 	public void loadAmmo(){
 		Set<String> ammoKeys = ammoConfig.getKeys(false);
 		Object[] ammoArray =  ammoKeys.toArray();
+		//GETTING THE TEXTURE
 		for(int i = 0;i<ammoArray.length;i++){
 			if((String) ammoArray[i]+".texture"==null||!ammoConfig.isString((String) ammoArray[i]+".texture")){
 				log.log(Level.WARNING, PRE + " Can't find texture url for "+ammoArray[i]+"! Skipping!");
 				continue;
 			}
+			//CREATING AMMO ITEM
 			Ammo a = new Ammo(this, ammoArray[i].toString(), ammoConfig.getString((String) ammoArray[i]+".texture"));
+			//ADD AMMO-TYPE TO THE AMMO-LIST
 			allCustomAmmo.add(a);
 		}
+		//IF ENABLED PRINT THE LOADED AMMO 
 		if(generalConfig.getBoolean("loaded-ammo")==true){
 			log.log(Level.FINE, PRE + " -------------- Ammo loaded: ---------------");
 			for(int k=0;k<allCustomAmmo.size();k++){
@@ -639,10 +648,14 @@ public class GunsPlus extends JavaPlugin{
 	
 	//loading recipes
 	public void loadRecipes(){
+		//GETTING ALL RECIPE KEYS
 		Set<String> recipeKeys = recipeConfig.getKeys(false);
 		Object[] recipeArray =  recipeKeys.toArray();
+		//LOOP THROUGH THE KEYS
 		for(int i = 0;i<recipeArray.length;i++){
+			//THE CUSTOM ITEM (RESULT OF THE RECIPE)
 			CustomItem r = null;
+			//LOOP THROUGH THE LISTS OF THE GUNS AND AMMO TO GET THE MATCHING ITEM
 			for(int j = 0;j<allGuns.size();j++){
 				if(allGuns.get(j).getName().equals(recipeArray[i].toString()))
 					r=allGuns.get(j);
@@ -655,49 +668,88 @@ public class GunsPlus extends JavaPlugin{
 				log.log(Level.WARNING, PRE + " Recipe output not found: "+recipeArray[i]+"! Skipping!");
 				continue;
 			}
+			//GETTING THE AMOUNT IN THE OUTPUT
 			if(recipeConfig.getInt(recipeArray[i]+".amount")<0){
+				if(generalConfig.getBoolean("show-warnings"))
 				log.log(Level.WARNING, PRE + " Amount of "+recipeArray[i]+"'s can't be smaller than 0! Skipping!");
 			}
+			//THE RESULT 
 			SpoutItemStack result = new SpoutItemStack(r, recipeConfig.getInt(recipeArray[i]+".amount"));
+			//CHECK THE RECIPE TYPE (SHAPED, SHAPELESS, FURNACE)
 			if(recipeConfig.getString(recipeArray[i]+".type").equalsIgnoreCase("shaped")){
+				//BUILDING THE SHAPED RECIPE WITH THE RESULT
 				SpoutShapedRecipe ssr = new SpoutShapedRecipe(result);
-				
+				//THE DIFFERENT CHARS FOR THE SPOUT RECIPE API 
 				char[] chars = {'a','b','c','d','e','f','g','h','i'};
+				//JUST A COUNTER
 				int charcounter = 0;
+				//GETTING THE INGREDIENTS
 				String s =recipeConfig.getString(recipeArray[i]+".ingredients");
-				
+				//PARSE THE INGREDIENTS INTO ITEMSTACKS
 				List<ItemStack> lis = MaterialParser.parseItems(s);
+				//CHECK IF THERE ARE 9 INGREDIENTS
 				if(lis.size()<9){
+					if(generalConfig.getBoolean("show-warnings"))
 					log.log(Level.WARNING, PRE + " Too low ingredients for recipe of "+recipeArray[i]+"! Skipping!");
 					continue;
 				}
 				
+				//LOOP THROUGH THE ITEMSTACKS
 				for(int l=0;l<9;l++){
+					//IF THE ID IS 0 (AIR) PUT A SPACE CHAR INTO chars[i]
 					if(lis.get(l).getTypeId()==0)chars[l]=' ';
 				}
+				//CONNECTING THE CHARS TO 3 ROWS
 				String r1 = chars[0]+""+chars[1]+""+chars[2];
 				String r2 = chars[3]+""+chars[4]+""+chars[5];
 				String r3 = chars[6]+""+chars[7]+""+chars[8];
+				//SHAPE THE RECIPE
 				ssr.shape(r1, r2, r3);
-			
+				//LOOP THROUGH THE SIZE OF THE INGREDIENTS
 				for(int l=0;l<lis.size();l++){
+					//IF THE CHAR IS A SPACE,SKIPP IT
 					if(chars[charcounter]==' '){
 						charcounter++;
 						continue;
 					}
+					//ADD THE CURRENT CHAR RELATED TO THE CHARCOUNTER TO THE RECIPE 
 					ssr.setIngredient(chars[charcounter],MaterialData.getMaterial(lis.get(l).getTypeId(),(short) lis.get(l).getDurability())); 
+					//INCREMENTING THE COUNTER TO GO TO THE NEXT CHAR 
 					charcounter++;
 				}
+				//REGISTER THE RECIPE
 				SpoutManager.getMaterialManager().registerSpoutRecipe(ssr);
 				
 			}else if(recipeConfig.getString(recipeArray[i]+".type").equalsIgnoreCase("shapeless")){
+				//BUILDING THE SHAPELESS RECIPE
 				SpoutShapelessRecipe ssl = new SpoutShapelessRecipe(result);
+				//GETTING THE INGREDIENTS
 				String s =recipeConfig.getString(recipeArray[i]+".ingredients");
+				//PARSING THE STRING TO ITEMSTACKS
 				List<ItemStack> lis = MaterialParser.parseItems(s);
+				//ADD ALL MATERIALS OF THE ITEMSTACKS AS INGREDIENTS
 				for(int l=0;l<lis.size();l++){
 					ssl.addIngredient(MaterialData.getMaterial(lis.get(l).getTypeId(),(short) lis.get(l).getDurability())); 
 				}
+				//REGISTERING THE RECIPE
 				SpoutManager.getMaterialManager().registerSpoutRecipe(ssl);
+			}else if(recipeConfig.getString(recipeArray[i]+".type").equalsIgnoreCase("furnace")){
+				//GETTING THE INGREDIENTS (ITEMS TO BE BURNED)
+				String s =recipeConfig.getString(recipeArray[i]+".ingredients");
+				//PARSING
+				List<ItemStack> lis = MaterialParser.parseItems(s);
+				//CHECK IF THERE IS AT LEAST ONE MATERIAL
+				if(lis.size()<1){
+					if(generalConfig.getBoolean("show-warnings"))
+					log.log(Level.WARNING,PRE+" Could not find the material to be burned! Skipping!");
+					continue;
+				}
+				//SET THE ITEM TO BE BURNED TO THE FIRST MATERIAL OF THE LIST
+				SpoutItemStack burn = new SpoutItemStack(lis.get(0));
+				//BUILDING THE FURNACE RECIPE THROUGH ZNICKQ'S APID
+				SpoutFurnaceRecipe sf = new SpoutFurnaceRecipe(burn, result);
+				//REGISTERING THE FURNACE RECIPE
+				SpoutFurnaceRecipes.registerSpoutRecipe(sf);
 			}
 		}
 	}
@@ -705,23 +757,27 @@ public class GunsPlus extends JavaPlugin{
 	
 	//loading the config....
 	 public void config(){
+		 //GETTING THE FILES
 		 gunsFile = new File(getDataFolder(), "guns.yml");
 		 ammoFile = new File(getDataFolder(), "ammo.yml");
 		 recipeFile = new File(getDataFolder(), "recipes.yml");
 		 generalFile = new File(getDataFolder(), "general.yml");
+		 //CHECK FOR FIRST RUN
 		 try {
 		        firstRun();
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		    }
+		 //CREATE NEW YAML OBJECTS
 		 gunsConfig = new YamlConfiguration();
 		 ammoConfig = new YamlConfiguration();
 		 recipeConfig = new YamlConfiguration();
 		 generalConfig = new YamlConfiguration();
+		 //LOAD THE FILES INTO THE CONFIGURATIONS
 		 loadYamls();
 	 }
 	 
-	
+	//CHECKS IF THE CONFIG EXISTS AND GENERATES A NEW IF NOT
 	private void firstRun() {
 	    if(!gunsFile.exists()){
 	    	gunsFile.getParentFile().mkdirs();
@@ -740,6 +796,7 @@ public class GunsPlus extends JavaPlugin{
 	        copy(getResource("general.yml"), generalFile);
 	    }
 	}
+	//COPY THE GIVEN FILE
 	private void copy(InputStream in, File file) {
 	    try {
 	        OutputStream out = new FileOutputStream(file);
@@ -755,17 +812,7 @@ public class GunsPlus extends JavaPlugin{
 	    }
 	}
 	
-	
-	/*public void saveYamls() {
-	    try {
-	        gunsConfig.save(gunsFile);
-	        ammoConfig.save(ammoFile);
-	        recipeConfig.save(recipeFile);
-	        generalConfig.save(generalFile);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}*/
+	//LOAD THE FILES INTO THE CONFIGURATION OBJECTS
 	public void loadYamls() {
 	    try {
 	        gunsConfig.load(gunsFile);
