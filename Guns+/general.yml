@@ -20,7 +20,7 @@ send-notifications: true
 # Available are: 'right', 'left', 'left+shift', 'right+shift', all characters and numbers on your keyboard
 # if you use a key for zooming you can put a '_' behind to specify that you want to hold the key for zooming 
 zoom: left
-shot: right
+fire: right
 reload: R
 
 # This list sets the materials you can shoot through with your guns. If you aren't sure how to edit this, don't touch it!

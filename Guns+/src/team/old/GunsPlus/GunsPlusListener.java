@@ -1,4 +1,4 @@
-package team.GunsPlus;
+package team.old.GunsPlus;
 
 
 import org.bukkit.entity.Player;
@@ -20,8 +20,8 @@ import org.getspout.spoutapi.event.input.KeyReleasedEvent;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.GunsPlus.Classes.Gun;
-import team.GunsPlus.Classes.Task;
+import team.old.GunsPlus.Classes.Gun;
+import team.old.GunsPlus.Classes.Task;
 
 public class GunsPlusListener implements Listener{
 

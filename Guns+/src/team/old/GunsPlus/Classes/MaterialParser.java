@@ -1,4 +1,4 @@
-package team.GunsPlus.Classes;
+package team.old.GunsPlus.Classes;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
-import team.GunsPlus.GunsPlus;
+import team.old.GunsPlus.GunsPlus;
 
 public class MaterialParser
 {

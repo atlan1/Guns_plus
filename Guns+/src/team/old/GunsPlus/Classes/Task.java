@@ -1,4 +1,4 @@
-package team.GunsPlus.Classes;
+package team.old.GunsPlus.Classes;
 
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;

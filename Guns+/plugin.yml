@@ -5,7 +5,7 @@ depend: [Spout]
 load: startup
 authors: [Atlan1, SirTyler]
 description: >
-             GunsPlus - Create your own guns! [SPOUT]
+             Guns+ ~ Guns, Guns, Guns Galore!
 commands:
     gunpack:
         description: Admin commands.
