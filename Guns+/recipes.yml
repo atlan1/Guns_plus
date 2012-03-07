@@ -1,0 +1,15 @@
+# Here you can configure your own recipes for guns, ammo and stuff!
+# Look at the examples to see how it works.
+
+Sniper:
+    # the type can only be shaped or shapeless
+    type: 'shaped'
+    # this is the amount of snipers in the output 
+    amount: 1
+    # the ingredients from the right to the left and from the first to the last row in the crafting grid 
+    ingredients: 20, 20, 0, 265, 265, 265, 5, SniperAmmo, 0
+SniperAmmo:
+    type: 'shapeless'
+    amount: 8
+    # the ingredients you have to put in the grid to get ammo
+    ingredients: 289, 265
