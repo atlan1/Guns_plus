@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,15 +14,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
 
 public class GunsPlus extends JavaPlugin {
 	private String PRE = "[Guns+]";
-	public final Logger log = Bukkit.getLogger();
+	public final static Logger log = Bukkit.getLogger();
 	public boolean warnings = true;
 	public boolean debug = false;
 
@@ -42,8 +45,9 @@ public class GunsPlus extends JavaPlugin {
 	public File generalFile;
 	public FileConfiguration generalConfig;
 
-	public List<Gun> allGuns = new ArrayList<Gun>();
-	public List<Ammo> allAmmo = new ArrayList<Ammo>();
+	public static List<Gun> allGuns = new ArrayList<Gun>();
+	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
+	public static List<Material> transparentMaterials = new ArrayList<Material>();
 
 	@Override
 	public void onDisable() {
@@ -64,6 +68,7 @@ public class GunsPlus extends JavaPlugin {
 	public void init() {
 		config();
 		performGeneral();
+		updateHUD();
 	}
 
 	public void config() {
@@ -127,11 +132,28 @@ public class GunsPlus extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
+	
+	public void updateHUD(){
+		Task update = new Task(this){
+			public void run(){
+				Set<SpoutPlayer> ps = HUD.playerHUD.keySet();
+				for(SpoutPlayer sp:ps){
+					HUD.playerHUD.get(sp).update(sp);
+				}
+			}
+		};
+		update.startRepeating(5);
+	}
 
 	public void performGeneral() {
 		try {
 			warnings = generalConfig.getBoolean("show-warnings", true);
 			debug = generalConfig.getBoolean("show-debug", false);
+			
+			List<ItemStack> il = ConfigParser.parseItems(generalConfig.getString("transparent-materials"));
+			for(int m=0;m<il.size();m++){
+				transparentMaterials.add(il.get(m).getType());
+			}
 
 			hudenabled = generalConfig.getBoolean("hud.enabled", true);
 			hudBackground = generalConfig.getString("hud.background",
@@ -159,138 +181,19 @@ public class GunsPlus extends JavaPlugin {
 							+ new SpoutItemStack(ammo).getDurability());
 				}
 			}
+			
 			String z = generalConfig.getString("zoom", "right");
-			if (z.startsWith("@")) {
-				if (z.endsWith("_"))
-					zoomKey = KeyType.HOLDLETTER(z.replace("@", ""));
-				else
-					zoomKey = KeyType.LETTER(z.replace("@", ""));
-			} else if (z.startsWith("#")) {
-				if (z.endsWith("_"))
-					zoomKey = KeyType.HOLDNUMBER(z.replace("#", ""));
-				else
-					zoomKey = KeyType.NUMBER(z.replace("#", ""));
-			} else {
-				if (z.endsWith("_")) {
-					switch (KeyType.getType(z)) {
-					case RIGHT:
-						zoomKey = KeyType.HOLDRIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.HOLDLEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.HOLDRIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.HOLDLEFTSHIFT;
-						break;
-					}
-				} else {
-					switch (KeyType.getType(z)) {
-					case RIGHT:
-						zoomKey = KeyType.RIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.LEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.RIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.LEFTSHIFT;
-						break;
-					}
-				}
-			}
+			zoomKey = ConfigParser.getKeyType(z);
+			if(zoomKey==null) throw new Exception(" Could not parse zoom key!");
+			
 			String f = generalConfig.getString("fire", "left");
-			if (f.startsWith("@")) {
-				if (f.endsWith("_"))
-					zoomKey = KeyType.HOLDLETTER(f.replace("@", ""));
-				else
-					zoomKey = KeyType.LETTER(f.replace("@", ""));
-			} else if (f.startsWith("#")) {
-				if (f.endsWith("_"))
-					zoomKey = KeyType.HOLDNUMBER(f.replace("#", ""));
-				else
-					zoomKey = KeyType.NUMBER(f.replace("#", ""));
-			} else {
-				if (f.endsWith("_")) {
-					switch (KeyType.getType(f)) {
-					case RIGHT:
-						zoomKey = KeyType.HOLDRIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.HOLDLEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.HOLDRIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.HOLDLEFTSHIFT;
-						break;
-					}
-				} else {
-					switch (KeyType.getType(f)) {
-					case RIGHT:
-						zoomKey = KeyType.RIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.LEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.RIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.LEFTSHIFT;
-						break;
-					}
-				}
-			}
+			fireKey = ConfigParser.getKeyType(f);
+			if(fireKey==null) throw new Exception(" Could not parse fire key!");
+			
 			String r = generalConfig.getString("reload", "@r");
-			if (z.startsWith("@")) {
-				if (r.endsWith("_"))
-					zoomKey = KeyType.HOLDLETTER(r.replace("@", ""));
-				else
-					zoomKey = KeyType.LETTER(r.replace("@", ""));
-			} else if (z.startsWith("#")) {
-				if (r.endsWith("_"))
-					zoomKey = KeyType.HOLDNUMBER(r.replace("#", ""));
-				else
-					zoomKey = KeyType.NUMBER(r.replace("#", ""));
-			} else {
-				if (r.endsWith("_")) {
-					switch (KeyType.getType(r)) {
-					case RIGHT:
-						zoomKey = KeyType.HOLDRIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.HOLDLEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.HOLDRIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.HOLDLEFTSHIFT;
-						break;
-					}
-				} else {
-					switch (KeyType.getType(r)) {
-					case RIGHT:
-						zoomKey = KeyType.RIGHT;
-						break;
-					case LEFT:
-						zoomKey = KeyType.LEFT;
-						break;
-					case RIGHTSHIFT:
-						zoomKey = KeyType.RIGHTSHIFT;
-						break;
-					case LEFTSHIFT:
-						zoomKey = KeyType.LEFTSHIFT;
-						break;
-					}
-				}
-			}
+			reloadKey = ConfigParser.getKeyType(r);
+			if(reloadKey==null) throw new Exception(" Could not parse reload key!");
+			
 			if (zoomKey.getData().equalsIgnoreCase(fireKey.getData()) || fireKey.getData().equalsIgnoreCase(reloadKey.getData())
 					|| reloadKey.getData().equalsIgnoreCase(zoomKey.getData())) {
 				String message = (zoomKey.getData() + " " + fireKey.getData() + " " + reloadKey.getData());
@@ -306,7 +209,5 @@ public class GunsPlus extends JavaPlugin {
 			if (debug)
 				e.printStackTrace();
 		}
-
-		// TODO: Transparent Materials
 	}
 }

@@ -38,7 +38,6 @@ import team.old.GunsPlus.Util;
 import team.old.GunsPlus.Classes.*;
 
 public class GunsPlus extends JavaPlugin{
-	
 	public static GunsPlus plugin;
 	public Util util;
 	public MaterialParser mparser;
