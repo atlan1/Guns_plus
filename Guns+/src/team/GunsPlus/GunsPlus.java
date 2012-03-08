@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
@@ -66,6 +68,7 @@ public class GunsPlus extends JavaPlugin {
 	public void init() {
 		config();
 		performGeneral();
+		updateHUD();
 	}
 
 	public void config() {
@@ -129,6 +132,18 @@ public class GunsPlus extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
+	
+	public void updateHUD(){
+		Task update = new Task(this){
+			public void run(){
+				Set<SpoutPlayer> ps = HUD.playerHUD.keySet();
+				for(SpoutPlayer sp:ps){
+					HUD.playerHUD.get(sp).update(sp);
+				}
+			}
+		};
+		update.startRepeating(5);
+	}
 
 	public void performGeneral() {
 		try {
@@ -141,7 +156,6 @@ public class GunsPlus extends JavaPlugin {
 			}
 
 			hudenabled = generalConfig.getBoolean("hud.enabled", true);
-			//do we really want to hard code the background to one url?
 			hudBackground = generalConfig.getString("hud.background",
 					"http://dl.dropbox.com/u/44243469/GunPack/Textures/HUDBackground.png");
 			hudX = generalConfig.getInt("hud.position.X", 20);
