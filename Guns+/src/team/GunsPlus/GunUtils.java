@@ -54,6 +54,12 @@ import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.Widget;
 import org.getspout.spoutapi.gui.WidgetAnchor;*/
+import org.getspout.spoutapi.gui.GenericItemWidget;
+import org.getspout.spoutapi.gui.GenericLabel;
+import org.getspout.spoutapi.gui.GenericTexture;
+import org.getspout.spoutapi.gui.RenderPriority;
+import org.getspout.spoutapi.gui.Widget;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -575,61 +581,4 @@ public class GunUtils {
 			}
 			return false;
 		}
-
-	/*	public static void updateHUD(Player p) {
-			SpoutPlayer sp =(SpoutPlayer) p;
-			GenericItemWidget giw;
-			GenericLabel gl;
-			GenericTexture gt;
-			if((!plugin.hudElements.containsKey(p))||(plugin.hudElements.containsKey(p)&&plugin.hudElements.get(p).isEmpty())){
-				//Creating widgets
-				giw = new GenericItemWidget();
-				gl = new GenericLabel();
-				gt = new GenericTexture();
-				//SETUP THE ITEMLABEL
-				giw.setAnchor(WidgetAnchor.SCALE).setWidth(15).setHeight(15).setPriority(RenderPriority.Normal).setX(plugin.hudX+13).setY(plugin.hudY+5);
-				//SETUP THE LABEL
-				gl.setAnchor(WidgetAnchor.SCALE).setWidth(30).setHeight(15).setPriority(RenderPriority.High).setX(plugin.hudX+5).setY(plugin.hudY+37);
-				//SETUP THE Texture
-				if(plugin.hudBackground!=null){
-					gt.setAnchor(WidgetAnchor.SCALE).setWidth(45).setHeight(50).setPriority(RenderPriority.High).setX(plugin.hudX).setY(plugin.hudY);
-					gt.setUrl(plugin.hudBackground);
-				}
-				//FILL THE CONTENT
-				HashMap<String, Widget> hm= new HashMap<String, Widget>(); 
-				hm.put("label", gl);
-				hm.put("item", giw);
-				hm.put("texture", gt);
-				plugin.hudElements.put(p, hm);
-			}
-			giw = (GenericItemWidget) plugin.hudElements.get(p).get("item");
-			gl = (GenericLabel) plugin.hudElements.get(p).get("label");
-			gt = (GenericTexture) plugin.hudElements.get(p).get("texture");
-			if(this.holdsGun(p)){
-				gt.setVisible(true);
-				gl.setVisible(true);
-				giw.setVisible(true);
-				Gun g = this.getGun(p.getItemInHand());
-				SpoutItemStack i = new SpoutItemStack(g);
-				giw.setTypeId(i.getTypeId()).setData(i.getDurability());
-				int count = g.getCounter();
-				if(count<0)count = 0;
-				int total = this.getAmmoCount(p, g.getAmmo());
-				if(total<0)total=0;
-				if(total<count){
-					count=total;
-					total=0;
-				}
-				int notLoaded = total-count;
-				if(notLoaded<0)notLoaded=0;
-				gl.setText(count+"/"+notLoaded);
-			}else{
-				gt.setVisible(false);
-				gl.setVisible(false);
-				giw.setVisible(false);
-			}
-			sp.getMainScreen().attachWidgets(plugin, gt, giw, gl);
-		}
-		*/
-
 }
