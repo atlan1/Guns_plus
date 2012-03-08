@@ -6,6 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.input.KeyReleasedEvent;
 import org.getspout.spoutapi.gui.ScreenType;
@@ -105,5 +106,13 @@ public class GunsPlusListener implements Listener{
 		}else if((plugin.fireKey.equals(KeyType.HOLDNUMBER)||plugin.fireKey.equals(KeyType.HOLDLETTER))&&plugin.fireKey.getData().equalsIgnoreCase(keyString)&&st.toString().equalsIgnoreCase("GAME_SCREEN")){
 			//stop fireing ?
 		}
+	}
+	
+	@EventHandler(priority=EventPriority.NORMAL)
+	public void onPlayerJoin(PlayerJoinEvent e){
+		if(!Util.hasSpoutcraft(e.getPlayer()))return;
+		SpoutPlayer sp = (SpoutPlayer) e.getPlayer();
+		HUD hud = new HUD(plugin, plugin.hudX, plugin.hudY, plugin.hudBackground);
+		hud.start(sp);
 	}
 }
