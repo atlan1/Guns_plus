@@ -133,4 +133,23 @@ public class ConfigParser {
 		}
     	return key;
     }
+    
+    public static int getProjectile(String name){
+    	if(name.equalsIgnoreCase("eyeofender")){
+    		return 1;
+    	}else if(name.equalsIgnoreCase("eyeofender")){
+    		return 2;
+    	}else if(name.equalsIgnoreCase("enderpearl")){
+    		return 3;
+    	}else if(name.equalsIgnoreCase("egg")){
+    		return 4;
+    	}else if(name.equalsIgnoreCase("fireball")){
+    		return 5;
+    	}else if(name.equalsIgnoreCase("arrow")){
+    		return 6;
+    	}else if(name.equalsIgnoreCase("snowball")){
+    		return 7;
+    	}
+    	return 0;
+    }
 }

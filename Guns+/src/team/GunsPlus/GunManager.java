@@ -30,7 +30,11 @@ public class GunManager {
 		}
 	}
 	
-	public void editGun(Gun gun, String name, float value) {
+	public void editGunValue(Gun gun, String name, float value) {
 		gun.setValue(name, value);
+	}
+	
+	public void editGunResource(Gun gun, String name, String res) {
+		gun.setResource(name, res);
 	}
 }

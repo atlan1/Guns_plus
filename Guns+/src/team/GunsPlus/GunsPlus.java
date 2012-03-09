@@ -21,10 +21,12 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
+import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
 	public String PRE = "[Guns+]";
 	public final static Logger log = Bukkit.getLogger();
+	public final GunManager gm = new GunManager(this);
 	public boolean warnings = true;
 	public boolean debug = false;
 
@@ -68,7 +70,136 @@ public class GunsPlus extends JavaPlugin {
 	public void init() {
 		config();
 		performGeneral();
+		loadGuns();
+		loadAmmo();
 		updateHUD();
+	}
+
+	public void loadAmmo() {
+		Object[] ammoArray =  ammoConfig.getKeys(false).toArray();
+		for(int i = 0;i<ammoArray.length;i++){
+			try{
+				String texture = ammoConfig.getString(ammoArray[i]+".texture");
+				String name = ammoArray[i].toString();
+				
+				if(texture == null)
+					throw new Exception(" Can't find texture url for "+ammoArray[i]+"! Skipping!");
+				
+				Ammo a = new Ammo(this, name, texture);
+				allAmmo.add(a);
+			} catch (Exception e) {
+				if (warnings)
+					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
+				if (debug)
+					e.printStackTrace();
+			}
+		}
+		
+		if(generalConfig.getBoolean("loaded-ammo")==true){
+			log.log(Level.FINE, PRE + " -------------- Ammo loaded: ---------------");
+			for(int k=0;k<allAmmo.size();k++){
+				log.log(Level.FINE, "- "+allAmmo.get(k).getName());
+			}
+		}		
+	}
+
+	public void loadGuns() {
+		Object[] gunsArray =  gunsConfig.getKeys(false).toArray();
+		for(int i = 0;i<gunsArray.length;i++){
+			try{
+				String name = gunsArray[i].toString();
+				int accuracyIn=0;
+				int accuracyOut= 0;
+				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical");
+				int range =  gunsConfig.getInt((String) gunsArray[i]+".range");
+				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
+				float reloadTime =  (float) gunsConfig.getDouble((String) gunsArray[i]+".reloadTime", 0);
+				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
+				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shotsBetweenReload", 1);
+				float recoil = gunsConfig.getInt((String) gunsArray[i]+".recoil", 0);
+				float knockback =  gunsConfig.getInt((String) gunsArray[i]+".knockback", 0);
+				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoomfactor", 0);
+				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".headShotDamage", 0);
+				int spread =  gunsConfig.getInt((String) gunsArray[i]+".spread", 0);
+				float projectileSpeed =  (float) gunsConfig.getDouble((String) gunsArray[i]+".projectile.speed", 0);
+				String shotSound = gunsConfig.getString(gunsArray[i]+".shotSound");
+				String reloadSound = gunsConfig.getString(gunsArray[i]+".reloadSound");
+				String zoomTexture = gunsConfig.getString(gunsArray[i]+".zoomTexture");
+				String texture = gunsConfig.getString(gunsArray[i]+".texture");
+				String projectile = gunsConfig.getString(gunsArray[i]+".projectile.type");
+				int projectiletype = 0;
+				//TODO: 
+				//ArrayList<Effect> effects = new ArrayList<Effect>();
+				//
+				ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(MaterialParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
+				
+				if(ammo.isEmpty()){
+						throw new Exception(" Can't find any valid ammo for "+gunsArray[i]);
+				}
+				
+				String[] split = gunsConfig.getString(gunsArray[i]+".accuracy").split("->");
+				if(split.length==2){
+					accuracyIn=Integer.parseInt(split[1]);
+					accuracyOut=Integer.parseInt(split[0]);
+				}else{
+					throw new Exception(" Can't find TWO accuracy values for "+gunsArray[i]+"!");
+				}
+				
+				if(shotSound==null){
+					throw new Exception(" Can't find shot sound url for "+gunsArray[i]+"!");
+				}
+				
+				if(reloadSound==null){
+						throw new Exception(" Can't find reload sound url for "+gunsArray[i]+"!");
+				}
+				
+				if(texture==null){
+						throw new Exception(" Can't find texture url for "+gunsArray[i]+"! Skipping!");
+				}
+				
+				if(zoomTexture==null){
+						throw new Exception(" Can't find zoom texture url for "+gunsArray[i]+"!");
+				}
+				 
+				if(projectile==null){
+						throw new Exception(" Can't find projectile type for "+gunsArray[i]+"!");
+				}
+				projectiletype = ConfigParser.getProjectile(projectile);
+				
+				//CREATING GUN
+				Gun g = gm.buildNewGun(name, texture);
+				gm.editGunValue(g, "DAMAGE", damage);
+				gm.editGunValue(g, "HEADSHOTDAMAGE", headShotDamage);
+				gm.editGunValue(g, "ZOOMFACTOR", zoomfactor);
+				gm.editGunValue(g, "CRITICAL", critical);
+				gm.editGunValue(g, "RANGE", range);
+				gm.editGunValue(g, "ACCURACYOUT", accuracyOut);
+				gm.editGunValue(g, "ACCURACYIN", accuracyIn);
+				gm.editGunValue(g, "RECOIL", recoil);
+				gm.editGunValue(g, "RELOADTIME", reloadTime);
+				gm.editGunValue(g, "SHOTSBETWEENRELOAD", shotsBetweenReload);
+				gm.editGunValue(g, "SHOTDELAY", shotDelay);
+				gm.editGunValue(g, "SPREAD", spread);
+				gm.editGunValue(g, "KNOCKBACK", knockback);
+				gm.editGunValue(g, "projectileSpeed", projectileSpeed);
+				gm.editGunValue(g, "PROJECTILETYPE", projectiletype);
+				gm.editGunResource(g, "ZOOMTEXTURE", zoomTexture);
+				gm.editGunResource(g, "SHOTSOUND", shotSound);
+				gm.editGunResource(g, "RELOADSOUND", reloadSound);
+				allGuns.add(g);
+			}catch(Exception e){
+				if (warnings)
+					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
+				if (debug)
+					e.printStackTrace();
+			}
+		}
+		if(generalConfig.getBoolean("loaded-guns")==true){
+			log.log(Level.FINE, PRE + " -------------- Guns loaded: ---------------");
+			for(int k=0;k<allGuns.size();k++){
+				log.log(Level.FINE, "- "+allGuns.get(k).getName());
+			}
+		}
 	}
 
 	public void config() {
