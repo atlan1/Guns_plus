@@ -1,6 +1,8 @@
 package team.GunsPlus.Classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import org.bukkit.inventory.ItemStack;
@@ -12,9 +14,20 @@ public class Gun extends GenericCustomItem{
 
 	//PRIVATE PROPERTIES
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
+	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
 	
 	public Gun(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
+	}
+	
+	public void setValue(String name, Float value) {
+		values.put(name, value);
+	}
+	
+	public float getValue(String name) {
+		Float f = -1F;
+		if(values.containsKey(name)) f = values.get(name);
+		return f;
 	}
 
 	public void zoom(SpoutPlayer sp){

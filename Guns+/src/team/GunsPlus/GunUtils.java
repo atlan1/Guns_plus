@@ -1,21 +1,15 @@
 package team.GunsPlus;
 
-//import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-//import net.minecraft.server.EntityLiving;
-//import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MobEffect;
-//import net.minecraft.server.Packet42RemoveMobEffect;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-//import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Blaze;
 import org.bukkit.entity.CaveSpider;
@@ -48,18 +42,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
-/*import org.getspout.spoutapi.gui.GenericItemWidget;
-import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericTexture;
-import org.getspout.spoutapi.gui.RenderPriority;
-import org.getspout.spoutapi.gui.Widget;
-import org.getspout.spoutapi.gui.WidgetAnchor;*/
-import org.getspout.spoutapi.gui.GenericItemWidget;
-import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericTexture;
-import org.getspout.spoutapi.gui.RenderPriority;
-import org.getspout.spoutapi.gui.Widget;
-import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
