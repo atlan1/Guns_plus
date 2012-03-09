@@ -3,6 +3,11 @@ package team.GunsPlus;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.inventory.ItemStack;
+import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.inventory.SpoutShapedRecipe;
+
 import team.GunsPlus.Classes.Gun;
 
 public class GunManager {
@@ -27,6 +32,25 @@ public class GunManager {
 			if (plugin.debug)
 				e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public void setRecipe(int[] data, ItemStack _result) {
+		try {
+			ItemStack result = new SpoutItemStack(_result);
+			char[] name = {'a','b','c',
+							'd','e','f',
+							'g','h','i'};
+			int i = 0;
+			SpoutShapedRecipe x = new SpoutShapedRecipe(result);
+			for(int val : data) {
+				x.setIngredient(name[i], new SpoutItemStack(val).getMaterial());
+				i++;
+			}
+			x.shape("abcdefghi");
+			SpoutManager.getMaterialManager().registerSpoutRecipe(x);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
