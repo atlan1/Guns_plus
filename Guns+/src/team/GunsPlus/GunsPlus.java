@@ -23,7 +23,7 @@ import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
 
 public class GunsPlus extends JavaPlugin {
-	private String PRE = "[Guns+]";
+	public String PRE = "[Guns+]";
 	public final static Logger log = Bukkit.getLogger();
 	public boolean warnings = true;
 	public boolean debug = false;
@@ -196,7 +196,7 @@ public class GunsPlus extends JavaPlugin {
 			
 			if (zoomKey.getData().equalsIgnoreCase(fireKey.getData()) || fireKey.getData().equalsIgnoreCase(reloadKey.getData())
 					|| reloadKey.getData().equalsIgnoreCase(zoomKey.getData())) {
-				String message = (zoomKey.getData() + " " + fireKey.getData() + " " + reloadKey.getData());
+				String message = ("Zoom:" + zoomKey.getData() + " Fire:" + fireKey.getData() + " Reload:" + reloadKey.getData());
 				zoomKey = KeyType.RIGHT;
 				fireKey = KeyType.LEFT;
 				reloadKey = KeyType.LETTER("r");

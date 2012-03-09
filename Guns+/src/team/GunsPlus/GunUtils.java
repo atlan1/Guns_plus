@@ -1,21 +1,15 @@
 package team.GunsPlus;
 
-//import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-//import net.minecraft.server.EntityLiving;
-//import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MobEffect;
-//import net.minecraft.server.Packet42RemoveMobEffect;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-//import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Blaze;
 import org.bukkit.entity.CaveSpider;
@@ -48,12 +42,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
-/*import org.getspout.spoutapi.gui.GenericItemWidget;
-import org.getspout.spoutapi.gui.GenericLabel;
-import org.getspout.spoutapi.gui.GenericTexture;
-import org.getspout.spoutapi.gui.RenderPriority;
-import org.getspout.spoutapi.gui.Widget;
-import org.getspout.spoutapi.gui.WidgetAnchor;*/
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -66,7 +54,7 @@ import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.Task;
 
 public class GunUtils {
-	
+
 		public static boolean holdsGun(Player p) {
 			ItemStack is = p.getItemInHand();
 			for(Gun g : GunsPlus.allGuns){
@@ -77,7 +65,7 @@ public class GunUtils {
 			}
 			return false;
 		}
-		
+
 		public static void playCustomSound(JavaPlugin plugin,Player player, String url)
 		{
 			SoundManager SM = SpoutManager.getSoundManager();
@@ -85,7 +73,7 @@ public class GunUtils {
 			SM.playCustomSoundEffect(plugin, sp, url, false, sp.getLocation() ,25, 50);
 			SM.playGlobalCustomSoundEffect(plugin, url, false, sp.getLocation(), 100, 100);
 		}
-		
+
 		public static void shootProjectile(String name,double speed, Player p){
 			BlockIterator bitr = new BlockIterator(p);
 			Block b = null;
@@ -131,12 +119,12 @@ public class GunUtils {
 				es.setVelocity(p.getLocation().getDirection().multiply(speed));
 			}
 		}
-		
+
 		public static ArrayList<LivingEntity> getTargetsWithSpread(Player p, int range, boolean headshot, int spread, int accuracy){
 			ArrayList<LivingEntity> lea = new ArrayList<LivingEntity>();
 			Location loc = p.getEyeLocation();
 			LivingEntity e =null;
-			
+
 			if(spread==0){
 				e=getTarget(loc, range, headshot,accuracy);
 				if(e!=null&&!lea.contains(e)){
@@ -164,7 +152,7 @@ public class GunUtils {
 			}
 			return lea;
 		}
-		
+
 		public static LivingEntity getTarget(Location loc, int range, boolean headshot, int accuracy) {
 			Random rand = new Random();
 			int random = rand.nextInt(101);
@@ -187,7 +175,7 @@ public class GunUtils {
 						entities.add((LivingEntity) e);
 					}
 				}
-				
+
 				for (LivingEntity e : entities) {
 					l = headshot==false ? e.getLocation() : e.getEyeLocation();
 					ex = l.getX();
@@ -216,13 +204,13 @@ public class GunUtils {
 							}
 						}
 					}
-					
-					
+
+
 				}
 			}
 			return target;
 		}
-		
+
 		@SuppressWarnings("deprecation")
 		public static void removeAmmo(ArrayList<ItemStack> ammo ,Player p){
 			if(ammo==null) return;
@@ -241,12 +229,12 @@ public class GunUtils {
 					}
 				}
 			}
-			
-			
+
+
 			if(ammoStack == null){
 				return;
 			}
-			
+
 			if(ammoStack.getAmount() >1){
 				ammoStack.setAmount(ammoStack.getAmount()-1);
 			}else{
@@ -272,7 +260,7 @@ public class GunUtils {
 			}
 			return false;
 		}
-		
+
 		public static int getAmmoCount(Player p, ArrayList<ItemStack> ammo){
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			int counter = 0;
@@ -291,8 +279,8 @@ public class GunUtils {
 			}
 			return counter;
 		}
-		
-		
+
+
 		public static void performEffects(ArrayList<Effect> h, LivingEntity le, Player player, int range){
 			Location loc;
 			if(le!=null&&le!=player) {
@@ -338,7 +326,7 @@ public class GunUtils {
 								loc.getBlock().setTypeId(0);
 							}
 						}
-						
+
 						break;
 					case 1:
 						if(le!=null&&le!=player){
@@ -434,13 +422,13 @@ public class GunUtils {
 							}
 						}
 						break;
-						
+
 				}
-				
-				
+
+
 			}
 		}
-		
+
 		public static void performRecoil(JavaPlugin plugin, Player p, float recoil){
 			Task t1 = new Task(plugin, p, recoil){
 				public void run() {
@@ -475,7 +463,7 @@ public class GunUtils {
 			};
 			t4.startDelayed(9);
 		}
-		
+
 		public static void performKnockBack(Player p, float knockback){
 			Location loc = p.getLocation();
 			if(loc.getPitch()>5){
@@ -489,10 +477,10 @@ public class GunUtils {
 			v.setZ(v.getZ()*(knockback/100)*-1);
 			p.setVelocity(v);
 		}
-		
+
 		public static Gun getGunInHand(Player p) {
 			ItemStack is = p.getItemInHand();
-				
+
 			if(holdsGun(p)){
 				for(Gun g:GunsPlus.allGuns){
 					SpoutItemStack sis = new SpoutItemStack(g);
@@ -503,7 +491,7 @@ public class GunUtils {
 			}
 			return null;
 		}
-		
+
 		public static Gun getGun(ItemStack item){
 			for(Gun g:GunsPlus.allGuns){
 				SpoutItemStack sis = new SpoutItemStack(g);
@@ -513,7 +501,7 @@ public class GunUtils {
 			}
 			return null;
 		}
-		
+
 	/*	@SuppressWarnings("rawtypes")
 		public static void zoomOut(Player p){
 			//PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
@@ -564,7 +552,7 @@ public class GunUtils {
 				plugin.zoomTextures.put(p, t);
 			}
 		}*/
-		
+
 		public static boolean isGun(ItemStack i){
 			for(Gun g:GunsPlus.allGuns){
 				SpoutItemStack sis = new SpoutItemStack(g);

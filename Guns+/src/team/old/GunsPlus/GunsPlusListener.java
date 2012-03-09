@@ -165,7 +165,7 @@ public class GunsPlusListener implements Listener{
 		}
 	}
 	
-	//IF THE ZOOMKEY IS A TOGGLE (SPECIFIED BY A _ BEHIND THE ZOOMKEY IN THE CONFIG), ZOOM OUT ON RELEASE
+	//IF THE ZOOMKEY IS A HOLD (SPECIFIED BY A _ BEHIND THE ZOOMKEY IN THE CONFIG), ZOOM OUT ON RELEASE
 	@EventHandler(priority=EventPriority.NORMAL)
 	public void onKeyReleasedEvent(KeyReleasedEvent e){
 		SpoutPlayer p = e.getPlayer();
