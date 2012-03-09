@@ -386,8 +386,6 @@ public class GunsPlus extends JavaPlugin{
 			ArrayList<Effect> effects = new ArrayList<Effect>();
 			ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
 			
-			
-			
 			// GETTING EFFECTS
 			ConfigurationSection cs = gunsConfig.getConfigurationSection(gunsArray[i]+".effects");
 			if(cs==null){
