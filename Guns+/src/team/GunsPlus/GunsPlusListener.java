@@ -1,5 +1,7 @@
 package team.GunsPlus;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -110,9 +112,14 @@ public class GunsPlusListener implements Listener{
 	
 	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e){
-		if(!Util.hasSpoutcraft(e.getPlayer()))return;
+		if(!Util.hasSpoutcraft(e.getPlayer())) {
+			e.getPlayer().sendMessage(ChatColor.GRAY + "This server is running Guns +");
+			e.getPlayer().sendMessage(ChatColor.GRAY + "By " + plugin.getDescription().getAuthors());
+			return;
+		}
 		SpoutPlayer sp = (SpoutPlayer) e.getPlayer();
 		HUD hud = new HUD(plugin, plugin.hudX, plugin.hudY, plugin.hudBackground);
 		hud.start(sp);
+		sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
 	}
 }

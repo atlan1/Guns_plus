@@ -58,7 +58,7 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		init();
-
+		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		if (debug)
 			log.setLevel(Level.ALL);
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()

@@ -17,6 +17,8 @@ import team.GunsPlus.GunsPlus;
 public class Util {
 	
 	public static boolean hasSpoutcraft(Player p){
+		if(SpoutManager.getPlayerManager().getPlayer(p).isSpoutCraftEnabled())
+			return true;
 		if(SpoutManager.getPlayer(p).isSpoutCraftEnabled())
 			return true;
 		return false;

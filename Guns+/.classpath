@@ -13,8 +13,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Tyler/workspace/Plugins/FurnaceAPI.jar"/>
-	<classpathentry kind="lib" path="I:/Benutzer/Robert/Spiele/Minecraft/Server/Plugins Test Server/plugins/FurnaceAPI.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Robert/Downloads/craftbukkit-1.2.3-R0.1.jar"/>
-	<classpathentry kind="lib" path="I:/Benutzer/Robert/Spiele/Minecraft/Server/PluginsOnMyOwn/lib/SpoutPluginAPI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
