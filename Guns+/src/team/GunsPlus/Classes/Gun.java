@@ -11,12 +11,9 @@ import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-<<<<<<< HEAD
 import team.GunsPlus.EffectType;
-=======
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
->>>>>>> 053498bcfa6b3a314da7c8e5baba2fecaa08ae0a
 
 public class Gun extends GenericCustomItem{
 
@@ -24,11 +21,8 @@ public class Gun extends GenericCustomItem{
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(); //Holds all accepted ammo itemstacks
 	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
 	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
-<<<<<<< HEAD
 	private ArrayList<EffectType> effects = new ArrayList<EffectType>(); //Holds the effects of the gun
-=======
 	private GunsPlus plugin;
->>>>>>> 053498bcfa6b3a314da7c8e5baba2fecaa08ae0a
 	
 	public Gun(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
@@ -41,12 +35,12 @@ public class Gun extends GenericCustomItem{
 		if(!plugin.inZoom.contains(sp)){
 			Util.zoomIn(p, zTex, zoomfactor); //TODO: Finish Method
 			plugin.inZoom.add(sp);
-			if(plugin.generalConfig.getBoolean("send-notifications"))
+			if(GunsPlus.generalConfig.getBoolean("send-notifications"))
 			(sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
 		}else{
 			Util.zoomOut(sp); //TODO: Finish Method
 			plugin.inZoom.remove(sp);
-			if(plugin.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
+			if(GunsPlus.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
 		}
 	}
 	
