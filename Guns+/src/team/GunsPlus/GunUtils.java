@@ -43,12 +43,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
-import org.getspout.spoutapi.sound.SoundManager;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
