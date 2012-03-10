@@ -37,4 +37,8 @@ public class GunManager {
 	public void editGunResource(Gun gun, String name, String res) {
 		gun.setResource(name, res);
 	}
+	
+	public void editGunEffect(Gun gun, EffectType et){
+		gun.addEffect(et);
+	}
 }
