@@ -29,12 +29,8 @@ import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
-<<<<<<< HEAD
 	public static String PRE = "[Guns+]";
-=======
 	public static LWC lwc;
-	public String PRE = "[Guns+]";
->>>>>>> 053498bcfa6b3a314da7c8e5baba2fecaa08ae0a
 	public final static Logger log = Bukkit.getLogger();
 	public final GunManager gm = new GunManager(this);
 	public static boolean warnings = true;
