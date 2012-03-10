@@ -39,9 +39,12 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -502,13 +505,13 @@ public class GunUtils {
 			return null;
 		}
 
-	/*	@SuppressWarnings("rawtypes")
 		public static void zoomOut(Player p){
-			//PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
-			//p.addPotionEffect(pe, true);
-			
-			CraftPlayer cp = (CraftPlayer) p;
+			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
+			p.addPotionEffect(pe, true);
 			SpoutPlayer sp = (SpoutPlayer) p;
+			//can't be used anymore
+			/*CraftPlayer cp = (CraftPlayer) p;
+			
 			try {
 	            Field field = EntityLiving.class.getDeclaredField("effects");
 	            field.setAccessible(true);
@@ -519,19 +522,18 @@ public class GunUtils {
 	            cp.getHandle().getDataWatcher().watch(8, Integer.valueOf(0));
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	        }
-			sp.getMainScreen().removeWidget(plugin.zoomTextures.get(p));
-			plugin.zoomTextures.remove(p);
+	        }*/
+			sp.getMainScreen().removeWidget(GunsPlus.zoomTextures.get(p));
+			GunsPlus.zoomTextures.remove(p);
 		}
 		
-		@SuppressWarnings("rawtypes")
-		public static void zoomIn(Player p, GenericTexture zTex,int  zoomfactor){
-//			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
-//			p.addPotionEffect(pe, true);
-			
-			
-			CraftPlayer cp = (CraftPlayer) p;
+		public static void zoomIn(GunsPlus plugin, Player p, GenericTexture zTex,int  zoomfactor){
 			SpoutPlayer sp = (SpoutPlayer) p;
+			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
+			p.addPotionEffect(pe, true);
+			//Can't be used anymore:
+			/*CraftPlayer cp = (CraftPlayer) p;
+			
 			cp.getHandle().addEffect(new MobEffect(2, 24000, zoomfactor));
 			try{
 				Field field;
@@ -544,14 +546,14 @@ public class GunUtils {
 			}catch(IllegalAccessException e1){
 				e1.printStackTrace();
 			}
-			
+			*/
 			if(!(zTex==null)){
 				GenericTexture t = zTex;
 				t.setHeight(sp.getMainScreen().getHeight()).setWidth(sp.getMainScreen().getWidth());
 				sp.getMainScreen().attachWidget(plugin, t);
-				plugin.zoomTextures.put(p, t);
+				GunsPlus.zoomTextures.put(p, t);
 			}
-		}*/
+		}
 
 		public static boolean isGun(ItemStack i){
 			for(Gun g:GunsPlus.allGuns){

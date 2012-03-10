@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -38,6 +40,7 @@ public class GunsPlus extends JavaPlugin {
 
 	public KeyType zoomKey = KeyType.RIGHT;
 	public List<Player> inZoom = new ArrayList<Player>();
+	public static HashMap<Player, GenericTexture> zoomTextures = new HashMap<Player, GenericTexture>();
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
@@ -52,6 +55,7 @@ public class GunsPlus extends JavaPlugin {
 	public File recipeFile;
 	public static FileConfiguration recipeConfig;
 	public File generalFile;
+	
 	public static FileConfiguration generalConfig;
 
 	public static List<Gun> allGuns = new ArrayList<Gun>();
