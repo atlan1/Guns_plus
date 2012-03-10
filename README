@@ -18,10 +18,10 @@ Enjoy! :)
 	 * ---FIX---
 	 * 1. Permissions ?
 	 * 2. Sound texture precache -> seems to be fixed on latest spout update
-	 * 3. HUD should overlay the zoomtexture
-	 * 4. make shorter smoke trail; less density
+	 * 3. HUD should overlay the zoomtexture #
+	 * 4. make shorter smoke trail; less density 
 	 * 5. Bypassing reload time if you switch weapons #
 	 * 6. Reload command  #
   	 * 7. Fireballs, Projectiles #
-         * 8. All custom items of this plugin can bypass LWC protections.
+         * 8. All custom items of this plugin can bypass LWC protections. # (No longer can bypass using method isLWC from Util Class)
          A '#' behind the todo/fix means they are done.

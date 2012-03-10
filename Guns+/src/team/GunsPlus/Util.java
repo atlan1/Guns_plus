@@ -17,6 +17,8 @@ import team.GunsPlus.GunsPlus;
 public class Util {
 	
 	public static boolean hasSpoutcraft(Player p){
+		if(SpoutManager.getPlayerManager().getPlayer(p).isSpoutCraftEnabled())
+			return true;
 		if(SpoutManager.getPlayer(p).isSpoutCraftEnabled())
 			return true;
 		return false;
@@ -66,5 +68,12 @@ public class Util {
 	    loc.setY(loc.getY() + p.getEyeHeight() - 0.2D);
 	    loc.setZ(loc.getZ() + l * Math.sin(a) + 0.8D * Math.cos(a));
 	    return loc;
+	}
+	
+	public static boolean isLWC(Block b) {
+		if(GunsPlus.lwc != null) {
+			if(GunsPlus.lwc.findProtection(b) != null) return true;
+			else return false;
+		} else return false;
 	}
 }

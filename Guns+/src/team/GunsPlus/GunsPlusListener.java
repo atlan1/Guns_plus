@@ -1,5 +1,7 @@
 package team.GunsPlus;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,10 +47,10 @@ public class GunsPlusListener implements Listener{
 			case RIGHT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.RIGHT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.RIGHT)) g.reload(sp);
-				if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.RIGHTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.RIGHTSHIFT)) g.reload(sp);
-				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
 				break;
 			case LEFT_CLICK_AIR:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
@@ -61,10 +63,10 @@ public class GunsPlusListener implements Listener{
 			case LEFT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.LEFT)) g.reload(sp);
-				if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.LEFTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.LEFTSHIFT)) g.reload(sp);
-				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
 				break;
 		}
 	}
@@ -110,9 +112,14 @@ public class GunsPlusListener implements Listener{
 	
 	@EventHandler(priority=EventPriority.NORMAL)
 	public void onPlayerJoin(PlayerJoinEvent e){
-		if(!Util.hasSpoutcraft(e.getPlayer()))return;
+		if(!Util.hasSpoutcraft(e.getPlayer())) {
+			e.getPlayer().sendMessage(ChatColor.GRAY + "This server is running Guns +");
+			e.getPlayer().sendMessage(ChatColor.GRAY + "By " + plugin.getDescription().getAuthors());
+			return;
+		}
 		SpoutPlayer sp = (SpoutPlayer) e.getPlayer();
 		HUD hud = new HUD(plugin, plugin.hudX, plugin.hudY, plugin.hudBackground);
 		hud.start(sp);
+		sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
 	}
 }

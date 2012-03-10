@@ -14,23 +14,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
+<<<<<<< HEAD
 	public static String PRE = "[Guns+]";
+=======
+	public static LWC lwc;
+	public String PRE = "[Guns+]";
+>>>>>>> 053498bcfa6b3a314da7c8e5baba2fecaa08ae0a
 	public final static Logger log = Bukkit.getLogger();
 	public final GunManager gm = new GunManager(this);
 	public static boolean warnings = true;
 	public static boolean debug = false;
 
 	public KeyType zoomKey = KeyType.RIGHT;
+	public List<Player> inZoom = new ArrayList<Player>();
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
@@ -60,11 +71,16 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		init();
-
+		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		if (debug)
 			log.setLevel(Level.ALL);
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now enabled.");
+		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
+		if(lwcPlugin != null) {
+		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
+		    log.log(Level.FINE, "Plugged into LWC");
+		}
 	}
 
 	public void init() {
