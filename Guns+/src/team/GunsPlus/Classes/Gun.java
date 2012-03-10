@@ -5,10 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Util;
 
 public class Gun extends GenericCustomItem{
 
@@ -16,14 +20,26 @@ public class Gun extends GenericCustomItem{
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
 	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
 	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
+	private GunsPlus plugin;
 	
 	public Gun(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
+		this.plugin = (GunsPlus) plugin;
 	}
 	
 	
 	public void zoom(SpoutPlayer sp){
 		//When doing Scope texture placement, set the render priority to normal or low
+		if(!plugin.inZoom.contains(sp)){
+			Util.zoomIn(p, zTex, zoomfactor); //TODO: Finish Method
+			plugin.inZoom.add(sp);
+			if(plugin.generalConfig.getBoolean("send-notifications"))
+			(sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
+		}else{
+			Util.zoomOut(sp); //TODO: Finish Method
+			plugin.inZoom.remove(sp);
+			if(plugin.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
+		}
 	}
 	
 	public void fire(SpoutPlayer sp){
