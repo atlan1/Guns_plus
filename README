@@ -23,5 +23,5 @@ Enjoy! :)
 	 * 5. Bypassing reload time if you switch weapons #
 	 * 6. Reload command  #
   	 * 7. Fireballs, Projectiles #
-     * 8. All custom items of this plugin can bypass LWC protections. # (No longer can bypass using method isLWC from Util Class)
+         * 8. All custom items of this plugin can bypass LWC protections. # (No longer can bypass using method isLWC from Util Class)
          A '#' behind the todo/fix means they are done.
