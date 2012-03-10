@@ -40,7 +40,9 @@ public class GunsPlus extends JavaPlugin {
 
 	public KeyType zoomKey = KeyType.RIGHT;
 	public List<Player> inZoom = new ArrayList<Player>();
+	public List<Player> reloading = new ArrayList<Player>();
 	public static HashMap<Player, GenericTexture> zoomTextures = new HashMap<Player, GenericTexture>();
+	public HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
@@ -55,6 +57,7 @@ public class GunsPlus extends JavaPlugin {
 	public File recipeFile;
 	public static FileConfiguration recipeConfig;
 	public File generalFile;
+	
 	
 	public static FileConfiguration generalConfig;
 

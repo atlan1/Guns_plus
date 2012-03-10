@@ -69,14 +69,6 @@ public class GunUtils {
 			return false;
 		}
 
-		public static void playCustomSound(JavaPlugin plugin,Player player, String url)
-		{
-			SoundManager SM = SpoutManager.getSoundManager();
-			SpoutPlayer sp = SpoutManager.getPlayer(player);
-			SM.playCustomSoundEffect(plugin, sp, url, false, sp.getLocation() ,25, 50);
-			SM.playGlobalCustomSoundEffect(plugin, url, false, sp.getLocation(), 100, 100);
-		}
-
 		public static void shootProjectile(String name,double speed, Player p){
 			BlockIterator bitr = new BlockIterator(p);
 			Block b = null;

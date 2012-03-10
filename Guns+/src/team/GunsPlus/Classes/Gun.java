@@ -6,6 +6,7 @@ import java.util.Map;
 
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -18,6 +19,7 @@ import team.GunsPlus.EffectType;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
+import team.old.GunsPlus.Classes.Task;
 
 public class Gun extends GenericCustomItem{
 
@@ -36,13 +38,13 @@ public class Gun extends GenericCustomItem{
 	
 	
 	public void zoom(SpoutPlayer sp){
-		if(!objects.containsKey("zoomTexture")){
-			GenericTexture zoomtex = new GenericTexture((String)resources.get("zoomTexture"));
+		if(!objects.containsKey("ZOOMTEXTURE")){
+			GenericTexture zoomtex = new GenericTexture((String)resources.get("ZOOMTEXTURE"));
 			zoomtex.setAnchor(WidgetAnchor.SCALE).setX(0).setY(0).setPriority(RenderPriority.Low);
-			objects.put("zoomTexture", zoomtex);
+			objects.put("ZOOMTEXTURE", zoomtex);
 		}
 		if(!plugin.inZoom.contains(sp)){
-			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("zoomTexture"), Math.round(values.get("zoomfactor"))); 
+			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), Math.round(values.get("ZOOMFACTOR"))); 
 			plugin.inZoom.add(sp);
 			if(GunsPlus.generalConfig.getBoolean("send-notifications"))
 			(sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
@@ -52,13 +54,29 @@ public class Gun extends GenericCustomItem{
 			if(GunsPlus.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
 		}
 	}
-	
+	//TODO decrease the fireCounter by one on fire
 	public void fire(SpoutPlayer sp){
 		
 	}
 	
 	public void reload(SpoutPlayer sp){
-		
+		if(plugin.fireCounter.get(sp)== Math.round(values.get("SHOTSBETWEENRELOAD")))return;
+		if(GunsPlus.generalConfig.getBoolean("send-notifications"))
+			sp.sendNotification(this.getName(), "Reloading...", Material.WATCH);
+		if(plugin.reloading.contains(sp)){
+			Task t = new Task(plugin, sp){
+				public void run() {
+					SpoutPlayer p = (SpoutPlayer) this.getArg(0);
+					plugin.fireCounter.put(p, Math.round(values.get("SHOTSBETWEENRELOAD")));
+				}
+			};
+			t.startDelayed(Math.round(values.get("RELOAD")));
+			plugin.reloading.remove(sp);
+			if(!(resources.get("RELOADSOUND")==null)){
+				Util.playCustomSound(plugin, sp, resources.get("RELOADSOUND"));
+			}
+			return;
+		}
 	}
 	
 	//GETTERS AND SETTERS

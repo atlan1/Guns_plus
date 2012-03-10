@@ -9,8 +9,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.player.SpoutPlayer;
+import org.getspout.spoutapi.sound.SoundManager;
 
 import team.GunsPlus.GunsPlus;
 
@@ -23,6 +26,15 @@ public class Util {
 			return true;
 		return false;
 	}
+	
+	public static void playCustomSound(GunsPlus plugin,Player player, String url)
+	{
+		SoundManager SM = SpoutManager.getSoundManager();
+		SpoutPlayer sp = SpoutManager.getPlayer(player);
+		SM.playCustomSoundEffect(plugin, sp, url, false, sp.getLocation() ,25, 50);
+		SM.playGlobalCustomSoundEffect(plugin, url, false, sp.getLocation(), 100, 100);
+	}
+
 	
 	public static boolean isTransparent(Block block) {
 		Material m = block.getType();
