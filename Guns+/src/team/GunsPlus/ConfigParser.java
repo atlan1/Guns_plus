@@ -1,7 +1,9 @@
 package team.GunsPlus;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -151,5 +153,89 @@ public class ConfigParser {
     		return 7;
     	}
     	return 0;
+    }
+    
+    public static ArrayList<EffectType> getEffects(String path){
+    	ArrayList<EffectType> effects = new ArrayList<EffectType>();
+    	Object[] keys = GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false).toArray();
+    	for(Object section:keys){
+    		if(!GunsPlus.gunsConfig.isConfigurationSection(path+"."+section.toString()))continue;
+    			Object[] effKeys = GunsPlus.gunsConfig.getConfigurationSection(path+"."+section.toString()).getKeys(false).toArray();
+    		try{
+	    		for(Object effectNode : effKeys){
+	    			if(EffectSection.valueOf(section.toString().toUpperCase())!=null
+	    					&&!EffectSection.valueOf(section.toString().toUpperCase()).equals(EffectSection.UNDEFINED)){
+		    			effects.add(getEffect(path+"."+section.toString()+"."+effectNode.toString(),effectNode.toString(), EffectSection.valueOf(section.toString().toUpperCase())));
+		    		}else throw new Exception(" Unknown effect section "+section.toString());
+		    	}
+    		}catch(Exception e){
+				if (GunsPlus.warnings)
+					GunsPlus.log.log(Level.WARNING, GunsPlus.PRE + "Config Error:" + e.getMessage());
+				if (GunsPlus.debug)
+					e.printStackTrace();
+			}
+    	}
+    		
+		return effects;
+    	
+    }
+    
+    private static EffectType getEffect(String path, String node, EffectSection es){
+    	EffectType et = null;
+    	
+    	if(node.equalsIgnoreCase("EXPLOSION")){
+    		et = EffectType.EXPLOSION;
+    		if(es.isLocation())
+    			et.addArgument("size", GunsPlus.gunsConfig.getInt(path+".size"));
+    	}else if(node.equalsIgnoreCase("SMOKE")){
+    		et = EffectType.SMOKE;
+    		if(es.isLocation())
+    			et.addArgument("density", GunsPlus.gunsConfig.getInt(path+".density"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("FIRE")){
+    		et = EffectType.FIRE;
+    		if(es.isLocation())
+    			et.addArgument("strength", GunsPlus.gunsConfig.getInt(path+".strength"));
+    		else et.addArgument("duration", GunsPlus.gunsConfig.getInt(path+".duration"));
+    	}else if(node.equalsIgnoreCase("SPAWN")){
+    		et = EffectType.SPAWN;
+    		if(es.isLocation())
+    			et.addArgument("mob", GunsPlus.gunsConfig.getInt(path+".mob"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("PUSH")){
+    		et = EffectType.PUSH;
+    		if(!es.isLocation())
+    			et.addArgument("speed", GunsPlus.gunsConfig.getDouble(path+".speed"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("DRAW")){
+    		et = EffectType.DRAW;
+    		if(!es.isLocation())
+    			et.addArgument("speed", GunsPlus.gunsConfig.getDouble(path+".speed"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("BREAK")){
+    		et = EffectType.BREAK;
+    		if(es.isLocation())
+    			et.addArgument("potency", GunsPlus.gunsConfig.getInt(path+".potency"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("PLACE")){
+    		et = EffectType.PLACE;
+    		if(es.isLocation())
+    			et.addArgument("block", GunsPlus.gunsConfig.getString(path+".block"));
+    		else return null;
+    	}else if(node.equalsIgnoreCase("POTION")){
+    		et = EffectType.POTION;
+    		if(!es.isLocation()){
+    			et.addArgument("id", GunsPlus.gunsConfig.getInt(path+".id"));
+    			et.addArgument("duration", GunsPlus.gunsConfig.getInt(path+".duration"));
+    			et.addArgument("strength", GunsPlus.gunsConfig.getInt(path+".strength"));
+    		}else return null;
+    		
+    	}else if(node.equalsIgnoreCase("LIGHTNING")){
+    		if(es.isLocation())
+    			et = EffectType.LIGHTNING;
+    		else return null;
+    	}
+    	et.setSection(es);
+		return et;
     }
 }
