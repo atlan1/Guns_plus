@@ -24,11 +24,11 @@ import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
-	public String PRE = "[Guns+]";
+	public static String PRE = "[Guns+]";
 	public final static Logger log = Bukkit.getLogger();
 	public final GunManager gm = new GunManager(this);
-	public boolean warnings = true;
-	public boolean debug = false;
+	public static boolean warnings = true;
+	public static boolean debug = false;
 
 	public KeyType zoomKey = KeyType.RIGHT;
 	public KeyType fireKey = KeyType.LEFT;
@@ -39,13 +39,13 @@ public class GunsPlus extends JavaPlugin {
 	public String hudBackground = null;
 
 	public File gunsFile;
-	public FileConfiguration gunsConfig;
+	public static FileConfiguration gunsConfig;
 	public File ammoFile;
-	public FileConfiguration ammoConfig;
+	public static FileConfiguration ammoConfig;
 	public File recipeFile;
-	public FileConfiguration recipeConfig;
+	public static FileConfiguration recipeConfig;
 	public File generalFile;
-	public FileConfiguration generalConfig;
+	public static FileConfiguration generalConfig;
 
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
@@ -110,12 +110,12 @@ public class GunsPlus extends JavaPlugin {
 				String name = gunsArray[i].toString();
 				int accuracyIn=0;
 				int accuracyOut= 0;
-				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical");
-				int range =  gunsConfig.getInt((String) gunsArray[i]+".range");
+				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
+				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
 				float reloadTime =  (float) gunsConfig.getDouble((String) gunsArray[i]+".reloadTime", 0);
 				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
-				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shotsBetweenReload", 1);
+				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shotsBetweenReload", 0);
 				float recoil = gunsConfig.getInt((String) gunsArray[i]+".recoil", 0);
 				float knockback =  gunsConfig.getInt((String) gunsArray[i]+".knockback", 0);
 				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoomfactor", 0);
@@ -128,9 +128,11 @@ public class GunsPlus extends JavaPlugin {
 				String texture = gunsConfig.getString(gunsArray[i]+".texture");
 				String projectile = gunsConfig.getString(gunsArray[i]+".projectile.type");
 				int projectiletype = 0;
-				//TODO: 
-				//ArrayList<Effect> effects = new ArrayList<Effect>();
-				//
+				
+				ArrayList<EffectType> effects = new ArrayList<EffectType>();
+				
+				effects = ConfigParser.getEffects(gunsArray[i]+".effects");
+				
 				ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(MaterialParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
 				
 				if(ammo.isEmpty()){
@@ -154,7 +156,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 				
 				if(texture==null){
-						throw new Exception(" Can't find texture url for "+gunsArray[i]+"! Skipping!");
+						throw new Exception(" Can't find texture url for "+gunsArray[i]+"!");
 				}
 				
 				if(zoomTexture==null){
@@ -186,6 +188,7 @@ public class GunsPlus extends JavaPlugin {
 				gm.editGunResource(g, "ZOOMTEXTURE", zoomTexture);
 				gm.editGunResource(g, "SHOTSOUND", shotSound);
 				gm.editGunResource(g, "RELOADSOUND", reloadSound);
+				for(EffectType et : effects) gm.editGunEffect(g, et);
 				allGuns.add(g);
 			}catch(Exception e){
 				if (warnings)
