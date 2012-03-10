@@ -6,7 +6,6 @@ import java.util.Map;
 
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -18,11 +17,8 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import team.GunsPlus.EffectType;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
-<<<<<<< HEAD
+import team.GunsPlus.Task;
 import team.GunsPlus.Util;
-import team.old.GunsPlus.Classes.Task;
-=======
->>>>>>> 59ec8284e4c05d976d6bf10102410823ca44b90c
 
 public class Gun extends GenericCustomItem{
 
@@ -60,10 +56,13 @@ public class Gun extends GenericCustomItem{
 	//TODO decrease the fireCounter by one on fire
 	public void fire(SpoutPlayer sp){
 		if(GunUtils.checkInvForAmmo(sp, getAmmo())) {
-			if(getValue("recoil") != 0) GunUtils.performRecoil(plugin, sp, getValue("recoil"));
-			if(getValue("knockback") != 0) GunUtils.performKnockBack(sp, getValue("knockback"));
-			if(getValue("spread") != 0) GunUtils.getTargetsWithSpread(sp, (int) getValue("range"), true, (int) getValue("spread"), (int) getValue("accuracy")); 
-			else GunUtils.getTarget(sp.getLocation(), (int) getValue("range"), true /* Is this right?*/, (int) getValue("accuracy"));
+			if(getValue("RECOIL") != 0) GunUtils.performRecoil(plugin, sp, getValue("RECOIL"));
+			if(getValue("KNOCKBACK") != 0) GunUtils.performKnockBack(sp, getValue("KNOCKBACK"));
+			if(getValue("SPREAD") != 0) GunUtils.getTargetsWithSpread(sp, (int) getValue("RANGE"), true, (int) getValue("SPREAD"), (int) getValue("ACCUARCY")); 
+			else GunUtils.getTarget(sp.getLocation(), (int) getValue("RANGE"), true /* Is this right?*/, (int) getValue("ACCURACY"));
+			int shotsBetweenReload = (int) getValue("SHOTSBETWEENRELOAD");
+			shotsBetweenReload--;
+			setValue("SHOTSBETWEENRELOAD",(float) shotsBetweenReload);
 		}
 	}
 	
