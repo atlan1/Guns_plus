@@ -1,13 +1,13 @@
 package team.GunsPlus;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public enum EffectType {
 
 	EXPLOSION(), LIGHTNING(), SMOKE(), POTION(), PUSH(), DRAW(), PLACE(), BREAK(), SPAWN(), FIRE(); 
 	
 	
-	private ArrayList<Object> arguments = new ArrayList<Object>();
+	private HashMap<String, Object> arguments = new HashMap<String, Object>();
 	private EffectSection section = EffectSection.UNDEFINED;
 	
 	public void setSection(EffectSection es){
@@ -18,12 +18,16 @@ public enum EffectType {
 		return section;
 	}
 	
-	public ArrayList<Object> getArguments() {
+	public HashMap<String, Object> getArguments() {
 		return arguments;
 	}
+	
+	public Object getArgument(String id){
+		return this.arguments.containsKey(id)?this.arguments.get(id):null;
+	}
 
-	public void setArguments(ArrayList<Object> arguments) {
-		this.arguments = arguments;
+	public void addArgument(String id, Object argument) {
+		this.arguments.put(id, argument);
 	}
 	
 	
