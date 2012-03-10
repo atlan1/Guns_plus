@@ -18,7 +18,7 @@ public class GunManager {
 	public GunManager(GunsPlus instance) {
 		plugin = instance;
 		log = GunsPlus.log;
-		PRE = plugin.PRE;
+		PRE = GunsPlus.PRE;
 	}
 	
 	public Gun buildNewGun(String name, String texture) {
@@ -27,9 +27,9 @@ public class GunManager {
 			GunsPlus.allGuns.add(gun);
 			return gun;
 		} catch (Exception e) {
-			if (plugin.warnings)
+			if (GunsPlus.warnings)
 				log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
-			if (plugin.debug)
+			if (GunsPlus.debug)
 				e.printStackTrace();
 			return null;
 		}
