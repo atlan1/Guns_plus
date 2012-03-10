@@ -18,8 +18,11 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import team.GunsPlus.EffectType;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
+<<<<<<< HEAD
 import team.GunsPlus.Util;
 import team.old.GunsPlus.Classes.Task;
+=======
+>>>>>>> 59ec8284e4c05d976d6bf10102410823ca44b90c
 
 public class Gun extends GenericCustomItem{
 
@@ -56,7 +59,12 @@ public class Gun extends GenericCustomItem{
 	}
 	//TODO decrease the fireCounter by one on fire
 	public void fire(SpoutPlayer sp){
-		
+		if(GunUtils.checkInvForAmmo(sp, getAmmo())) {
+			if(getValue("recoil") != 0) GunUtils.performRecoil(plugin, sp, getValue("recoil"));
+			if(getValue("knockback") != 0) GunUtils.performKnockBack(sp, getValue("knockback"));
+			if(getValue("spread") != 0) GunUtils.getTargetsWithSpread(sp, (int) getValue("range"), true, (int) getValue("spread"), (int) getValue("accuracy")); 
+			else GunUtils.getTarget(sp.getLocation(), (int) getValue("range"), true /* Is this right?*/, (int) getValue("accuracy"));
+		}
 	}
 	
 	public void reload(SpoutPlayer sp){
