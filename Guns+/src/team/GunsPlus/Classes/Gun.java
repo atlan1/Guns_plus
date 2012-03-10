@@ -8,10 +8,14 @@ import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.getspout.spoutapi.gui.GenericTexture;
+import org.getspout.spoutapi.gui.RenderPriority;
+import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.EffectType;
+import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
 
@@ -21,6 +25,7 @@ public class Gun extends GenericCustomItem{
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(); //Holds all accepted ammo itemstacks
 	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
 	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
+	private Map<String, Object> objects = new HashMap<String, Object>(); //holds anything else 
 	private ArrayList<EffectType> effects = new ArrayList<EffectType>(); //Holds the effects of the gun
 	private GunsPlus plugin;
 	
@@ -31,14 +36,18 @@ public class Gun extends GenericCustomItem{
 	
 	
 	public void zoom(SpoutPlayer sp){
-		//When doing Scope texture placement, set the render priority to normal or low
+		if(!objects.containsKey("zoomTexture")){
+			GenericTexture zoomtex = new GenericTexture((String)resources.get("zoomTexture"));
+			zoomtex.setAnchor(WidgetAnchor.SCALE).setX(0).setY(0).setPriority(RenderPriority.Low);
+			objects.put("zoomTexture", zoomtex);
+		}
 		if(!plugin.inZoom.contains(sp)){
-			Util.zoomIn(p, zTex, zoomfactor); //TODO: Finish Method
+			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("zoomTexture"), Math.round(values.get("zoomfactor"))); 
 			plugin.inZoom.add(sp);
 			if(GunsPlus.generalConfig.getBoolean("send-notifications"))
 			(sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
 		}else{
-			Util.zoomOut(sp); //TODO: Finish Method
+			GunUtils.zoomOut(sp); 
 			plugin.inZoom.remove(sp);
 			if(GunsPlus.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
 		}
