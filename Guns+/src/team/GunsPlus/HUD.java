@@ -28,6 +28,9 @@ public class HUD {
 		item.setAnchor(WidgetAnchor.SCALE).setWidth(15).setHeight(15).setPriority(RenderPriority.Normal).setX(plugin.hudX+13).setY(plugin.hudY+5);
 		label.setAnchor(WidgetAnchor.SCALE).setWidth(30).setHeight(15).setPriority(RenderPriority.High).setX(plugin.hudX+5).setY(plugin.hudY+37);
 		backtex.setAnchor(WidgetAnchor.SCALE).setWidth(45).setHeight(50).setPriority(RenderPriority.High).setX(plugin.hudX).setY(plugin.hudY);
+		backtex.setPriority(RenderPriority.High);
+		label.setPriority(RenderPriority.High);
+		item.setPriority(RenderPriority.High);
 	}
 	
 	//TODO: getCounter() in Gun.java

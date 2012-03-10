@@ -15,15 +15,20 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
+	public static LWC lwc;
 	public String PRE = "[Guns+]";
 	public final static Logger log = Bukkit.getLogger();
 	public final GunManager gm = new GunManager(this);
@@ -65,6 +70,11 @@ public class GunsPlus extends JavaPlugin {
 			log.setLevel(Level.ALL);
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now enabled.");
+		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
+		if(lwcPlugin != null) {
+		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
+		    log.log(Level.FINE, "Plugged into LWC");
+		}
 	}
 
 	public void init() {

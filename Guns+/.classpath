@@ -13,5 +13,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Tyler/workspace/Plugins/FurnaceAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tyler/workspace/Plugins/LWC.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://griefcraft.com/javadoc/lwc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -23,7 +23,7 @@ public class Gun extends GenericCustomItem{
 	
 	
 	public void zoom(SpoutPlayer sp){
-		
+		//When doing Scope texture placement, set the render priority to normal or low
 	}
 	
 	public void fire(SpoutPlayer sp){
@@ -58,9 +58,7 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public float getValue(String name) {
-		Float f = -1F;
-		if(values.containsKey(name)) f = values.get(name);
-		return f;
+		return values.containsKey(name)?values.get(name):null;
 	}
 
 }

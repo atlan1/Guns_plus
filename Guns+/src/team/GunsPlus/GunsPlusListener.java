@@ -47,10 +47,10 @@ public class GunsPlusListener implements Listener{
 			case RIGHT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.RIGHT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.RIGHT)) g.reload(sp);
-				if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.RIGHTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.RIGHTSHIFT)) g.reload(sp);
-				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
 				break;
 			case LEFT_CLICK_AIR:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
@@ -63,10 +63,10 @@ public class GunsPlusListener implements Listener{
 			case LEFT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.LEFT)) g.reload(sp);
-				if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.LEFTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.LEFTSHIFT)) g.reload(sp);
-				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
+				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
 				break;
 		}
 	}

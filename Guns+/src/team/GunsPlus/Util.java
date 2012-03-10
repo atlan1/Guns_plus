@@ -69,4 +69,11 @@ public class Util {
 	    loc.setZ(loc.getZ() + l * Math.sin(a) + 0.8D * Math.cos(a));
 	    return loc;
 	}
+	
+	public static boolean isLWC(Block b) {
+		if(GunsPlus.lwc != null) {
+			if(GunsPlus.lwc.findProtection(b) != null) return true;
+			else return false;
+		} else return false;
+	}
 }
