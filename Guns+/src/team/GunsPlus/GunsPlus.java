@@ -15,12 +15,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.griefcraft.lwc.LWC;
@@ -32,17 +32,22 @@ import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
+	
 	public static LWC lwc;
 	public final static Logger log = Bukkit.getLogger();
 	public final GunManager gm = new GunManager(this);
+	
 	public static boolean warnings = true;
 	public static boolean debug = false;
+	public static boolean notifications = true;
+	public static boolean autoreload = true;
 
 	public KeyType zoomKey = KeyType.RIGHT;
-	public List<Player> inZoom = new ArrayList<Player>();
-	public List<Player> reloading = new ArrayList<Player>();
-	public static HashMap<Player, GenericTexture> zoomTextures = new HashMap<Player, GenericTexture>();
-	public HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
+	public static List<SpoutPlayer> inZoom = new ArrayList<SpoutPlayer>();
+	public static HashMap<SpoutPlayer, Boolean> reloading = new HashMap<SpoutPlayer, Boolean>();
+	public static HashMap<SpoutPlayer, Boolean> delaying = new HashMap<SpoutPlayer, Boolean>();
+	public static HashMap<SpoutPlayer, GenericTexture> zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
+	public static HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
@@ -80,17 +85,22 @@ public class GunsPlus extends JavaPlugin {
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now enabled.");
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
+		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		if(lwcPlugin != null) {
 		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
-		    log.log(Level.FINE, "Plugged into LWC");
+		    log.log(Level.FINE, "Plugged into LWC!");
+		}
+		if(furnaceAPI != null) {
+			 log.log(Level.FINE, "Plugged into FurnaceAPI!");
 		}
 	}
 
 	public void init() {
 		config();
-		performGeneral();
-		loadGuns();
 		loadAmmo();
+		loadGuns();
+		loadRecipes();
+		performGeneral();
 		updateHUD();
 	}
 
@@ -121,18 +131,45 @@ public class GunsPlus extends JavaPlugin {
 			}
 		}		
 	}
+	
+	public void loadRecipes(){
+		Object[] recipeKeys = recipeConfig.getKeys(false).toArray();
+		for(Object key : recipeKeys){
+			try{
+				CustomItem ci = null;
+				if(Util.isGunsPlusItem(key.toString()))ci = Util.getGunsPlusItem(key.toString());
+				else throw new Exception(PRE + " Recipe output not found: "+key+"! Skipping!");
+				int amount = recipeConfig.getInt(key+".amount");
+				SpoutItemStack result = new SpoutItemStack(ci, amount);
+				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
+				if(recipeConfig.getString(key+".type").equalsIgnoreCase("shaped")){
+					if(ingredients.size()!=9) throw new Exception(PRE + " Wrong number of ingredients in recipe for: "+key+"! Skipping!");
+					RecipeManager.addShapedRecipe(ingredients, result);
+				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("shapeless")){
+					RecipeManager.addShapelessRecipe(ingredients, result);
+				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("furnace")){
+					RecipeManager.addFurnaceRecipe(ingredients.get(0), result);
+				}
+			}catch (Exception e) {
+				if (warnings)
+					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
+				if (debug)
+					e.printStackTrace();
+			}
+		}
+	}
 
 	public void loadGuns() {
 		Object[] gunsArray =  gunsConfig.getKeys(false).toArray();
 		for(int i = 0;i<gunsArray.length;i++){
 			try{
 				String name = gunsArray[i].toString();
-				int accuracyIn=0;
-				int accuracyOut= 0;
+				int accuracyIn = 0;
+				int accuracyOut = 0;
 				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
-				float reloadTime =  (float) gunsConfig.getDouble((String) gunsArray[i]+".reloadTime", 0);
+				int  reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reloadTime", 0);
 				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
 				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shotsBetweenReload", 0);
 				float recoil = gunsConfig.getInt((String) gunsArray[i]+".recoil", 0);
@@ -302,6 +339,8 @@ public class GunsPlus extends JavaPlugin {
 		try {
 			warnings = generalConfig.getBoolean("show-warnings", true);
 			debug = generalConfig.getBoolean("show-debug", false);
+			notifications = generalConfig.getBoolean("show-notifications", true);
+			autoreload = generalConfig.getBoolean("auto-reload", true);
 			
 			List<ItemStack> il = ConfigParser.parseItems(generalConfig.getString("transparent-materials"));
 			for(int m=0;m<il.size();m++){
