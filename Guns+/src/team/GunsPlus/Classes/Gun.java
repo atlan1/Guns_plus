@@ -42,46 +42,78 @@ public class Gun extends GenericCustomItem{
 			zoomtex.setAnchor(WidgetAnchor.SCALE).setX(0).setY(0).setPriority(RenderPriority.Low);
 			objects.put("ZOOMTEXTURE", zoomtex);
 		}
-		if(!plugin.inZoom.contains(sp)){
-			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), Math.round(values.get("ZOOMFACTOR"))); 
-			plugin.inZoom.add(sp);
-			if(GunsPlus.generalConfig.getBoolean("send-notifications"))
-			(sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
+		if(!Util.isZooming(sp)){
+			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), (int) getValue("ZOOMFACTOR")); 
+			Util.setZooming(sp, true);
+			if(GunsPlus.notifications)  (sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
 		}else{
 			GunUtils.zoomOut(sp); 
-			plugin.inZoom.remove(sp);
-			if(GunsPlus.warnings) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
+			Util.setZooming(sp, false);
+			if(GunsPlus.notifications) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
 		}
 	}
-	//TODO decrease the fireCounter by one on fire
+
 	public void fire(SpoutPlayer sp){
-		if(GunUtils.checkInvForAmmo(sp, getAmmo())) {
+		if(!GunUtils.checkInvForAmmo(sp, getAmmo()))return;
+		if(Util.isReloading(sp))return;
+		else if(Util.isDelayed(sp)) return;
+		else{
+			
+			//TODO shoot projectile
+			//TODO critical
+			//TODO Damage/headdamage
+			//TODO effects
+			//TODO remove ammo
+			//TODO increment counter
+			
 			if(getValue("RECOIL") != 0) GunUtils.performRecoil(plugin, sp, getValue("RECOIL"));
 			if(getValue("KNOCKBACK") != 0) GunUtils.performKnockBack(sp, getValue("KNOCKBACK"));
-			if(getValue("SPREAD") != 0) GunUtils.getTargetsWithSpread(sp, (int) getValue("RANGE"), true, (int) getValue("SPREAD"), (int) getValue("ACCUARCY")); 
-			else GunUtils.getTarget(sp.getLocation(), (int) getValue("RANGE"), true /* Is this right?*/, (int) getValue("ACCURACY"));
-			int shotsBetweenReload = (int) getValue("SHOTSBETWEENRELOAD");
-			shotsBetweenReload--;
-			setValue("SHOTSBETWEENRELOAD",(float) shotsBetweenReload);
+			
+			if(Util.getFireCounter(sp)>=getValue("SHOTSBETWEENRELOAD")&&GunsPlus.autoreload) reload(sp);
+			else if(getValue("SHOTDELAY")>0) delay(sp);
 		}
 	}
 	
 	public void reload(SpoutPlayer sp){
-		if(plugin.fireCounter.get(sp)== Math.round(values.get("SHOTSBETWEENRELOAD")))return;
-		if(GunsPlus.generalConfig.getBoolean("send-notifications"))
-			sp.sendNotification(this.getName(), "Reloading...", Material.WATCH);
-		if(plugin.reloading.contains(sp)){
-			Task t = new Task(plugin, sp){
+		if(Util.getFireCounter(sp) == 0)return;
+		if(GunsPlus.notifications)  sp.sendNotification(this.getName(), "Reloading...", Material.WATCH);
+			
+		if(!GunsPlus.reloading.containsKey(sp)){
+			Util.setOnReloadQueue(sp);
+		}
+		if(Util.isOnReloadQueue(sp)){
+			Task reloadTask = new Task(plugin, sp){
 				public void run() {
-					SpoutPlayer p = (SpoutPlayer) this.getArg(0);
-					plugin.fireCounter.put(p, Math.round(values.get("SHOTSBETWEENRELOAD")));
+					SpoutPlayer sp = (SpoutPlayer) this.getArg(0);
+					Util.removeReload(sp);
+					Util.resetFireCounter(sp);
 				}
 			};
-			t.startDelayed(Math.round(values.get("RELOAD")));
-			plugin.reloading.remove(sp);
-			if(!(resources.get("RELOADSOUND")==null)){
-				Util.playCustomSound(plugin, sp, resources.get("RELOADSOUND"));
+			reloadTask.startDelayed((int)getValue("RELOAD"));
+			Util.setReloading(sp);
+			if(!(getResource("RELOADSOUND")==null)){
+				Util.playCustomSound(plugin, sp, getResource("RELOADSOUND"));
 			}
+			return;
+		}else if(Util.isReloading(sp)){
+			return;
+		}
+	}
+	
+	public void delay(SpoutPlayer sp){
+		if(!GunsPlus.delaying.containsKey(sp)){
+			Util.setOnDelayQueue(sp);
+		}
+		if(Util.isOnDelayQueue(sp)){
+			Task t = new Task(plugin, sp){
+				public void run() {
+					SpoutPlayer sp = (SpoutPlayer) this.getArg(0);
+					Util.removeDelay(sp);
+				}
+			};
+			t.startDelayed((long) getValue("SHOTDELAY"));
+			Util.setDelayed(sp);
+		}else if(Util.isDelayed(sp)){
 			return;
 		}
 	}
