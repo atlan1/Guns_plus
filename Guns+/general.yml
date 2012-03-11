@@ -16,6 +16,9 @@ show-warnings: true
 
 # Send notifications for special events, e.g. headshot
 send-notifications: true
+
+# Should the plugin auto reload an empty gun or not
+auto-reload: true
 # These are the keys/buttons for zooming/shooting the gun
 # Available are: 'right', 'left', 'left+shift', 'right+shift', all characters and numbers on your keyboard
 # In order to use a Letter Key, use the @symbol before the Letter. And for Numbers use #
