@@ -35,25 +35,6 @@ public class GunManager {
 		}
 	}
 	
-	public void setRecipe(int[] data, ItemStack _result) {
-		try {
-			ItemStack result = new SpoutItemStack(_result);
-			char[] name = {'a','b','c',
-							'd','e','f',
-							'g','h','i'};
-			int i = 0;
-			SpoutShapedRecipe x = new SpoutShapedRecipe(result);
-			for(int val : data) {
-				x.setIngredient(name[i], new SpoutItemStack(val).getMaterial());
-				i++;
-			}
-			x.shape("abcdefghi");
-			SpoutManager.getMaterialManager().registerSpoutRecipe(x);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public void editGunValue(Gun gun, String name, float value) {
 		gun.setValue(name, value);
 	}
