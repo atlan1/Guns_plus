@@ -28,7 +28,6 @@ import com.griefcraft.lwc.LWCPlugin;
 
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
-import team.old.GunsPlus.Classes.MaterialParser;
 
 public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
@@ -97,10 +96,30 @@ public class GunsPlus extends JavaPlugin {
 
 	public void init() {
 		config();
+		performGeneral();
 		loadAmmo();
 		loadGuns();
 		loadRecipes();
-		performGeneral();
+		if (generalConfig.getBoolean("id-info-guns", true)) {
+			log.log(Level.INFO, PRE
+					+ " ------------  ID's of the guns: -----------------");
+			if(allGuns.isEmpty()) log.log(Level.INFO, "EMPTY");
+			for (Gun gun : allGuns) {
+				log.log(Level.INFO, "ID of " + gun.getName() + ":"
+						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(gun).getDurability());
+			}
+		}
+		if (generalConfig.getBoolean("id-info-ammo", true)) {
+			log.log(Level.INFO, PRE
+					+ " ------------  ID's of the ammo: -----------------");
+			if(allAmmo.isEmpty()) log.log(Level.INFO, "EMPTY");
+			for (Ammo ammo : allAmmo) {
+				log.log(Level.INFO, "ID of " + ammo.getName() + ":"
+						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(ammo).getDurability());
+			}
+		}
 		updateHUD();
 	}
 
@@ -189,7 +208,7 @@ public class GunsPlus extends JavaPlugin {
 				
 				effects = ConfigParser.getEffects(gunsArray[i]+".effects");
 				
-				ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(MaterialParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
+				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
 				
 				if(ammo.isEmpty()){
 						throw new Exception(" Can't find any valid ammo for "+gunsArray[i]);
@@ -352,27 +371,6 @@ public class GunsPlus extends JavaPlugin {
 					"http://dl.dropbox.com/u/44243469/GunPack/Textures/HUDBackground.png");
 			hudX = generalConfig.getInt("hud.position.X", 20);
 			hudY = generalConfig.getInt("hud.position.Y", 20);
-
-			if (generalConfig.getBoolean("id-info-guns", true)) {
-				log.log(Level.INFO, PRE
-						+ " ------------  ID's of the guns: -----------------");
-				if(allGuns.isEmpty()) log.log(Level.INFO, "EMPTY");
-				for (Gun gun : allGuns) {
-					log.log(Level.INFO, "ID of " + gun.getName() + ":"
-							+ Material.FLINT.getId() + ":"
-							+ new SpoutItemStack(gun).getDurability());
-				}
-			}
-			if (generalConfig.getBoolean("id-info-ammo", true)) {
-				log.log(Level.INFO, PRE
-						+ " ------------  ID's of the ammo: -----------------");
-				if(allAmmo.isEmpty()) log.log(Level.INFO, "EMPTY");
-				for (Ammo ammo : allAmmo) {
-					log.log(Level.INFO, "ID of " + ammo.getName() + ":"
-							+ Material.FLINT.getId() + ":"
-							+ new SpoutItemStack(ammo).getDurability());
-				}
-			}
 			
 			String z = generalConfig.getString("zoom", "right");
 			zoomKey = ConfigParser.getKeyType(z);

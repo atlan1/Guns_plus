@@ -3,9 +3,11 @@ package team.GunsPlus.Classes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -54,17 +56,27 @@ public class Gun extends GenericCustomItem{
 	}
 
 	public void fire(SpoutPlayer sp){
+		//something causes a return here
 		if(!GunUtils.checkInvForAmmo(sp, getAmmo()))return;
 		if(Util.isReloading(sp))return;
 		else if(Util.isDelayed(sp)) return;
 		else{
-			
 			//TODO shoot projectile
-			//TODO critical
-			//TODO Damage/headdamage
+			if((Util.isZooming(sp)?getValue("ACCURACYIN"):getValue("ACCURACYOUT"))<=Util.getRandomInteger(0, 100)){
+				HashMap<LivingEntity, Integer> targets_damage = GunUtils.getTargets(sp, this);
+				for(LivingEntity tar : targets_damage.keySet()){
+					if(Util.getRandomInteger(0, 100)<=getValue("CRITICAL")){
+						if(GunsPlus.notifications) sp.sendNotification(this.getName(), "Critical hit!", Material.DIAMOND_SWORD);
+						targets_damage.put(tar, tar.getHealth());
+					}
+					tar.damage(targets_damage.get(tar), sp);
+				}
+			}
+
 			//TODO effects
-			//TODO remove ammo
-			//TODO increment counter
+
+			GunUtils.removeAmmo(ammo, sp);
+			Util.setFireCounter(sp, Util.getFireCounter(sp)+1);
 			
 			if(getValue("RECOIL") != 0) GunUtils.performRecoil(plugin, sp, getValue("RECOIL"));
 			if(getValue("KNOCKBACK") != 0) GunUtils.performKnockBack(sp, getValue("KNOCKBACK"));
@@ -89,7 +101,7 @@ public class Gun extends GenericCustomItem{
 					Util.resetFireCounter(sp);
 				}
 			};
-			reloadTask.startDelayed((int)getValue("RELOAD"));
+			reloadTask.startDelayed((int)getValue("RELOADTIME"));
 			Util.setReloading(sp);
 			if(!(getResource("RELOADSOUND")==null)){
 				Util.playCustomSound(plugin, sp, getResource("RELOADSOUND"));

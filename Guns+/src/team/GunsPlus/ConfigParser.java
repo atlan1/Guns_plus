@@ -51,6 +51,7 @@ public class ConfigParser {
 				}
 			}
 			for(int i = 0;i<GunsPlus.allGuns.size();i++){
+				GunsPlus.log.log(Level.WARNING, GunsPlus.allGuns+"");
 				if(GunsPlus.allGuns.get(i).getName().toString().equals(item)){
 					custom = new SpoutItemStack(GunsPlus.allGuns.get(i));
 				}

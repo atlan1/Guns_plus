@@ -1,5 +1,8 @@
 package team.GunsPlus;
 
+
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,11 +33,10 @@ public class GunsPlusListener implements Listener{
 		Player p = e.getPlayer();
 		if(!Util.hasSpoutcraft(p)) return;
 		SpoutPlayer sp = (SpoutPlayer) p;
-		if(!GunUtils.holdsGun(p)) return;
+		if(!GunUtils.holdsGun(sp)) return;
 		
 		Action a = e.getAction();
 		Gun g = GunUtils.getGunInHand(sp);
-		
 		switch(a){
 			case RIGHT_CLICK_AIR:
 				if(plugin.zoomKey.equals(KeyType.RIGHT)) g.zoom(sp);
@@ -120,7 +122,7 @@ public class GunsPlusListener implements Listener{
 		SpoutPlayer sp = (SpoutPlayer) e.getPlayer();
 		HUD hud = new HUD(plugin, plugin.hudX, plugin.hudY, plugin.hudBackground);
 		hud.start(sp);
-		plugin.fireCounter.put(sp, 0);
+		GunsPlus.fireCounter.put(sp, 0);
 		sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
 	}
 }

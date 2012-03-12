@@ -3,7 +3,6 @@ package team.GunsPlus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.server.MobEffect;
@@ -11,11 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.CaveSpider;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
-import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.EnderSignal;
@@ -23,22 +17,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowball;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
@@ -56,7 +37,7 @@ import team.old.GunsPlus.Classes.Task;
 
 public class GunUtils {
 
-		public static boolean holdsGun(Player p) {
+		public static boolean holdsGun(SpoutPlayer p) {
 			ItemStack is = p.getItemInHand();
 			for(Gun g : GunsPlus.allGuns){
 				SpoutItemStack sis = new SpoutItemStack(g);
@@ -67,7 +48,7 @@ public class GunUtils {
 			return false;
 		}
 
-		public static void shootProjectile(String name,double speed, Player p){
+		public static void shootProjectile(String name,double speed,  SpoutPlayer p){
 			BlockIterator bitr = new BlockIterator(p);
 			Block b = null;
 			while(bitr.hasNext()){
@@ -113,44 +94,34 @@ public class GunUtils {
 			}
 		}
 
-		public static ArrayList<LivingEntity> getTargetsWithSpread(Player p, int range, boolean headshot, int spread, int accuracy){
-			ArrayList<LivingEntity> lea = new ArrayList<LivingEntity>();
+		public static HashMap<LivingEntity, Integer> getTargets(SpoutPlayer p, Gun g ){
+			HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 			Location loc = p.getEyeLocation();
-			LivingEntity e =null;
-
-			if(spread==0){
-				e=getTarget(loc, range, headshot,accuracy);
-				if(e!=null&&!lea.contains(e)){
-					lea.add(e);
-				}
-				return lea;
-			}
-			for(int i=0; i<spread; i+=4){
+			HashMap<LivingEntity,Integer >e = null;
+			for(int i=0; i<=g.getValue("SPREAD"); i+=4){
 				loc = p.getEyeLocation();
 				loc.setYaw(loc.getYaw()+i);
-				e = getTarget(loc, range, headshot,accuracy);
-				if(e!=null&&!lea.contains(e))lea.add(e);
+				e = getTargetEntities(loc, g);
+				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setYaw(loc.getYaw()-i);
-				e = getTarget(loc, range, headshot,accuracy);
-				if(e!=null&&!lea.contains(e))lea.add(e);
+				e = getTargetEntities(loc, g);
+				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setPitch(loc.getPitch()+i);
-				e = getTarget(loc, range, headshot,accuracy);
-				if(e!=null&&!lea.contains(e))lea.add(e);
+				e = getTargetEntities(loc, g);
+				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setPitch(loc.getPitch()-i);
-				e = getTarget(loc, range, headshot,accuracy);
-				if(e!=null&&!lea.contains(e))lea.add(e);
+				e = getTargetEntities(loc, g);
+				targets.putAll(e);
 			}
-			return lea;
+			return targets;
 		}
 
-		public static LivingEntity getTarget(Location loc, int range, boolean headshot, int accuracy) {
-			Random rand = new Random();
-			int random = rand.nextInt(101);
-			LivingEntity target = null;
-			BlockIterator bitr = new BlockIterator(loc,0d, range);
+		public static HashMap<LivingEntity, Integer> getTargetEntities(Location loc, Gun g) {
+			HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
+			BlockIterator bitr = new BlockIterator(loc,0d, (int) g.getValue("RANGE"));
 			Block b;
 			Location l;
 			int bx, by, bz;
@@ -163,49 +134,55 @@ public class GunUtils {
 				Set<LivingEntity> entities = new HashSet<LivingEntity>();
 				Location lb = new Location(b.getWorld(), bx, by, bz);
 				if(!Util.isTransparent(lb.getBlock()))break;
-				for (Entity e : Util.getNearbyEntities(lb, 0.5, 0.5, 0.5)) {
+				for (Entity e : Util.getNearbyEntities(lb, 0.4, 0.4, 0.4)) {
 					if (e instanceof LivingEntity) {
 						entities.add((LivingEntity) e);
 					}
 				}
 
 				for (LivingEntity e : entities) {
-					l = headshot==false ? e.getLocation() : e.getEyeLocation();
+					l = e.getLocation();
 					ex = l.getX();
 					ey = l.getY();
 					ez = l.getZ();
-					if(random>=accuracy){
-						if(e instanceof Skeleton||e instanceof Zombie||e instanceof Blaze||e instanceof Player||e instanceof Creeper||e instanceof PigZombie||e instanceof Villager){
-							if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= (headshot==true?by:by+2.65)))) {
-								target = e;
-								break;
-							}
-						}else if(e instanceof Pig||e instanceof Sheep||e instanceof Cow||e instanceof MushroomCow||e instanceof Squid||e instanceof Wolf||e instanceof Spider){
-							if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= (headshot==true?by:by+1.3)))) {
-								target = e;
-								break;
-							}
-						}else if(e instanceof Chicken||e instanceof CaveSpider||e instanceof Slime){
-							if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= (headshot==true?by:by+1.2)))) {
-								target = e;
-								break;
-							}
-						}else{
-							if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= (headshot==true?by:by+2.55)))) {
-								target = e;
-								break;
-							}
-						}
+					
+					if(Util.is1x1x2(e)){
+						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+2.65)))
+							targets.put(e, (int) g.getValue("DAMAGE"));
+					}else if(Util.is1x1x1(e)){
+						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by+1.3))) 
+							targets.put(e, (int) g.getValue("DAMAGE"));
+					}else if(Util.is2x2x1(e)){
+						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+1.2))) 
+							targets.put(e, (int) g.getValue("DAMAGE"));
+					}else{
+						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by+2.55)))
+							targets.put(e, (int) g.getValue("DAMAGE"));
 					}
-
-
+					l = e.getEyeLocation();
+					ex = l.getX();
+					ey = l.getY();
+					ez = l.getZ();
+					if(Util.is1x1x2(e)){
+						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
+							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+					}else if(Util.is1x1x1(e)){
+						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by))) 
+							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+					}else if(Util.is2x2x1(e)){
+						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
+							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+					}else{
+						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by))) 
+							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+					}
 				}
 			}
-			return target;
+			return targets;
 		}
 
 		@SuppressWarnings("deprecation")
-		public static void removeAmmo(ArrayList<ItemStack> ammo ,Player p){
+		public static void removeAmmo(ArrayList<ItemStack> ammo ,SpoutPlayer p){
 			if(ammo==null) return;
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			Inventory inv = p.getInventory();
@@ -222,12 +199,9 @@ public class GunUtils {
 					}
 				}
 			}
-
-
 			if(ammoStack == null){
 				return;
 			}
-
 			if(ammoStack.getAmount() >1){
 				ammoStack.setAmount(ammoStack.getAmount()-1);
 			}else{
@@ -236,7 +210,7 @@ public class GunUtils {
 			p.updateInventory();
 		}
 
-		public static boolean checkInvForAmmo(Player p, ArrayList<ItemStack> ammo) {
+		public static boolean checkInvForAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo) {
 			if(ammo==null)return true;
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			Inventory inv = p.getInventory();
@@ -254,7 +228,7 @@ public class GunUtils {
 			return false;
 		}
 
-		public static int getAmmoCount(Player p, ArrayList<ItemStack> ammo){
+		public static int getAmmoCount(SpoutPlayer p, ArrayList<ItemStack> ammo){
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			int counter = 0;
 			if(ammo==null)return counter;
@@ -273,8 +247,8 @@ public class GunUtils {
 			return counter;
 		}
 
-
-		public static void performEffects(ArrayList<Effect> h, LivingEntity le, Player player, int range){
+//doesn't work anymore; has to be rewritten for the new enums
+		public static void performEffects(ArrayList<Effect> h, LivingEntity le, SpoutPlayer player, int range){
 			Location loc;
 			if(le!=null&&le!=player) {
 				loc = le.getLocation();
@@ -422,10 +396,10 @@ public class GunUtils {
 			}
 		}
 
-		public static void performRecoil(JavaPlugin plugin, Player p, float recoil){
+		public static void performRecoil(GunsPlus plugin, SpoutPlayer p, float recoil){
 			Task t1 = new Task(plugin, p, recoil){
 				public void run() {
-					Player p = (Player) this.getArg(0);
+					SpoutPlayer p = (SpoutPlayer) this.getArg(0);
 					Location l = p.getLocation();
 					l.setPitch(l.getPitch() - this.getFloatArg(1)/2);
 					p.teleport(l);
@@ -441,7 +415,7 @@ public class GunUtils {
 			t2.startDelayed(5);
 			Task t3 = new Task(plugin, p, recoil){
 				public void run() {
-					Player p = (Player) this.getArg(0);
+					SpoutPlayer p = (SpoutPlayer) this.getArg(0);
 					Location l = p.getLocation();
 					l.setPitch(l.getPitch() + this.getFloatArg(1)/3);
 					p.teleport(l);
@@ -457,7 +431,7 @@ public class GunUtils {
 			t4.startDelayed(9);
 		}
 
-		public static void performKnockBack(Player p, float knockback){
+		public static void performKnockBack(SpoutPlayer p, float knockback){
 			Location loc = p.getLocation();
 			if(loc.getPitch()>5){
 				loc.setPitch(0);
@@ -471,7 +445,7 @@ public class GunUtils {
 			p.setVelocity(v);
 		}
 
-		public static Gun getGunInHand(Player p) {
+		public static Gun getGunInHand(SpoutPlayer p) {
 			ItemStack is = p.getItemInHand();
 
 			if(holdsGun(p)){
@@ -495,7 +469,7 @@ public class GunUtils {
 			return null;
 		}
 
-		public static void zoomOut(Player p){
+		public static void zoomOut(SpoutPlayer p){
 			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
 			p.addPotionEffect(pe, true);
 			SpoutPlayer sp = (SpoutPlayer) p;
@@ -517,7 +491,7 @@ public class GunUtils {
 			GunsPlus.zoomTextures.remove(p);
 		}
 		
-		public static void zoomIn(GunsPlus plugin, Player p, GenericTexture zTex,int  zoomfactor){
+		public static void zoomIn(GunsPlus plugin, SpoutPlayer p, GenericTexture zTex,int  zoomfactor){
 			SpoutPlayer sp = (SpoutPlayer) p;
 			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
 			p.addPotionEffect(pe, true);
@@ -541,7 +515,7 @@ public class GunUtils {
 				GenericTexture t = zTex;
 				t.setHeight(sp.getMainScreen().getHeight()).setWidth(sp.getMainScreen().getWidth());
 				sp.getMainScreen().attachWidget(plugin, t);
-				GunsPlus.zoomTextures.put(p, t);
+				GunsPlus.zoomTextures.put(sp, t);
 			}
 		}
 

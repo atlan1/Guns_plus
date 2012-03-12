@@ -45,13 +45,14 @@ Sniper:
     effects:
     # Here you can assign three categories: targetBlock (will affect the target block), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target) ### OPT
     # for more information about the effects see the faq on the bukkit thread. -> http://forums.bukkit.org/threads/mech-fun-gunpack-create-your-very-own-guns-spout-1-1-r3.57768/
-        targetBlock:
+        targetLocation:
             smoke:
                 density: 20
         flightPath:
             smoke:
                 density: 20
         targetEntity:
-            potion_9:
+            potion:
+                id: 9
                 duration: 20
                 strenght: 1

@@ -2,6 +2,7 @@ package team.GunsPlus;
 
 
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -134,6 +135,98 @@ public class Util {
 		e.remove();
 		return entities;
 	}
+	
+	public static int getRandomInteger(int start, int end){
+		Random rand = new Random();
+		return start+rand.nextInt(end+1);
+	}
+	
+	public static boolean is1x1x2(Entity e){
+		int id = e.getEntityId();
+	
+		switch(id){
+			case 50:
+				return true;
+			case 51:
+				return true;
+			case 54:
+				return true;
+			case 57:
+				return true;
+			case 61:
+				return true;
+			case 97:
+				return true;
+			case 120:
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean is1x1x1(Entity e){
+		int id = e.getEntityId();
+	
+		switch(id){
+			case 60:
+				return true;
+			case 90:
+				return true;
+			case 91:
+				return true;
+			case 92:
+				return true;
+			case 93:
+				return true;
+			case 94:
+				return true;
+			case 95:
+				return true;
+			case 96:
+				return true;
+			case 98:
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean is1x1x3(Entity e){
+		int id = e.getEntityId();
+	
+		switch(id){
+			case 58:
+				return true;
+		}
+		return false;
+	}
+	
+	
+	public static boolean is2x2x1(Entity e){
+		int id = e.getEntityId();
+	
+		switch(id){
+			case 59:
+				return true;
+			case 52:
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean is2x2x2(Entity e){
+		int id = e.getEntityId();
+		switch(id){
+			case 56:
+				return true;
+			case 55:
+				return true;
+			case 62:
+				return true;
+			case 99:
+				return true;
+		}
+		return false;
+	}
+	
 	
 	
 	public static Vector getDirection(Location l) {
