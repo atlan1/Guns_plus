@@ -1,7 +1,6 @@
 package team.GunsPlus;
 
 
-import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,9 +10,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.input.KeyReleasedEvent;
+import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -113,13 +112,8 @@ public class GunsPlusListener implements Listener{
 	}
 	
 	@EventHandler(priority=EventPriority.NORMAL)
-	public void onPlayerJoin(PlayerJoinEvent e){
-		if(!Util.hasSpoutcraft(e.getPlayer())) {
-			e.getPlayer().sendMessage(ChatColor.GRAY + "This server is running Guns+");
-			e.getPlayer().sendMessage(ChatColor.GRAY + "By " + plugin.getDescription().getAuthors());
-			return;
-		}
-		SpoutPlayer sp = (SpoutPlayer) e.getPlayer();
+	public void onSpoutCraftEnable(SpoutCraftEnableEvent e){
+		SpoutPlayer sp = e.getPlayer();
 		HUD hud = new HUD(plugin, plugin.hudX, plugin.hudY, plugin.hudBackground);
 		hud.start(sp);
 		GunsPlus.fireCounter.put(sp, 0);

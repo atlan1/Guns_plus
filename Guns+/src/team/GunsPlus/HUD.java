@@ -1,6 +1,5 @@
 package team.GunsPlus;
 
-import java.util.HashMap;
 
 import org.getspout.spoutapi.gui.GenericItemWidget;
 import org.getspout.spoutapi.gui.GenericLabel;
@@ -14,7 +13,6 @@ import team.GunsPlus.Classes.Gun;
 
 public class HUD {
 	
-	public static HashMap<SpoutPlayer, HUD> playerHUD = new HashMap<SpoutPlayer, HUD>();
 	
 	public GunsPlus plugin;
 	private GenericTexture backtex = new GenericTexture();
@@ -33,7 +31,6 @@ public class HUD {
 		item.setPriority(RenderPriority.High);
 	}
 	
-	//TODO: getCounter() in Gun.java
 	public void update(SpoutPlayer sp){
 		if(GunUtils.holdsGun(sp)){
 			backtex.setVisible(true);
@@ -42,17 +39,18 @@ public class HUD {
 			Gun g = GunUtils.getGun(sp.getItemInHand());
 			SpoutItemStack i = new SpoutItemStack(g);
 			item.setTypeId(i.getTypeId()).setData(i.getDurability());
-			int count /*= g.getCounter(sp)*/ = 0;
-			if(count<0)count = 0;
+			int count = Util.getFireCounter(sp);
 			int total = GunUtils.getAmmoCount(sp, g.getAmmo());
+			int mag = (int) g.getValue("SHOTSBETWEENRELOAD");
+			if(count<0)count = 0;
 			if(total<0)total=0;
 			if(total<count){
 				count=total;
 				total=0;
 			}
-			int notLoaded = total-count;
-			if(notLoaded<0)notLoaded=0;
-			label.setText(count+"/"+notLoaded);
+			if(mag<0)mag=0;
+			
+			label.setText((mag-count)+"/"+(total-(mag-count)));
 		}else{
 			backtex.setVisible(false);
 			label.setVisible(false);
@@ -62,15 +60,15 @@ public class HUD {
 	}
 	
 	public void stop(SpoutPlayer sp){
-		if(HUD.playerHUD.containsKey(sp)){
-			HUD.playerHUD.remove(sp);
+		if(GunsPlus.playerHUD.containsKey(sp)){
+			GunsPlus.playerHUD.remove(sp);
 		}
 		sp.getMainScreen().removeWidgets(plugin);
 	}
 	
 	public void start(SpoutPlayer sp){
-		if(plugin.hudenabled&&Util.hasSpoutcraft(sp)&&sp.hasPermission("gunsplus.hud")){
-			HUD.playerHUD.put(sp, this);
+		if(plugin.hudenabled&&(sp.hasPermission("gunsplus.hud")||sp.isOp())){
+			GunsPlus.playerHUD.put(sp, this);
 		}
 	}
 

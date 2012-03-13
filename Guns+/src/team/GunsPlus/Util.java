@@ -3,6 +3,7 @@ package team.GunsPlus;
 
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,19 +13,22 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Classes.Ammo;
+import team.GunsPlus.Classes.Gun;
 
 public class Util {
 	
 	public static boolean hasSpoutcraft(Player p){
-		if(SpoutManager.getPlayerManager().getPlayer(p).isSpoutCraftEnabled())
+		SpoutPlayer sp = (SpoutPlayer) p;
+		if(sp.isSpoutCraftEnabled()){
 			return true;
-		if(SpoutManager.getPlayer(p).isSpoutCraftEnabled())
-			return true;
+		}
 		return false;
 	}
 	
@@ -227,6 +231,29 @@ public class Util {
 		return false;
 	}
 	
+	
+	public static void printCustomIDs(){
+		if (GunsPlus.generalConfig.getBoolean("id-info-guns", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
+					+ " ------------  ID's of the guns: -----------------");
+			if(GunsPlus.allGuns.isEmpty()) GunsPlus.log.log(Level.INFO, "EMPTY");
+			for (Gun gun : GunsPlus.allGuns) {
+				GunsPlus.log.log(Level.INFO, "ID of " + gun.getName() + ":"
+						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(gun).getDurability());
+			}
+		}
+		if (GunsPlus.generalConfig.getBoolean("id-info-ammo", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
+					+ " ------------  ID's of the ammo: -----------------");
+			if(GunsPlus.allAmmo.isEmpty()) GunsPlus.log.log(Level.INFO, "EMPTY");
+			for (Ammo ammo : GunsPlus.allAmmo) {
+				GunsPlus.log.log(Level.INFO, "ID of " + ammo.getName() + ":"
+						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(ammo).getDurability());
+			}
+		}
+	}
 	
 	
 	public static Vector getDirection(Location l) {

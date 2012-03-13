@@ -211,7 +211,7 @@ public class GunUtils {
 		}
 
 		public static boolean checkInvForAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo) {
-			if(ammo==null)return true;
+			if(ammo==null) return true;
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			Inventory inv = p.getInventory();
 			for(ItemStack theStack : ammo){

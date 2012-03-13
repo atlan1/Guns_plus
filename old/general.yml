@@ -1,0 +1,34 @@
+# This is the general config file. Everything in here will affect all guns and the whole plugin
+
+# Write the ids of the custom items so you can copy them and use it in other plugins( e.g. mobarena)
+id-info-guns: true
+id-info-ammo: true
+
+# Write the loaded items in the log on plugin start
+loaded-guns: true
+loaded-ammo: true
+
+# Show Debug Messages, useful for Error finding
+show-debug: false
+
+# Show Warnings in the console if a node is missing
+show-warnings: true
+
+# Send notifications for special events, e.g. headshot
+send-notifications: true
+# These are the keys/buttons for zooming/shooting the gun
+# Available are: 'right', 'left', 'left+shift', 'right+shift', all characters and numbers on your keyboard
+# if you use a key for zooming you can put a '_' behind to specify that you want to hold the key for zooming 
+zoom: left
+shot: right
+reload: R
+
+# This list sets the materials you can shoot through with your guns. If you aren't sure how to edit this, don't touch it!
+transparent-materials: 0, 6, 83, 107, 68, 50, 18, 31, 8, 9, 10, 11, 101, 77, 113, 85, 75, 76, 90, 55, 30, 106, 111, 37, 38, 39, 40, 51, 59, 65
+
+hud:
+    enabled: true
+    background: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/HUDBackground.png'
+    position:
+        X: 20
+        Y: 20

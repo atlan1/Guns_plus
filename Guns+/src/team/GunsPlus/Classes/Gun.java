@@ -3,7 +3,6 @@ package team.GunsPlus.Classes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 
 import org.bukkit.Material;
@@ -56,7 +55,6 @@ public class Gun extends GenericCustomItem{
 	}
 
 	public void fire(SpoutPlayer sp){
-		//something causes a return here
 		if(!GunUtils.checkInvForAmmo(sp, getAmmo()))return;
 		if(Util.isReloading(sp))return;
 		else if(Util.isDelayed(sp)) return;
@@ -69,6 +67,7 @@ public class Gun extends GenericCustomItem{
 						if(GunsPlus.notifications) sp.sendNotification(this.getName(), "Critical hit!", Material.DIAMOND_SWORD);
 						targets_damage.put(tar, tar.getHealth());
 					}
+					if(targets_damage.get(tar)==getValue("HEADSHOTDAMAGE")&&GunsPlus.notifications) sp.sendNotification(getName(), "Headshot!", new ItemStack(Material.ARROW), 2000); 
 					tar.damage(targets_damage.get(tar), sp);
 				}
 			}

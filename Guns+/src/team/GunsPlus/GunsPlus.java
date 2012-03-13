@@ -33,7 +33,7 @@ public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
 	
 	public static LWC lwc;
-	public final static Logger log = Bukkit.getLogger();
+	public static Logger log = Logger.getLogger("Minecraft");;
 	public final GunManager gm = new GunManager(this);
 	
 	public static boolean warnings = true;
@@ -47,6 +47,7 @@ public class GunsPlus extends JavaPlugin {
 	public static HashMap<SpoutPlayer, Boolean> delaying = new HashMap<SpoutPlayer, Boolean>();
 	public static HashMap<SpoutPlayer, GenericTexture> zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
 	public static HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
+	public static HashMap<SpoutPlayer, HUD> playerHUD = new HashMap<SpoutPlayer, HUD>();
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
@@ -77,20 +78,24 @@ public class GunsPlus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		
 		init();
-		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
-		if (debug)
+		
+		if(debug)
 			log.setLevel(Level.ALL);
-		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
-				+ " is now enabled.");
+		
+		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
+		
+		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
+		
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		if(lwcPlugin != null) {
 		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
-		    log.log(Level.FINE, "Plugged into LWC!");
+		    log.log(Level.INFO, PRE+" Plugged into LWC!");
 		}
 		if(furnaceAPI != null) {
-			 log.log(Level.FINE, "Plugged into FurnaceAPI!");
+			 log.log(Level.INFO, PRE+" Plugged into FurnaceAPI!");
 		}
 	}
 
@@ -100,28 +105,10 @@ public class GunsPlus extends JavaPlugin {
 		loadAmmo();
 		loadGuns();
 		loadRecipes();
-		if (generalConfig.getBoolean("id-info-guns", true)) {
-			log.log(Level.INFO, PRE
-					+ " ------------  ID's of the guns: -----------------");
-			if(allGuns.isEmpty()) log.log(Level.INFO, "EMPTY");
-			for (Gun gun : allGuns) {
-				log.log(Level.INFO, "ID of " + gun.getName() + ":"
-						+ Material.FLINT.getId() + ":"
-						+ new SpoutItemStack(gun).getDurability());
-			}
-		}
-		if (generalConfig.getBoolean("id-info-ammo", true)) {
-			log.log(Level.INFO, PRE
-					+ " ------------  ID's of the ammo: -----------------");
-			if(allAmmo.isEmpty()) log.log(Level.INFO, "EMPTY");
-			for (Ammo ammo : allAmmo) {
-				log.log(Level.INFO, "ID of " + ammo.getName() + ":"
-						+ Material.FLINT.getId() + ":"
-						+ new SpoutItemStack(ammo).getDurability());
-			}
-		}
+		Util.printCustomIDs();
 		updateHUD();
 	}
+	
 
 	public void loadAmmo() {
 		Object[] ammoArray =  ammoConfig.getKeys(false).toArray();
@@ -144,9 +131,9 @@ public class GunsPlus extends JavaPlugin {
 		}
 		
 		if(generalConfig.getBoolean("loaded-ammo")==true){
-			log.log(Level.FINE, PRE + " -------------- Ammo loaded: ---------------");
+			log.log(Level.INFO, PRE + " -------------- Ammo loaded: ---------------");
 			for(int k=0;k<allAmmo.size();k++){
-				log.log(Level.FINE, "- "+allAmmo.get(k).getName());
+				log.log(Level.INFO, "- "+allAmmo.get(k).getName());
 			}
 		}		
 	}
@@ -209,7 +196,6 @@ public class GunsPlus extends JavaPlugin {
 				effects = ConfigParser.getEffects(gunsArray[i]+".effects");
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
-				
 				if(ammo.isEmpty()){
 						throw new Exception(" Can't find any valid ammo for "+gunsArray[i]);
 				}
@@ -263,8 +249,8 @@ public class GunsPlus extends JavaPlugin {
 				gm.editGunResource(g, "ZOOMTEXTURE", zoomTexture);
 				gm.editGunResource(g, "SHOTSOUND", shotSound);
 				gm.editGunResource(g, "RELOADSOUND", reloadSound);
+				gm.editAmmo(g, ammo);
 				for(EffectType et : effects) gm.editGunEffect(g, et);
-				allGuns.add(g);
 			}catch(Exception e){
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
@@ -273,9 +259,9 @@ public class GunsPlus extends JavaPlugin {
 			}
 		}
 		if(generalConfig.getBoolean("loaded-guns")==true){
-			log.log(Level.FINE, PRE + " -------------- Guns loaded: ---------------");
+			log.log(Level.INFO, PRE + " -------------- Guns loaded: ---------------");
 			for(int k=0;k<allGuns.size();k++){
-				log.log(Level.FINE, "- "+allGuns.get(k).getName());
+				log.log(Level.INFO, "- "+allGuns.get(k).getName());
 			}
 		}
 	}
@@ -345,9 +331,9 @@ public class GunsPlus extends JavaPlugin {
 	public void updateHUD(){
 		Task update = new Task(this){
 			public void run(){
-				Set<SpoutPlayer> ps = HUD.playerHUD.keySet();
+				Set<SpoutPlayer> ps = GunsPlus.playerHUD.keySet();
 				for(SpoutPlayer sp:ps){
-					HUD.playerHUD.get(sp).update(sp);
+					GunsPlus.playerHUD.get(sp).update(sp);
 				}
 			}
 		};

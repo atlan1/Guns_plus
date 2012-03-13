@@ -1,7 +1,10 @@
 package team.GunsPlus;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.inventory.ItemStack;
 
 
 import team.GunsPlus.Classes.Gun;
@@ -41,5 +44,9 @@ public class GunManager {
 	
 	public void editGunEffect(Gun gun, EffectType et){
 		gun.addEffect(et);
+	}
+	
+	public void editAmmo(Gun gun, ArrayList<ItemStack> ammo){
+		gun.setAmmo(ammo);
 	}
 }
