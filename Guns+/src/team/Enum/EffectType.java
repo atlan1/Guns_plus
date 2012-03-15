@@ -1,6 +1,7 @@
-package team.GunsPlus;
+package team.Enum;
 
 import java.util.HashMap;
+
 
 public enum EffectType {
 

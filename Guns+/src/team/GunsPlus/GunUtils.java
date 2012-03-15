@@ -1,18 +1,23 @@
 package team.GunsPlus;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MobEffect;
+import net.minecraft.server.Packet42RemoveMobEffect;
+
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
@@ -29,9 +34,10 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.Enum.EffectType;
+import team.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
-import team.old.GunsPlus.Classes.Effect;
 import team.GunsPlus.Classes.Gun;
 import team.old.GunsPlus.Classes.Task;
 
@@ -48,71 +54,48 @@ public class GunUtils {
 			return false;
 		}
 
-		public static void shootProjectile(String name,double speed,  SpoutPlayer p){
-			BlockIterator bitr = new BlockIterator(p);
-			Block b = null;
-			while(bitr.hasNext()){
-				b = bitr.next();
-				if(b!=p.getEyeLocation().getBlock())break;
-			}
-			Location l = p.getEyeLocation();
-			if(b!=null)
-				l = b.getLocation();
-			Entity e = null;
-			if(name.equalsIgnoreCase("arrow")){
-				e = l.getWorld().spawn(l, Arrow.class);
-				Arrow a = (Arrow) e;
-				a.setShooter(p);
-				a.setVelocity(p.getLocation().getDirection().multiply(speed));
-			}else if(name.equalsIgnoreCase("fireball")){
-				e = l.getWorld().spawn(l, Fireball.class);
-				Fireball fbg = (Fireball)e;
-				fbg.setYield(0f);
-				fbg.setIsIncendiary(false);
-				fbg.setShooter(p);
-				fbg.setDirection(p.getLocation().getDirection());
-				fbg.setVelocity(p.getLocation().getDirection().multiply(speed));
-			}else if(name.equalsIgnoreCase("snowball")){
-				e = l.getWorld().spawn(l, Snowball.class);
-				Snowball sb= (Snowball)e;
-				sb.setShooter(p);
-				sb.setVelocity(p.getLocation().getDirection().multiply(speed));
-			}else if(name.equalsIgnoreCase("egg")){
-				e = l.getWorld().spawn(l, Egg.class);
-				Egg egg= (Egg)e;
-				egg.setShooter(p);
-				egg.setVelocity(p.getLocation().getDirection().multiply(speed));
-			}else if(name.equalsIgnoreCase("enderpearl")){
-				e = l.getWorld().spawn(l, EnderPearl.class);
-				EnderPearl ep= (EnderPearl)e;
-				ep.setShooter(p);
-				ep.setVelocity(p.getLocation().getDirection().multiply(speed));
-			}else if(name.equalsIgnoreCase("eyeofender")){
-				e = l.getWorld().spawn(l, EnderSignal.class);
-				EnderSignal es = (EnderSignal)e;
-				es.setVelocity(p.getLocation().getDirection().multiply(speed));
+		public static void shootProjectile(SpoutPlayer sp , Projectile pro){
+			double speed = pro.getSpeed();
+			if(pro.equals(Projectile.ARROW)){
+				Arrow a = sp.launchProjectile(Arrow.class);
+				a.setVelocity(sp.getLocation().getDirection().multiply(speed));
+			}else if(pro.equals(Projectile.FIREBALL)){
+				Fireball fb = sp.launchProjectile(Fireball.class);
+				fb.setYield(0f);
+				fb.setIsIncendiary(false);
+				fb.setDirection(sp.getLocation().getDirection());
+				fb.setVelocity(sp.getLocation().getDirection().multiply(speed));
+			}else if(pro.equals(Projectile.SNOWBALL)){
+				Snowball sb = sp.launchProjectile(Snowball.class);
+				sb.setVelocity(sp.getLocation().getDirection().multiply(speed));
+			}else if(pro.equals(Projectile.EGG)){
+				Egg egg = sp.launchProjectile(Egg.class);
+				egg.setVelocity(sp.getLocation().getDirection().multiply(speed));
+			}else if(pro.equals(Projectile.ENDERPEARL)){
+				EnderPearl ep = sp.launchProjectile(EnderPearl.class);
+				ep.setVelocity(sp.getLocation().getDirection().multiply(speed));
 			}
 		}
 
 		public static HashMap<LivingEntity, Integer> getTargets(SpoutPlayer p, Gun g ){
 			HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 			Location loc = p.getEyeLocation();
-			HashMap<LivingEntity,Integer >e = null;
-			for(int i=0; i<=g.getValue("SPREAD"); i+=4){
+			HashMap<LivingEntity,Integer > e = null;
+			for(int i=0; i<=(Util.isZooming(p)?(g.getValue("SPREAD_IN")/2):(g.getValue("SPREAD_OUT")/2)); i+=3){
 				loc = p.getEyeLocation();
-				loc.setYaw(loc.getYaw()+i);
+				loc.setYaw(loc.getYaw()+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR"))));
 				e = getTargetEntities(loc, g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
-				loc.setYaw(loc.getYaw()-i);
+				loc.setYaw(loc.getYaw()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
 				e = getTargetEntities(loc, g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
-				loc.setPitch(loc.getPitch()+i);
+				loc.setPitch(loc.getPitch()+Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
 				e = getTargetEntities(loc, g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
-				loc.setPitch(loc.getPitch()-i);
+				loc.setPitch(loc.getPitch()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
 				e = getTargetEntities(loc, g);
 				targets.putAll(e);
 			}
@@ -247,152 +230,208 @@ public class GunUtils {
 			return counter;
 		}
 
-//doesn't work anymore; has to be rewritten for the new enums
-		public static void performEffects(ArrayList<Effect> h, LivingEntity le, SpoutPlayer player, int range){
-			Location loc;
-			if(le!=null&&le!=player) {
-				loc = le.getLocation();
-			}else {
-				loc = player.getTargetBlock(null, range).getLocation();
-			}
-			for(Effect eff : h){
-				switch(eff.getType()){
-					case 0:
-						if(eff.hasEffect("explosion")){
-							loc.getWorld().createExplosion(loc, (Integer) eff.getEffectValues("explosion").get(0));
-						}
-						if(eff.hasEffect("lightning")){
-							loc.getWorld().strikeLightning(loc);
-						}
-						if(eff.hasEffect("smoke")){
-							loc.getWorld().playEffect(loc, org.bukkit.Effect.SMOKE, (Integer) eff.getEffectValues("smoke").get(0));
-						}
-						if(eff.hasEffect("spawn")){
-							Location l1 = loc;
-							l1.setY(loc.getY()+1);
-							loc.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getEffectValues("spawn").get(0)));
-						}
-						if(eff.hasEffect("fire")){
-							loc.getWorld().playEffect(loc, org.bukkit.Effect.MOBSPAWNER_FLAMES, (Integer) eff.getEffectValues("fire").get(0));
-						}
-						if(eff.hasEffect("place")){
-							BlockIterator bi = new BlockIterator(player.getWorld(), player.getEyeLocation().toVector(), player.getEyeLocation().getDirection(), 0, range);
-							Block last = null, b = null;
-							boolean loop=true;
-							while(bi.hasNext()&&loop){
-								last = b;
-								b = bi.next();
-								if(!Util.isTransparent(b)){
-									last.setTypeId((Integer) eff.getEffectValues("place").get(0));
-									loop=false;
-								}
-							}
-						}
-						if(eff.hasEffect("break")){
-							if(MaterialData.getBlock(loc.getBlock().getTypeId()).getHardness()<(Integer) eff.getEffectValues("break").get(0)){
-								loc.getBlock().setTypeId(0);
-							}
-						}
-
-						break;
-					case 1:
-						if(le!=null&&le!=player){
-							if(eff.hasEffect("fire")){
-								le.setFireTicks((Integer) eff.getEffectValues("fire").get(1));
-							}
-							if(eff.hasEffect("push")){
-								Vector v = player.getLocation().getDirection();
-								v.multiply((Double) eff.getEffectValues("push").get(0));
-								le.setVelocity(v);
-							}
-							if(eff.hasEffect("draw")){
-								Vector v = player.getLocation().getDirection();
-								v.multiply((Double) eff.getEffectValues("draw").get(0)*-1);
-								le.setVelocity(v);
-							}
-							for(int i=0;i<19;i++){
-								if(eff.hasEffect("potion_"+i)){
-									if(i==14||i==16)continue;
-										CraftLivingEntity cle = (CraftLivingEntity)le;
-										cle.getHandle().addEffect(new MobEffect((Integer)eff.getEffectValues("potion_"+i).get(0), (Integer)eff.getEffectValues("potion_"+i).get(1), (Integer)eff.getEffectValues("potion_"+i).get(2)));
-								}
-							}
-						}
-						break;
-					case 2:
-						if(eff.hasEffect("fire")){
-							BlockIterator bi = new BlockIterator(player, range);
-							while(bi.hasNext()){
-								Block b = bi.next();
-								b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.MOBSPAWNER_FLAMES, (Integer) eff.getEffectValues("fire").get(0));
-							}
-						}
-						if(eff.hasEffect("explosion")){
-							BlockIterator bi = new BlockIterator(player, range);
-							boolean loop = true;
-							while(bi.hasNext()&&loop){
-								Block b = bi.next();
-								if(Util.isTransparent(b))
-								b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getEffectValues("explosion").get(0));
-								else loop=false;
-							}
-						}	
-						if(eff.hasEffect("lightning")){
-							BlockIterator bi = new BlockIterator(player, range);
-							boolean loop=true;
-							while(bi.hasNext()&&loop){
-								Block b = bi.next();
-								if(Util.isTransparent(b))
-								b.getWorld().strikeLightning(b.getLocation());
-								else loop=false;
-							}
-						}	
-						if(eff.hasEffect("smoke")){
-							BlockIterator bi = new BlockIterator(player, range);
-							while(bi.hasNext()){
-								Block b = bi.next();
-								b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.SMOKE, (Integer) eff.getEffectValues("smoke").get(0));
-							}
-						}	
-						if(eff.hasEffect("spawn")){
-							BlockIterator bi = new BlockIterator(player, range);
-							boolean loop=true;
-							while(bi.hasNext()&&loop){
-								Block b = bi.next();
-								Location l1 = b.getLocation();
-								l1.setY(loc.getY()+1);
-								if(Util.isTransparent(b))
-								b.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getEffectValues("spawn").get(0)));
-								else loop=false;
-							}
-						}	
-						if(eff.hasEffect("place")){
-							BlockIterator bi = new BlockIterator(player, range);
-							boolean loop = true;
-							while(bi.hasNext()&&loop){
-								Block b = bi.next();
-								if(Util.isTransparent(b))
-								b.setTypeId((Integer) eff.getEffectValues("place").get(0));
-								else loop=false;
-							}
-						}
-						if(eff.hasEffect("break")){
-							BlockIterator bi = new BlockIterator(player, range);
-							boolean loop = true;
-							while(bi.hasNext()&&loop){
-								Block b = bi.next();
-								if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer) eff.getEffectValues("break").get(0)){
-									b.setTypeId(0);
-								}else{
-									loop=false;
-								}
-							}
-						}
-						break;
-
+		public static void performEffects(ArrayList<EffectType> effects, Set<LivingEntity> targets, SpoutPlayer player, Gun gun){
+			Location loc_tar, loc_sp;
+			for(LivingEntity tar : targets){
+				if(tar.equals(player)){
+					continue;
 				}
-
-
+				loc_tar = tar.getEyeLocation();
+				loc_sp = player.getEyeLocation();
+				
+				for(EffectType eff : effects){
+					System.out.println(""+eff+"|"+eff.getSection()+"|"+targets.size());
+					switch(eff.getSection()){
+						case TARGETLOCATION:
+							switch(eff){
+							case EXPLOSION:
+								loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
+								break;
+							case LIGHTNING:
+								loc_tar.getWorld().strikeLightning(loc_tar);
+								break;
+							case SMOKE:
+								loc_tar.getWorld().playEffect(loc_tar, Effect.SMOKE, (Integer)eff.getArgument("DENSITY"));
+								break;
+							case SPAWN:
+								Location l1 = loc_tar;
+								l1.setY(loc_tar.getY()+1);
+								loc_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+								break;
+							case FIRE:
+								loc_tar.getWorld().playEffect(loc_tar, Effect.MOBSPAWNER_FLAMES, (Integer) eff.getArgument("STRENGTH"));
+								break;
+							case PLACE:
+								loc_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
+//								BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), loc_tar.toVector(), 0, (int) gun.getValue("RANGE"));
+//								Block last = null, b = null;
+//								boolean loop=true;
+//								while(bi.hasNext()&&loop){
+//									last = b;
+//									b = bi.next();
+//									if(!Util.isTransparent(b)){
+//										last.setTypeId((Integer) eff.getArgument("BLOCK"));
+//										loop=false;
+//									}
+//								}
+								break;
+							case BREAK:
+								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
+									loc_tar.getBlock().setTypeId(0);
+								}
+								break;
+							}
+							break;
+						case SHOOTERLOCATION:
+							switch(eff){
+							case EXPLOSION:
+								loc_sp.getWorld().createExplosion(loc_sp, (Integer) eff.getArgument("SIZE"));
+								break;
+							case LIGHTNING:
+								loc_sp.getWorld().strikeLightning(loc_sp);
+								break;
+							case SMOKE:
+								loc_sp.getWorld().playEffect(loc_sp, Effect.SMOKE, (Integer)eff.getArgument("DENSITY"));
+								break;
+							case SPAWN:
+								Location l1 = loc_sp;
+								l1.setY(loc_tar.getY()+1);
+								loc_sp.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+								break;
+							case FIRE:
+								loc_sp.getWorld().playEffect(loc_sp, Effect.MOBSPAWNER_FLAMES, (Integer) eff.getArgument("STRENGTH"));
+								break;
+							case PLACE:
+								loc_sp.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
+//								BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), loc_tar.toVector(), 0, (int) gun.getValue("RANGE"));
+//								Block last = null, b = null;
+//								boolean loop=true;
+//								while(bi.hasNext()&&loop){
+//									last = b;
+//									b = bi.next();
+//									if(!Util.isTransparent(b)){
+//										last.setTypeId((Integer) eff.getArgument("BLOCK"));
+//										loop=false;
+//									}
+//								}
+								break;
+							case BREAK:
+								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
+									loc_tar.getBlock().setTypeId(0);
+								}
+								break;
+							}
+							break;
+						case TARGETENTITY:
+							switch(eff){
+								case FIRE:
+									tar.setFireTicks((Integer) eff.getArgument("DURATION"));
+									break;
+								case PUSH:
+									Vector v1 = loc_sp.getDirection();
+									v1.multiply((Double)eff.getArgument("SPEED"));
+									tar.setVelocity(v1);
+									break;
+								case DRAW:
+									Vector v2 = loc_sp.getDirection();
+									v2.multiply((Double)eff.getArgument("SPEED")*-1);
+									tar.setVelocity(v2);
+									break;
+								case POTION:
+									System.out.println(""+tar);
+									tar.addPotionEffect(new PotionEffect(PotionEffectType.getById((Integer) eff.getArgument("ID")), (Integer)eff.getArgument("DURATION"), (Integer) eff.getArgument("STRENGTH")),true);
+									break;
+								}
+							break;
+						case SHOOTER:
+							switch(eff){
+							case FIRE:
+								player.setFireTicks((Integer) eff.getArgument("DURATION"));
+								break;
+							case PUSH:
+								Vector v1 = loc_sp.getDirection();
+								v1.multiply((Double)eff.getArgument("SPEED"));
+								player.setVelocity(v1);
+								break;
+							case DRAW:
+								Vector v2 = loc_sp.getDirection();
+								v2.multiply((Double)eff.getArgument("SPEED")*-1);
+								player.setVelocity(v2);
+								break;
+							case POTION:
+								player.addPotionEffect(new PotionEffect(PotionEffectType.getById((Integer) eff.getArgument("ID")), (Integer)eff.getArgument("DURATION"), (Integer) eff.getArgument("STRENGTH")),true);
+								break;
+							}
+						break;
+						case FLIGHTPATH:
+							BlockIterator bi = new BlockIterator(loc_sp, gun.getValue("RANGE"));
+							boolean loop = true;
+							switch(eff){
+							case FIRE:
+								while(bi.hasNext()){
+									Block b = bi.next();
+									b.getWorld().playEffect(b.getLocation(), Effect.MOBSPAWNER_FLAMES, (Integer) eff.getArgument("STRENGTH"));
+								}
+								break;
+							case EXPLOSION:
+								loop = true;
+								while(bi.hasNext()&&loop){
+									Block b = bi.next();
+									if(Util.isTransparent(b))
+									b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
+									else loop=false;
+								}
+								break;
+							case LIGHTNING:
+								loop=true;
+								while(bi.hasNext()&&loop){
+									Block b = bi.next();
+									if(Util.isTransparent(b))
+									b.getWorld().strikeLightning(b.getLocation());
+									else loop=false;
+								}
+								break;
+							case SMOKE:
+								while(bi.hasNext()){
+									Block b = bi.next();
+									b.getWorld().playEffect(b.getLocation(), Effect.SMOKE, (Integer) eff.getArgument("DENSITY"));
+								}
+								break;
+							case SPAWN:
+								loop=true;
+								while(bi.hasNext()&&loop){
+									Block b = bi.next();
+									Location l1 = b.getLocation();
+									l1.setY(loc_tar.getY()+1);
+									if(Util.isTransparent(b))
+									b.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+									else loop=false;
+								}
+								break;
+							case PLACE:
+								loop = true;
+								while(bi.hasNext()&&loop){
+									Block b = bi.next();
+									if(Util.isTransparent(b))
+									b.setTypeId((Integer)eff.getArgument("BLOCK"));
+									else loop=false;
+								}
+								break;
+							case BREAK:
+								loop = true;
+								while(bi.hasNext()&&loop){
+									Block b = bi.next();
+									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
+										b.setTypeId(0);
+									}else{
+										loop=false;
+									}
+								}
+								break;
+							}
+							break;
+					}
+				}
 			}
 		}
 
@@ -470,47 +509,50 @@ public class GunUtils {
 		}
 
 		public static void zoomOut(SpoutPlayer p){
-			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
-			p.addPotionEffect(pe, true);
+//			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
+//			p.addPotionEffect(pe, true);
 			SpoutPlayer sp = (SpoutPlayer) p;
-			//can't be used anymore
-			/*CraftPlayer cp = (CraftPlayer) p;
+			//CAN be used anymore!!!
+			CraftPlayer cp = (CraftPlayer) p;
 			
 			try {
 	            Field field = EntityLiving.class.getDeclaredField("effects");
 	            field.setAccessible(true);
-	            HashMap effects = (HashMap)field.get(cp.getHandle());
+	            @SuppressWarnings("rawtypes")
+				HashMap effects = (HashMap)field.get(cp.getHandle());
 	            effects.remove(2);
 	            EntityPlayer player = cp.getHandle();
 	            player.netServerHandler.sendPacket(new Packet42RemoveMobEffect(player.id, new MobEffect(2, 0, 0)));
 	            cp.getHandle().getDataWatcher().watch(8, Integer.valueOf(0));
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	        }*/
+	        }
 			sp.getMainScreen().removeWidget(GunsPlus.zoomTextures.get(p));
 			GunsPlus.zoomTextures.remove(p);
 		}
 		
 		public static void zoomIn(GunsPlus plugin, SpoutPlayer p, GenericTexture zTex,int  zoomfactor){
+//			SpoutPlayer sp = (SpoutPlayer) p;
+//			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
+//			p.addPotionEffect(pe, true);
+			//CAN be used anymore!!!
 			SpoutPlayer sp = (SpoutPlayer) p;
-			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
-			p.addPotionEffect(pe, true);
-			//Can't be used anymore:
-			/*CraftPlayer cp = (CraftPlayer) p;
+			CraftPlayer cp = (CraftPlayer) p;
 			
 			cp.getHandle().addEffect(new MobEffect(2, 24000, zoomfactor));
 			try{
 				Field field;
 			field = EntityLiving.class.getDeclaredField("effects");
 	        field.setAccessible(true);
-	        HashMap effects = (HashMap)field.get(cp.getHandle());
+	        @SuppressWarnings("rawtypes")
+			HashMap effects = (HashMap)field.get(cp.getHandle());
 	        effects.remove(2);
 			}catch(NoSuchFieldException e){
 				e.printStackTrace();
 			}catch(IllegalAccessException e1){
 				e1.printStackTrace();
 			}
-			*/
+			
 			if(!(zTex==null)){
 				GenericTexture t = zTex;
 				t.setHeight(sp.getMainScreen().getHeight()).setWidth(sp.getMainScreen().getWidth());

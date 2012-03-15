@@ -4,6 +4,7 @@ package team.GunsPlus;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,6 +18,7 @@ import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.Enum.KeyType;
 import team.GunsPlus.Classes.Gun;
 
 public class GunsPlusListener implements Listener{
@@ -33,8 +35,13 @@ public class GunsPlusListener implements Listener{
 		if(!Util.hasSpoutcraft(p)) return;
 		SpoutPlayer sp = (SpoutPlayer) p;
 		if(!GunUtils.holdsGun(sp)) return;
-		
 		Action a = e.getAction();
+		Block b = e.getClickedBlock();
+		if(Util.isBlockAction(a))
+			if(!GunsPlus.lwc.canAccessProtection(sp, b.getX(), b.getY(), b.getZ())){
+				e.setCancelled(true);
+				return;
+			}
 		Gun g = GunUtils.getGunInHand(sp);
 		switch(a){
 			case RIGHT_CLICK_AIR:
@@ -48,10 +55,10 @@ public class GunsPlusListener implements Listener{
 			case RIGHT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.RIGHT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.RIGHT)) g.reload(sp);
-				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
+				if(plugin.fireKey.equals(KeyType.RIGHT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.RIGHTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.RIGHTSHIFT)) g.reload(sp);
-				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
+				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.RIGHTSHIFT)) g.fire(sp);
 				break;
 			case LEFT_CLICK_AIR:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
@@ -64,10 +71,10 @@ public class GunsPlusListener implements Listener{
 			case LEFT_CLICK_BLOCK:
 				if(plugin.zoomKey.equals(KeyType.LEFT)) g.zoom(sp);
 				if(plugin.reloadKey.equals(KeyType.LEFT)) g.reload(sp);
-				if(!Util.isLWC(e.getClickedBlock())) if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
+				if(plugin.fireKey.equals(KeyType.LEFT)) g.fire(sp);
 				if(sp.isSneaking()&&plugin.zoomKey.equals(KeyType.LEFTSHIFT)) g.zoom(sp);
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.LEFTSHIFT)) g.reload(sp);
-				if(!Util.isLWC(e.getClickedBlock())) if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
+				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
 				break;
 		}
 	}

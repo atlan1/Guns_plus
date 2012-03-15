@@ -44,13 +44,14 @@ public class HUD {
 			int mag = (int) g.getValue("SHOTSBETWEENRELOAD");
 			if(count<0)count = 0;
 			if(total<0)total=0;
-			if(total<count){
-				count=total;
-				total=0;
-			}
 			if(mag<0)mag=0;
-			
-			label.setText((mag-count)+"/"+(total-(mag-count)));
+			int current;
+			if(total<=mag)
+				current = total;
+			else
+				current= (mag-count);
+			if(total==0) current=0;
+			label.setText(current+"/"+total);
 		}else{
 			backtex.setVisible(false);
 			label.setVisible(false);

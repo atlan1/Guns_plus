@@ -15,7 +15,8 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.GunsPlus.EffectType;
+import team.Enum.EffectType;
+import team.Enum.Projectile;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Task;
@@ -59,20 +60,19 @@ public class Gun extends GenericCustomItem{
 		if(Util.isReloading(sp))return;
 		else if(Util.isDelayed(sp)) return;
 		else{
-			//TODO shoot projectile
-			if((Util.isZooming(sp)?getValue("ACCURACYIN"):getValue("ACCURACYOUT"))<=Util.getRandomInteger(0, 100)){
-				HashMap<LivingEntity, Integer> targets_damage = GunUtils.getTargets(sp, this);
-				for(LivingEntity tar : targets_damage.keySet()){
-					if(Util.getRandomInteger(0, 100)<=getValue("CRITICAL")){
-						if(GunsPlus.notifications) sp.sendNotification(this.getName(), "Critical hit!", Material.DIAMOND_SWORD);
-						targets_damage.put(tar, tar.getHealth());
-					}
-					if(targets_damage.get(tar)==getValue("HEADSHOTDAMAGE")&&GunsPlus.notifications) sp.sendNotification(getName(), "Headshot!", new ItemStack(Material.ARROW), 2000); 
-					tar.damage(targets_damage.get(tar), sp);
+			GunUtils.shootProjectile(sp, (Projectile) getObject("PROJECTILE"));
+			HashMap<LivingEntity, Integer> targets_damage = GunUtils.getTargets(sp, this);
+			for(LivingEntity tar : targets_damage.keySet()){
+				if(tar.equals(sp)) continue;
+				if(Util.getRandomInteger(0, 100)<=getValue("CRITICAL")){
+					if(GunsPlus.notifications) sp.sendNotification(this.getName(), "Critical hit!", Material.DIAMOND_SWORD);
+					targets_damage.put(tar, tar.getHealth());
 				}
+				if(targets_damage.get(tar)==getValue("HEADSHOTDAMAGE")&&GunsPlus.notifications) sp.sendNotification(getName(), "Headshot!", new ItemStack(Material.ARROW), 2000); 
+				tar.damage(targets_damage.get(tar), sp);
 			}
 
-			//TODO effects
+			GunUtils.performEffects(effects, targets_damage.keySet(), sp, this);
 
 			GunUtils.removeAmmo(ammo, sp);
 			Util.setFireCounter(sp, Util.getFireCounter(sp)+1);
@@ -144,6 +144,15 @@ public class Gun extends GenericCustomItem{
 
 	public void setResource(String name, String resource) {
 		this.resources.put(name, resource);
+	}
+	
+	
+	public Object getObject(String s) {
+		return objects.containsKey(s)?objects.get(s):null;
+	}
+
+	public void setObject(String name, Object o) {
+		this.objects.put(name, o);
 	}
 	
 	public void setValue(String name, Float value) {

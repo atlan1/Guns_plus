@@ -1,4 +1,4 @@
-package team.GunsPlus;
+package team.Enum;
 
 public enum EffectSection {
 	TARGETLOCATION(true), TARGETENTITY(false), SHOOTER(false), SHOOTERLOCATION(true), FLIGHTPATH(true), UNDEFINED(true);

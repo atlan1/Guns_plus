@@ -1,7 +1,8 @@
-package team.GunsPlus;
+package team.Enum;
+
 
 public enum Projectile {
-	ARROW(1.0), FIREBALL(1.0), SNOWBALL(1.0), EGG(1.0), ENDERPEARL(1.0), EYEOFENDER(1.0), CUSTOM(1.0);
+	ARROW(1.0), FIREBALL(1.0), SNOWBALL(1.0), EGG(1.0), ENDERPEARL(1.0), NONE(1.0);
 	
 	private double speed;
 	
@@ -17,4 +18,5 @@ public enum Projectile {
 	public void setSpeed(double speed){
 		this.speed = speed;
 	}
+
 }

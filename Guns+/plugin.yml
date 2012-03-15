@@ -2,7 +2,7 @@ name: GunsPlus
 main: team.GunsPlus.GunsPlus
 version: 1.0
 depend: [Spout]
-load: startup
+soft-depend: [LWC, FurnaceAPI]
 authors: [Atlan1, SirTyler]
 description: >
              Guns+ ~ Guns, Guns, Guns Galore!

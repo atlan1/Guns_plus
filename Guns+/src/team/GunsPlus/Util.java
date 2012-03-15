@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
@@ -106,11 +107,17 @@ public class Util {
 	
 	public static CustomItem getGunsPlusItem(String name){
 		CustomItem ci = null;
-		for(int j = 0;j<GunsPlus.allGuns.size();j++){
-			if(GunsPlus.allGuns.get(j).getName().equalsIgnoreCase(name)) return ci;
+		for(int i = 0;i<GunsPlus.allGuns.size();i++){
+			if(GunsPlus.allGuns.get(i).getName().equalsIgnoreCase(name)){
+				ci = GunsPlus.allGuns.get(i);
+				return ci;
+			}
 		}
 		for(int j = 0;j<GunsPlus.allAmmo.size();j++){
-			if(GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name)) return ci;
+			if(GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name)){
+				ci = GunsPlus.allAmmo.get(j);
+				return ci;
+			}
 		}
 		return ci;
 	}
@@ -285,10 +292,20 @@ public class Util {
 	    return loc;
 	}
 	
-	public static boolean isLWC(Block b) {
-		if(GunsPlus.lwc != null) {
-			if(GunsPlus.lwc.findProtection(b) != null) return true;
-			else return false;
-		} else return false;
+//	public static boolean canAccessLWCBlock (SpoutPlayer sp , Block b) {
+//		if(GunsPlus.lwc != null) {
+//			System.out.println(GunsPlus.lwc.canAccessProtection(sp, b));
+//			return GunsPlus.lwc.canAccessProtection(sp, b);
+//		} else return false;
+//	}
+
+	public static boolean isBlockAction(Action a) {
+		switch(a){
+			case RIGHT_CLICK_BLOCK:
+				return true;
+			case LEFT_CLICK_BLOCK:
+				return true;
+		}
+		return false;
 	}
 }

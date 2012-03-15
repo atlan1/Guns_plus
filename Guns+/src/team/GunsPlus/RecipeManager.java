@@ -10,6 +10,7 @@ import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.inventory.SpoutShapedRecipe;
 import org.getspout.spoutapi.inventory.SpoutShapelessRecipe;
+import org.getspout.spoutapi.material.MaterialData;
 
 public class RecipeManager {
 	public static void addShapedRecipe(List<ItemStack> ingredients, ItemStack result){
@@ -18,18 +19,24 @@ public class RecipeManager {
 						'g','h','i'};
 		int i = 0;
 		SpoutShapedRecipe x = new SpoutShapedRecipe(result);
+		x.shape("abc","def","ghi");
 		for(ItemStack item : ingredients) {
-			x.setIngredient(name[i], new SpoutItemStack(item).getMaterial());
+			if(item.getTypeId()==0){
+				i++;
+				continue;
+			}
+			SpoutItemStack ingred = new SpoutItemStack(item);
+			x.setIngredient(name[i], MaterialData.getMaterial(ingred.getTypeId(),(short)ingred.getDurability()));
 			i++;
 		}
-		x.shape("abcdefghi");
 		SpoutManager.getMaterialManager().registerSpoutRecipe(x);
 	}
 	
 	public static void addShapelessRecipe(List<ItemStack> ingredients, ItemStack result){
 		SpoutShapelessRecipe x = new SpoutShapelessRecipe(result);
 		for(ItemStack item : ingredients){
-			x.addIngredient(new SpoutItemStack(item).getMaterial());
+			SpoutItemStack ingred = new SpoutItemStack(item);
+			x.addIngredient(MaterialData.getMaterial(ingred.getTypeId(),ingred.getDurability()));
 		}
 		SpoutManager.getMaterialManager().registerSpoutRecipe(x);
 	}

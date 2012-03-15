@@ -26,6 +26,9 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
+import team.Enum.EffectType;
+import team.Enum.KeyType;
+import team.Enum.Projectile;
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
 
@@ -145,11 +148,11 @@ public class GunsPlus extends JavaPlugin {
 				CustomItem ci = null;
 				if(Util.isGunsPlusItem(key.toString()))ci = Util.getGunsPlusItem(key.toString());
 				else throw new Exception(PRE + " Recipe output not found: "+key+"! Skipping!");
-				int amount = recipeConfig.getInt(key+".amount");
+				int amount = recipeConfig.getInt(key.toString()+".amount");
 				SpoutItemStack result = new SpoutItemStack(ci, amount);
 				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
 				if(recipeConfig.getString(key+".type").equalsIgnoreCase("shaped")){
-					if(ingredients.size()!=9) throw new Exception(PRE + " Wrong number of ingredients in recipe for: "+key+"! Skipping!");
+					if(ingredients.size()!=9) throw new Exception(PRE + " Wrong number of ingredients in shaped recipe for: "+key+"! Skipping!");
 					RecipeManager.addShapedRecipe(ingredients, result);
 				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("shapeless")){
 					RecipeManager.addShapelessRecipe(ingredients, result);
@@ -170,65 +173,49 @@ public class GunsPlus extends JavaPlugin {
 		for(int i = 0;i<gunsArray.length;i++){
 			try{
 				String name = gunsArray[i].toString();
-				int accuracyIn = 0;
-				int accuracyOut = 0;
+				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+"accuracy.random-factor");
+				int spreadangleIN = 0;
+				int spreadangleOUT = 0;
 				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
-				int  reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reloadTime", 0);
+				int  reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reload-time", 0);
 				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
-				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shotsBetweenReload", 0);
+				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shots-between-reload", 0);
 				float recoil = gunsConfig.getInt((String) gunsArray[i]+".recoil", 0);
 				float knockback =  gunsConfig.getInt((String) gunsArray[i]+".knockback", 0);
-				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoomfactor", 0);
-				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".headShotDamage", 0);
-				int spread =  gunsConfig.getInt((String) gunsArray[i]+".spread", 0);
-				float projectileSpeed =  (float) gunsConfig.getDouble((String) gunsArray[i]+".projectile.speed", 0);
-				String shotSound = gunsConfig.getString(gunsArray[i]+".shotSound");
-				String reloadSound = gunsConfig.getString(gunsArray[i]+".reloadSound");
-				String zoomTexture = gunsConfig.getString(gunsArray[i]+".zoomTexture");
+				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoom-factor", 0);
+				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".head-shot-damage", 0);
+				String shotSound = gunsConfig.getString(gunsArray[i]+".shot-sound");
+				String reloadSound = gunsConfig.getString(gunsArray[i]+".reload-sound");
+				String zoomTexture = gunsConfig.getString(gunsArray[i]+".zoom-texture");
 				String texture = gunsConfig.getString(gunsArray[i]+".texture");
-				String projectile = gunsConfig.getString(gunsArray[i]+".projectile.type");
-				int projectiletype = 0;
+				
+				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunsArray[i]+".projectile.type"));
+				projectile.setSpeed(gunsConfig.getDouble(gunsArray[i]+".projectile.speed", 1.0));
+				
+				
+				
+				String[] spread_angle = gunsConfig.getString(gunsArray[i]+".accuracy.spread-angle").split("->");
+				if(spread_angle.length==2){
+					spreadangleIN=Integer.parseInt(spread_angle[1]);
+					spreadangleOUT=Integer.parseInt(spread_angle[0]);
+				}
 				
 				ArrayList<EffectType> effects = new ArrayList<EffectType>();
 				
 				effects = ConfigParser.getEffects(gunsArray[i]+".effects");
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
+				
 				if(ammo.isEmpty()){
 						throw new Exception(" Can't find any valid ammo for "+gunsArray[i]);
 				}
 				
-				String[] split = gunsConfig.getString(gunsArray[i]+".accuracy").split("->");
-				if(split.length==2){
-					accuracyIn=Integer.parseInt(split[1]);
-					accuracyOut=Integer.parseInt(split[0]);
-				}else{
-					throw new Exception(" Can't find TWO accuracy values for "+gunsArray[i]+"!");
-				}
-				
-				if(shotSound==null){
-					throw new Exception(" Can't find shot sound url for "+gunsArray[i]+"!");
-				}
-				
-				if(reloadSound==null){
-						throw new Exception(" Can't find reload sound url for "+gunsArray[i]+"!");
-				}
 				
 				if(texture==null){
 						throw new Exception(" Can't find texture url for "+gunsArray[i]+"!");
 				}
-				
-				if(zoomTexture==null){
-						throw new Exception(" Can't find zoom texture url for "+gunsArray[i]+"!");
-				}
-				 
-				if(projectile==null){
-						throw new Exception(" Can't find projectile type for "+gunsArray[i]+"!");
-				}
-				projectiletype = ConfigParser.getProjectile(projectile);
-				
 				//CREATING GUN
 				Gun g = gm.buildNewGun(name, texture);
 				gm.editGunValue(g, "DAMAGE", damage);
@@ -236,21 +223,20 @@ public class GunsPlus extends JavaPlugin {
 				gm.editGunValue(g, "ZOOMFACTOR", zoomfactor);
 				gm.editGunValue(g, "CRITICAL", critical);
 				gm.editGunValue(g, "RANGE", range);
-				gm.editGunValue(g, "ACCURACYOUT", accuracyOut);
-				gm.editGunValue(g, "ACCURACYIN", accuracyIn);
+				gm.editGunValue(g, "RANDOMFACTOR", randomfactor);
+				gm.editGunValue(g, "SPREAD_OUT", spreadangleOUT);
+				gm.editGunValue(g, "SPREAD_IN", spreadangleIN);
 				gm.editGunValue(g, "RECOIL", recoil);
 				gm.editGunValue(g, "RELOADTIME", reloadTime);
 				gm.editGunValue(g, "SHOTSBETWEENRELOAD", shotsBetweenReload);
 				gm.editGunValue(g, "SHOTDELAY", shotDelay);
-				gm.editGunValue(g, "SPREAD", spread);
 				gm.editGunValue(g, "KNOCKBACK", knockback);
-				gm.editGunValue(g, "projectileSpeed", projectileSpeed);
-				gm.editGunValue(g, "PROJECTILETYPE", projectiletype);
 				gm.editGunResource(g, "ZOOMTEXTURE", zoomTexture);
 				gm.editGunResource(g, "SHOTSOUND", shotSound);
 				gm.editGunResource(g, "RELOADSOUND", reloadSound);
 				gm.editAmmo(g, ammo);
-				for(EffectType et : effects) gm.editGunEffect(g, et);
+				gm.editObject(g, "PROJECTILE", projectile);
+				for(EffectType et : effects) gm.addGunEffect(g, et);
 			}catch(Exception e){
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
