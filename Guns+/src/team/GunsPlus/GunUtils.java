@@ -84,25 +84,25 @@ public class GunUtils {
 			for(int i=0; i<=(Util.isZooming(p)?(g.getValue("SPREAD_IN")/2):(g.getValue("SPREAD_OUT")/2)); i+=3){
 				loc = p.getEyeLocation();
 				loc.setYaw(loc.getYaw()+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR"))));
-				e = getTargetEntities(loc, g);
+				e = getTargetEntities(loc, p,g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setYaw(loc.getYaw()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc, g);
+				e = getTargetEntities(loc, p,g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setPitch(loc.getPitch()+Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc, g);
+				e = getTargetEntities(loc,p, g);
 				targets.putAll(e);
 				loc = p.getEyeLocation();
 				loc.setPitch(loc.getPitch()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc, g);
+				e = getTargetEntities(loc,p, g);
 				targets.putAll(e);
 			}
 			return targets;
 		}
 
-		public static HashMap<LivingEntity, Integer> getTargetEntities(Location loc, Gun g) {
+		public static HashMap<LivingEntity, Integer> getTargetEntities(Location loc, SpoutPlayer sp ,Gun g) {
 			HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 			BlockIterator bitr = new BlockIterator(loc,0d, (int) g.getValue("RANGE"));
 			Block b;
@@ -124,23 +124,28 @@ public class GunUtils {
 				}
 
 				for (LivingEntity e : entities) {
+					if(e==sp);
 					l = e.getLocation();
 					ex = l.getX();
 					ey = l.getY();
 					ez = l.getZ();
 					
+					double changedamage = (int) Math.ceil((float)g.getValue("CHANGEDAMAGE")*loc.toVector().distance(l.toVector()));
+//					System.out.println("CD:"+(float)g.getValue("CHANGEDAMAGE"));
+//					System.out.println("D:"+Math.round(loc.toVector().distance(l.toVector())));
+					
 					if(Util.is1x1x2(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+2.65)))
-							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+changedamage));
 					}else if(Util.is1x1x1(e)){
 						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by+1.3))) 
-							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) (int) ((int) g.getValue("DAMAGE")+changedamage));
 					}else if(Util.is2x2x1(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+1.2))) 
-							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+changedamage));
 					}else{
 						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by+2.55)))
-							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+changedamage));
 					}
 					l = e.getEyeLocation();
 					ex = l.getX();
@@ -148,16 +153,16 @@ public class GunUtils {
 					ez = l.getZ();
 					if(Util.is1x1x2(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+changedamage));
 					}else if(Util.is1x1x1(e)){
 						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+changedamage));
 					}else if(Util.is2x2x1(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+changedamage));
 					}else{
 						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
+							targets.put(e, (int)((int) g.getValue("HEADSHOTDAMAGE")+changedamage));
 					}
 				}
 			}

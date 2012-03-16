@@ -173,7 +173,7 @@ public class GunsPlus extends JavaPlugin {
 		for(int i = 0;i<gunsArray.length;i++){
 			try{
 				String name = gunsArray[i].toString();
-				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+"accuracy.random-factor");
+				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+"accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
 				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
@@ -183,8 +183,8 @@ public class GunsPlus extends JavaPlugin {
 				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
 				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shots-between-reload", 0);
 				float recoil = (float) gunsConfig.getDouble((String) gunsArray[i]+".recoil", 0);
-				float knockback =  (float) gunsConfig.getDouble((String) gunsArray[i]+".knockback", 0);
-				float changedamage =  (float) gunsConfig.getDouble((String) gunsArray[i]+".change-damage", 0);
+				float knockback =  (float) gunsConfig.getDouble((String) gunsArray[i]+".knockback", 1.0);
+				float changedamage =  (float) gunsConfig.getDouble((String) gunsArray[i]+".damage-change", 0);
 				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoom-factor", 0);
 				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".head-shot-damage", 0);
 				String shotSound = gunsConfig.getString(gunsArray[i]+".shot-sound");
