@@ -69,6 +69,7 @@ public class Gun extends GenericCustomItem{
 					targets_damage.put(tar, tar.getHealth());
 				}
 				if(targets_damage.get(tar)==getValue("HEADSHOTDAMAGE")&&GunsPlus.notifications) sp.sendNotification(getName(), "Headshot!", new ItemStack(Material.ARROW), 2000); 
+				System.out.println(""+targets_damage.get(tar));
 				tar.damage(targets_damage.get(tar), sp);
 			}
 

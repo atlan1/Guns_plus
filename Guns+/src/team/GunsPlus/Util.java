@@ -19,6 +19,8 @@ import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
+import team.Enum.EffectSection;
+import team.Enum.EffectType;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Classes.Ammo;
 import team.GunsPlus.Classes.Gun;
@@ -262,6 +264,128 @@ public class Util {
 		}
 	}
 	
+	public static boolean isAllowedInEffectSection(EffectType efftyp, EffectSection effsec){
+		switch(effsec){
+			case SHOOTER:
+				switch(efftyp){
+					case EXPLOSION:
+						return false;
+					case LIGHTNING:
+						return false;
+					case SMOKE:
+						return false;
+					case FIRE:
+						return true;
+					case PUSH:
+						return true;
+					case DRAW:
+						return true;
+					case SPAWN:
+						return false;
+					case POTION:
+						return true;
+					case PLACE:
+						return false;
+					case BREAK:
+						return false;
+				}break;
+			case SHOOTERLOCATION:
+				switch(efftyp){
+					case EXPLOSION:
+						return true;
+					case LIGHTNING:
+						return true;
+					case SMOKE:
+						return true;
+					case FIRE:
+						return true;
+					case PUSH:
+						return false;
+					case DRAW:
+						return false;
+					case SPAWN:
+						return true;
+					case POTION:
+						return false;
+					case PLACE:
+						return true;
+					case BREAK:
+						return true;
+				}break;
+			case TARGETLOCATION:
+				switch(efftyp){
+					case EXPLOSION:
+						return true;
+					case LIGHTNING:
+						return true;
+					case SMOKE:
+						return true;
+					case FIRE:
+						return true;
+					case PUSH:
+						return false;
+					case DRAW:
+						return false;
+					case SPAWN:
+						return true;
+					case POTION:
+						return false;
+					case PLACE:
+						return true;
+					case BREAK:
+						return true;
+				}break;
+			case TARGETENTITY:
+				switch(efftyp){
+					case EXPLOSION:
+						return false;
+					case LIGHTNING:
+						return false;
+					case SMOKE:
+						return false;
+					case FIRE:
+						return true;
+					case PUSH:
+						return true;
+					case DRAW:
+						return true;
+					case SPAWN:
+						return false;
+					case POTION:
+						return true;
+					case PLACE:
+						return false;
+					case BREAK:
+						return false;
+				}break;
+			case FLIGHTPATH:
+				switch(efftyp){
+					case EXPLOSION:
+						return true;
+					case LIGHTNING:
+						return true;
+					case SMOKE:
+						return true;
+					case FIRE:
+						return true;
+					case PUSH:
+						return false;
+					case DRAW:
+						return false;
+					case SPAWN:
+						return true;
+					case POTION:
+						return false;
+					case PLACE:
+						return true;
+					case BREAK:
+						return true;
+				}break;
+			case UNDEFINED:
+				return false;
+		}
+		return false;
+	}
 	
 	public static Vector getDirection(Location l) {
         Vector vector = new Vector();

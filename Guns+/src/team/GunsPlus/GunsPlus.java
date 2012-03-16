@@ -179,11 +179,12 @@ public class GunsPlus extends JavaPlugin {
 				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
-				int  reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reload-time", 0);
+				int reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reload-time", 0);
 				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
 				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shots-between-reload", 0);
-				float recoil = gunsConfig.getInt((String) gunsArray[i]+".recoil", 0);
-				float knockback =  gunsConfig.getInt((String) gunsArray[i]+".knockback", 0);
+				float recoil = (float) gunsConfig.getDouble((String) gunsArray[i]+".recoil", 0);
+				float knockback =  (float) gunsConfig.getDouble((String) gunsArray[i]+".knockback", 0);
+				float changedamage =  (float) gunsConfig.getDouble((String) gunsArray[i]+".change-damage", 0);
 				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoom-factor", 0);
 				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".head-shot-damage", 0);
 				String shotSound = gunsConfig.getString(gunsArray[i]+".shot-sound");
@@ -202,9 +203,7 @@ public class GunsPlus extends JavaPlugin {
 					spreadangleOUT=Integer.parseInt(spread_angle[0]);
 				}
 				
-				ArrayList<EffectType> effects = new ArrayList<EffectType>();
-				
-				effects = ConfigParser.getEffects(gunsArray[i]+".effects");
+				ArrayList<EffectType> effects = new ArrayList<EffectType>(ConfigParser.getEffects(gunsArray[i]+".effects"));
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
 				
@@ -218,6 +217,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 				//CREATING GUN
 				Gun g = gm.buildNewGun(name, texture);
+				gm.editGunValue(g, "CHANGEDAMAGE", changedamage);
 				gm.editGunValue(g, "DAMAGE", damage);
 				gm.editGunValue(g, "HEADSHOTDAMAGE", headShotDamage);
 				gm.editGunValue(g, "ZOOMFACTOR", zoomfactor);

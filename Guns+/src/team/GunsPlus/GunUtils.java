@@ -131,16 +131,16 @@ public class GunUtils {
 					
 					if(Util.is1x1x2(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+2.65)))
-							targets.put(e, (int) g.getValue("DAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else if(Util.is1x1x1(e)){
 						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by+1.3))) 
-							targets.put(e, (int) g.getValue("DAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else if(Util.is2x2x1(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+1.2))) 
-							targets.put(e, (int) g.getValue("DAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else{
 						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by+2.55)))
-							targets.put(e, (int) g.getValue("DAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("DAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}
 					l = e.getEyeLocation();
 					ex = l.getX();
@@ -148,16 +148,16 @@ public class GunUtils {
 					ez = l.getZ();
 					if(Util.is1x1x2(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else if(Util.is1x1x1(e)){
 						if ((((bx - .9) <= ex) && (ex <= (bx + 1.9)))&&(((bz - .9) <= ez) && (ez <= (bz + 1.9)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else if(Util.is2x2x1(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}else{
 						if ((((bx - .75) <= ex) && (ex <= (bx + 1.75)))&&(((bz - .75) <= ez) && (ez <= (bz + 1.75)))&&(((by - 1) <= ey) && (ey <= by))) 
-							targets.put(e, (int) g.getValue("HEADSHOTDAMAGE"));
+							targets.put(e, (int) ((int) g.getValue("HEADSHOTDAMAGE")+((int) g.getValue("CHANGEDAMAGE")*Math.round(loc.toVector().distance(e.getLocation().toVector())))));
 					}
 				}
 			}
@@ -240,7 +240,6 @@ public class GunUtils {
 				loc_sp = player.getEyeLocation();
 				
 				for(EffectType eff : effects){
-					System.out.println(""+eff+"|"+eff.getSection()+"|"+targets.size());
 					switch(eff.getSection()){
 						case TARGETLOCATION:
 							switch(eff){

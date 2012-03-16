@@ -141,95 +141,58 @@ public class ConfigParser {
     	return key;
     }
     
-    public static ArrayList<EffectType> getEffects(String path){
-    	ArrayList<EffectType> effects = new ArrayList<EffectType>();
-    	Object[] keys = GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false).toArray();
-    	System.out.println(""+keys.length);
-    	for(Object section:keys){
-    		if(!GunsPlus.gunsConfig.isConfigurationSection(path+"."+section.toString()))continue;
-    		Object[] effKeys = GunsPlus.gunsConfig.getConfigurationSection(path+"."+section.toString()).getKeys(false).toArray();
-    		try{
-	    		for(Object effectNode : effKeys){
-	    			EffectSection es = EffectSection.valueOf(section.toString().toUpperCase());
-	    			if(es!=null){
-	    				EffectType et = getEffect(path+"."+section+"."+effectNode,effectNode.toString(), es);
-	    				System.out.println(et+"<>"+et.getSection());
-		    			effects.add(et);
-		    		}else throw new Exception(" Unknown effect section "+section);
-		    	}
-    		}catch(Exception e){
-				if (GunsPlus.warnings)
-					GunsPlus.log.log(Level.WARNING, GunsPlus.PRE + "Config Error:" + e.getMessage());
-				if (GunsPlus.debug)
-					e.printStackTrace();
-			}
-    		System.out.println(effects.get(effects.size()-1<0?0:effects.size()-1)+"§"+effects.get(effects.size()-1<0?0:effects.size()-1).getSection());	
+    public static List<EffectType> getEffects(String path){
+    	List<EffectType> effects = new ArrayList<EffectType>();
+    	for(String effectsection: GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false)){
+    		EffectSection effsec = EffectSection.valueOf(effectsection.toUpperCase());
+    		for(String effecttype : GunsPlus.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
+    			EffectType efftyp = EffectType.valueOf(effecttype.toUpperCase());
+    			efftyp.setSection(effsec);
+    			if(buildEffect(efftyp, path+"."+effectsection+"."+effecttype))
+    				effects.add(efftyp);
+    		}
     	}
-    	System.out.println("------------------");
-    	for(EffectType eff : effects) System.out.println(eff+"||"+eff.getSection());
-		return effects;
+    	return effects;
     }
     
-    private static EffectType getEffect(String path, String node, EffectSection es){
-    	EffectType et = null;
-    	et = EffectType.valueOf(node.toUpperCase());
-    	System.out.println(""+es);
-    	et.setSection(es);
-    	switch(et){
-    	case EXPLOSION:
-    		if(es.isLocation())
-    			et.addArgument("SIZE", GunsPlus.gunsConfig.getInt(path+".size"));
-    		else return null;
-    		break;
-    	case SMOKE:
-    		if(es.isLocation())
-    			et.addArgument("DENSITY", GunsPlus.gunsConfig.getInt(path+".density"));
-    		else return null;
-    		break;
-    	case FIRE:
-    		if(es.isLocation())
-    			et.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
-    		else et.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
-    	case SPAWN:
-    		if(es.isLocation())
-    			et.addArgument("ENTITY", GunsPlus.gunsConfig.getInt(path+".entity"));
-    		else return null;
-    		break;
-    	case PUSH:
-    		if(!es.isLocation())
-    			et.addArgument("SPEED", GunsPlus.gunsConfig.getDouble(path+".speed"));
-    		else return null;
-    		break;
-    	case DRAW:
-    		if(!es.isLocation())
-    			et.addArgument("SPEED", GunsPlus.gunsConfig.getDouble(path+".speed"));
-    		else return null;
-    		break;
-    	case BREAK:
-    		et = EffectType.BREAK;
-    		if(es.isLocation())
-    			et.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
-    		else return null;
-    		break;
-    	case PLACE:
-    		if(es.isLocation())
-    			et.addArgument("BLOCK", GunsPlus.gunsConfig.getString(path+".block"));
-    		else return null;
-    		break;
-    	case POTION:
-    		if(!es.isLocation()){
-    			et.addArgument("ID", GunsPlus.gunsConfig.getInt(path+".id"));
-    			et.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
-    			et.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
-    		}else return null;
-    		break;
-    	case LIGHTNING:
-    		if(es.isLocation())
-    			et = EffectType.LIGHTNING;
-    		else return null;
-    		break;
+    private static boolean buildEffect(EffectType efftyp , String path){
+    	if(!Util.isAllowedInEffectSection(efftyp, efftyp.getSection())) return false;
+    	switch(efftyp){
+	    	case EXPLOSION:
+	    		efftyp.addArgument("SIZE", GunsPlus.gunsConfig.getInt(path+".size"));
+	    		break;
+	    	case LIGHTNING:
+	    		break;
+	    	case SMOKE:
+	    		efftyp.addArgument("DENSITY", GunsPlus.gunsConfig.getInt(path+".density"));
+	    		break;
+	    	case FIRE:
+	    		if(efftyp.getSection().equals(EffectSection.SHOOTER)||efftyp.getSection().equals(EffectSection.TARGETENTITY))
+	    			efftyp.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
+	    		else
+	    			efftyp.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
+	    		break;
+	    	case PUSH:
+	    		efftyp.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+	    		break;
+	    	case DRAW:
+	    		efftyp.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+	    		break;
+	    	case POTION:
+	    		efftyp.addArgument("ID", GunsPlus.gunsConfig.getInt(path+".id"));
+	    		efftyp.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
+	    		efftyp.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
+	    		break;
+	    	case SPAWN:
+	    		efftyp.addArgument("ENTITY", GunsPlus.gunsConfig.getInt(path+".entity"));
+	    		break;
+	    	case PLACE:
+	    		efftyp.addArgument("BLOCK", GunsPlus.gunsConfig.getInt(path+".block"));
+	    		break;
+	    	case BREAK:
+	    		efftyp.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
+	    		break;
     	}
-    	System.out.println(""+et+"\\/"+et.getSection());
-		return et;
+    	return true;
     }
 }
