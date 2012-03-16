@@ -1,6 +1,7 @@
-*.settings
-*.classpath
-*.project
+# Eclipse stuff
+/.classpath
+/.project
+/.settings
 
-/target
 /lib
+/bin
