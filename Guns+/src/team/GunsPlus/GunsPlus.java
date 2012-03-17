@@ -26,11 +26,14 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
-import team.Enum.EffectType;
-import team.Enum.KeyType;
-import team.Enum.Projectile;
-import team.GunsPlus.Classes.Ammo;
-import team.GunsPlus.Classes.Gun;
+import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Enum.Projectile;
+import team.GunsPlus.Item.Ammo;
+import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Manager.ConfigParser;
+import team.GunsPlus.Manager.GunManager;
+import team.GunsPlus.Manager.RecipeManager;
 
 public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
@@ -173,16 +176,18 @@ public class GunsPlus extends JavaPlugin {
 		for(int i = 0;i<gunsArray.length;i++){
 			try{
 				String name = gunsArray[i].toString();
-				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+"accuracy.random-factor", 1.0);
+				boolean hudenabled = gunsConfig.getBoolean(gunsArray[i]+".hud-enabled", true);
+				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+".accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
 				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
 				int reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reload-time", 0);
-				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shotDelay", 0);
+				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shot-delay", 0);
 				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shots-between-reload", 0);
 				float recoil = (float) gunsConfig.getDouble((String) gunsArray[i]+".recoil", 0);
+				float weight = (float) gunsConfig.getDouble((String) gunsArray[i]+".weight", 0);
 				float knockback =  (float) gunsConfig.getDouble((String) gunsArray[i]+".knockback", 1.0);
 				float changedamage =  (float) gunsConfig.getDouble((String) gunsArray[i]+".damage-change", 0);
 				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoom-factor", 0);
@@ -217,6 +222,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 				//CREATING GUN
 				Gun g = gm.buildNewGun(name, texture);
+				gm.editGunValue(g, "WEIGHT", weight);
 				gm.editGunValue(g, "CHANGEDAMAGE", changedamage);
 				gm.editGunValue(g, "DAMAGE", damage);
 				gm.editGunValue(g, "HEADSHOTDAMAGE", headShotDamage);
@@ -236,6 +242,7 @@ public class GunsPlus extends JavaPlugin {
 				gm.editGunResource(g, "RELOADSOUND", reloadSound);
 				gm.editAmmo(g, ammo);
 				gm.editObject(g, "PROJECTILE", projectile);
+				gm.editObject(g, "HUDENABLED", hudenabled);
 				for(EffectType et : effects) gm.addGunEffect(g, et);
 			}catch(Exception e){
 				if (warnings)

@@ -1,7 +1,5 @@
 package team.GunsPlus;
 
-
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,6 +9,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.input.KeyReleasedEvent;
 import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
@@ -18,8 +18,8 @@ import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.Enum.KeyType;
-import team.GunsPlus.Classes.Gun;
+import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Item.Gun;
 
 public class GunsPlusListener implements Listener{
 
@@ -76,6 +76,24 @@ public class GunsPlusListener implements Listener{
 				if(sp.isSneaking()&&plugin.reloadKey.equals(KeyType.LEFTSHIFT)) g.reload(sp);
 				if(sp.isSneaking()&&plugin.fireKey.equals(KeyType.LEFTSHIFT)) g.fire(sp);
 				break;
+		}
+	}
+	
+	//does not work pretty much? dont know why...
+	@EventHandler(priority=EventPriority.NORMAL)
+	public void onHeldItemChange(PlayerItemHeldEvent e){
+		Player p = e.getPlayer();
+		if(!Util.hasSpoutcraft(p)) return;
+		SpoutPlayer sp = (SpoutPlayer) p;
+ 		ItemStack preItem = p.getInventory().getItem(e.getPreviousSlot());
+		ItemStack nextItem = p.getInventory().getItem(e.getNewSlot());
+		if(GunUtils.isGun(preItem)){
+			sp.setWalkingMultiplier(1);
+		}
+		if(GunUtils.isGun(nextItem)){
+			Gun g = GunUtils.getGun(nextItem);
+			sp.setWalkingMultiplier(1-g.getValue("WEIGHT"));
+			
 		}
 	}
 	

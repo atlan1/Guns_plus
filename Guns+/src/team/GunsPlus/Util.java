@@ -19,11 +19,11 @@ import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
-import team.Enum.EffectSection;
-import team.Enum.EffectType;
+import team.GunsPlus.Enum.EffectSection;
+import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.GunsPlus;
-import team.GunsPlus.Classes.Ammo;
-import team.GunsPlus.Classes.Gun;
+import team.GunsPlus.Item.Ammo;
+import team.GunsPlus.Item.Gun;
 
 public class Util {
 	

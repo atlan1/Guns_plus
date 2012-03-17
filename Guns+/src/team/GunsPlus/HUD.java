@@ -9,7 +9,7 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.GunsPlus.Classes.Gun;
+import team.GunsPlus.Item.Gun;
 
 public class HUD {
 	
@@ -32,7 +32,7 @@ public class HUD {
 	}
 	
 	public void update(SpoutPlayer sp){
-		if(GunUtils.holdsGun(sp)){
+		if(GunUtils.holdsGun(sp)&&GunUtils.isHudEnabled(GunUtils.getGunInHand(sp))){
 			backtex.setVisible(true);
 			label.setVisible(true);
 			item.setVisible(true);

@@ -34,9 +34,9 @@ import org.getspout.spoutapi.inventory.SpoutShapelessRecipe;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.material.MaterialData;
 
-import team.old.GunsPlus.Util;
-import team.old.GunsPlus.Classes.*;
+import team.old.GunsPlus.*;
 
+@SuppressWarnings("unused")
 public class GunsPlus extends JavaPlugin{
 	public static GunsPlus plugin;
 	public Util util;

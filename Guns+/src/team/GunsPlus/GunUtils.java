@@ -34,12 +34,12 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.Enum.EffectType;
-import team.Enum.Projectile;
+import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
-import team.GunsPlus.Classes.Gun;
-import team.old.GunsPlus.Classes.Task;
+import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Task;
 
 public class GunUtils {
 
@@ -131,8 +131,6 @@ public class GunUtils {
 					ez = l.getZ();
 					
 					double changedamage = (int) Math.ceil((float)g.getValue("CHANGEDAMAGE")*loc.toVector().distance(l.toVector()));
-//					System.out.println("CD:"+(float)g.getValue("CHANGEDAMAGE"));
-//					System.out.println("D:"+Math.round(loc.toVector().distance(l.toVector())));
 					
 					if(Util.is1x1x2(e)){
 						if ((((bx - .5) <= ex) && (ex <= (bx + 1.5)))&&(((bz - .5) <= ez) && (ez <= (bz + 1.5)))&&(((by - 1) <= ey) && (ey <= by+2.65)))
@@ -516,7 +514,7 @@ public class GunUtils {
 //			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 0, 100);
 //			p.addPotionEffect(pe, true);
 			SpoutPlayer sp = (SpoutPlayer) p;
-			//CAN be used anymore!!!
+			//CAN be used still!!!
 			CraftPlayer cp = (CraftPlayer) p;
 			
 			try {
@@ -539,7 +537,7 @@ public class GunUtils {
 //			SpoutPlayer sp = (SpoutPlayer) p;
 //			PotionEffect pe = new PotionEffect(PotionEffectType.SLOW, 24000, zoomfactor);
 //			p.addPotionEffect(pe, true);
-			//CAN be used anymore!!!
+			//CAN be used still!!!
 			SpoutPlayer sp = (SpoutPlayer) p;
 			CraftPlayer cp = (CraftPlayer) p;
 			
@@ -564,12 +562,16 @@ public class GunUtils {
 				GunsPlus.zoomTextures.put(sp, t);
 			}
 		}
+		
+		public static boolean isHudEnabled(Gun g){
+			if((Boolean)g.getObject("HUDENABLED")) return true;
+			return false;
+		}
 
 		public static boolean isGun(ItemStack i){
 			for(Gun g:GunsPlus.allGuns){
 				SpoutItemStack sis = new SpoutItemStack(g);
 				if(i.getTypeId()==sis.getTypeId()&&i.getDurability()==sis.getDurability()){
-					GunsPlus.log.info(i.getType().toString()+":"+sis.getType().toString());
 					return true;
 				}
 			}

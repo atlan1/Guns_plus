@@ -20,8 +20,8 @@ import org.getspout.spoutapi.event.input.KeyReleasedEvent;
 import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.old.GunsPlus.Classes.Gun;
-import team.old.GunsPlus.Classes.Task;
+import team.old.GunsPlus.Gun;
+import team.old.GunsPlus.Task;
 
 public class GunsPlusListener implements Listener{
 

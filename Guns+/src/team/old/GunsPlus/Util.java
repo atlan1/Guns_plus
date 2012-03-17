@@ -62,9 +62,9 @@ import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
-import team.old.GunsPlus.GunsPlus;
-import team.old.GunsPlus.Classes.*;
+import team.old.GunsPlus.*;
 
+@SuppressWarnings("unused")
 public class Util {
 	
 	private final GunsPlus plugin;
