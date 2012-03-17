@@ -141,22 +141,22 @@ public class ConfigParser {
     	return key;
     }
     
-    public static List<EffectType> getEffects(String path){
-    	List<EffectType> effects = new ArrayList<EffectType>();
+    public static List<EffectSection> getEffects(String path){
+    	List<EffectSection> effects = new ArrayList<EffectSection>();
     	for(String effectsection: GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false)){
     		EffectSection effsec = EffectSection.valueOf(effectsection.toUpperCase());
     		for(String effecttype : GunsPlus.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
     			EffectType efftyp = EffectType.valueOf(effecttype.toUpperCase());
-    			efftyp.setSection(effsec);
-    			if(buildEffect(efftyp, path+"."+effectsection+"."+effecttype))
-    				effects.add(efftyp);
+    			if(Util.isAllowedInEffectSection(efftyp, effsec)){
+    				effsec.addEffect(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
+    			}
     		}
+    		effects.add(effsec);
     	}
     	return effects;
     }
     
-    private static boolean buildEffect(EffectType efftyp , String path){
-    	if(!Util.isAllowedInEffectSection(efftyp, efftyp.getSection())) return false;
+    private static EffectType buildEffect(EffectType efftyp, EffectSection es, String path){
     	switch(efftyp){
 	    	case EXPLOSION:
 	    		efftyp.addArgument("SIZE", GunsPlus.gunsConfig.getInt(path+".size"));
@@ -167,7 +167,7 @@ public class ConfigParser {
 	    		efftyp.addArgument("DENSITY", GunsPlus.gunsConfig.getInt(path+".density"));
 	    		break;
 	    	case FIRE:
-	    		if(efftyp.getSection().equals(EffectSection.SHOOTER)||efftyp.getSection().equals(EffectSection.TARGETENTITY))
+	    		if(es.equals(EffectSection.SHOOTER)||es.equals(EffectSection.TARGETENTITY))
 	    			efftyp.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
 	    		else
 	    			efftyp.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
@@ -193,6 +193,6 @@ public class ConfigParser {
 	    		efftyp.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
 	    		break;
     	}
-    	return true;
+    	return efftyp;
     }
 }

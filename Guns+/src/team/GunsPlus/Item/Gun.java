@@ -2,6 +2,7 @@ package team.GunsPlus.Item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
@@ -36,7 +37,7 @@ public class Gun extends GenericCustomItem{
 	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
 	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
 	private Map<String, Object> objects = new HashMap<String, Object>(); //holds anything else 
-	private ArrayList<EffectType> effects = new ArrayList<EffectType>(); //Holds the effects of the gun
+	private ArrayList<EffectSection> effects = new ArrayList<EffectSection>(); //Holds the effects of the gun
 	private GunsPlus plugin;
 	
 	public Gun(Plugin plugin, String name, String texture) {
@@ -114,7 +115,7 @@ public class Gun extends GenericCustomItem{
 				tar.damage(targets_damage.get(tar), sp);
 			}
 
-			GunUtils.performEffects(effects, targets_damage.keySet(), sp, this);
+			GunUtils.performEffects(effects, new HashSet<LivingEntity>(targets_damage.keySet()), sp, this);
 
 			GunUtils.removeAmmo(ammo, sp);
 			Util.setFireCounter(sp, Util.getFireCounter(sp)+1);
@@ -215,13 +216,13 @@ public class Gun extends GenericCustomItem{
 		return values.containsKey(name)?values.get(name):null;
 	}
 	
-	public void addEffect(EffectType et){
-		effects.add(et);
+	public void addEffect(EffectSection es){
+		effects.add(es);
 	}
 	
-	public void removeEffect(EffectType et){
-		if(effects.contains(et))
-			effects.remove(et);
+	public void removeEffect(EffectSection es){
+		if(effects.contains(es))
+			effects.remove(es);
 	}
 
 }

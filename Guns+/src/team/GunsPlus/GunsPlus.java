@@ -26,7 +26,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Item.Ammo;
@@ -209,8 +209,8 @@ public class GunsPlus extends JavaPlugin {
 					spreadangleOUT=Integer.parseInt(spread_angle[0]);
 				}
 				
-				ArrayList<EffectType> effects = new ArrayList<EffectType>(ConfigParser.getEffects(gunsArray[i]+".effects"));
-				
+				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(gunsArray[i]+".effects"));
+		
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
 				
 				if(ammo.isEmpty()){
@@ -244,7 +244,7 @@ public class GunsPlus extends JavaPlugin {
 				gm.editAmmo(g, ammo);
 				gm.editObject(g, "PROJECTILE", projectile);
 				gm.editObject(g, "HUDENABLED", hudenabled);
-				for(EffectType et : effects) gm.addGunEffect(g, et);
+				for(EffectSection es : effects) gm.addGunEffect(g, es);
 			}catch(Exception e){
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
