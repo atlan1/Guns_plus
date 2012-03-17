@@ -569,6 +569,7 @@ public class GunUtils {
 		}
 
 		public static boolean isGun(ItemStack i){
+			if(i!=null)
 			for(Gun g:GunsPlus.allGuns){
 				SpoutItemStack sis = new SpoutItemStack(g);
 				if(i.getTypeId()==sis.getTypeId()&&i.getDurability()==sis.getDurability()){
