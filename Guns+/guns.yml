@@ -38,23 +38,21 @@ Sniper:
     # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out   ### OPT
     # this nodes can be modified to very custom accuracy values. 
     accuracy: 
-        random-factor: 1.3
-        spread-angle: '10->3'
+        random-factor: 3.0
+        spread-angle: '3->0'
     # defines the de-/increase of the damage per block (e.g. 1 would be an increase of 1 per 1 block distance to the target, -1 would decrease the damage by one per block)
     damage-change: -0.1
     # here you put the probability of a critical hit, which means a one-hit-kill. 100 is every shoot, 1 is very rare. ### OPT
     critical: 10
+    # this node sets the weight of the gun, this will modify the walk speed of the player that holds the gun
+    weight: 0.3
+    # specifies if the gun will be shown in the hud or not.
+    hud-enabled: true
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT
     # Shooter (will affect the shooter of the gun), ShooterLocation (will affect the location, the shooter is standing on)
     # for more information about the effects see the faq on the bukkit thread. -> http://forums.bukkit.org/threads/mech-fun-gunpack-create-your-very-own-guns-spout-1-1-r3.57768/
-        targetlocation:
-            smoke:
-                density: 20
-        flightpath:
-            smoke:
-                density: 20
         targetentity:
             potion:
                 id: 9
