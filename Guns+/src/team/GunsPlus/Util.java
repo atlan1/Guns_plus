@@ -416,12 +416,6 @@ public class Util {
 	    return loc;
 	}
 	
-//	public static boolean canAccessLWCBlock (SpoutPlayer sp , Block b) {
-//		if(GunsPlus.lwc != null) {
-//			System.out.println(GunsPlus.lwc.canAccessProtection(sp, b));
-//			return GunsPlus.lwc.canAccessProtection(sp, b);
-//		} else return false;
-//	}
 
 	public static boolean isBlockAction(Action a) {
 		switch(a){

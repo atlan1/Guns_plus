@@ -10,15 +10,6 @@ public enum EffectType {
 	
 	
 	private HashMap<String, Object> arguments = new HashMap<String, Object>();
-	private EffectSection section = EffectSection.UNDEFINED;
-	
-	public void setSection(EffectSection es){
-		this.section = es;
-	}
-	
-	public EffectSection getSection(){
-		return section;
-	}
 	
 	public HashMap<String, Object> getArguments() {
 		return arguments;

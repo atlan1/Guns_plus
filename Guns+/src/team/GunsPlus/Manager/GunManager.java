@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.bukkit.inventory.ItemStack;
 
 
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Item.Gun;
 
@@ -44,12 +44,12 @@ public class GunManager {
 		gun.setResource(name, res);
 	}
 	
-	public void addGunEffect(Gun gun, EffectType et){
-		gun.addEffect(et);
+	public void addGunEffect(Gun gun, EffectSection es){
+		gun.addEffect(es);
 	}
 	
-	public void removeGunEffect(Gun gun, EffectType et){
-		gun.removeEffect(et);
+	public void removeGunEffect(Gun gun, EffectSection es){
+		gun.removeEffect(es);
 	}
 	
 	public void editAmmo(Gun gun, ArrayList<ItemStack> ammo){
