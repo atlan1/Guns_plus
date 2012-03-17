@@ -247,7 +247,7 @@ public class GunUtils {
 							case TARGETLOCATION:
 								switch(eff){
 									case EXPLOSION:
-										loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
+										if(!Util.inRegion(player,loc_tar)) loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
 										break;
 									case LIGHTNING:
 										loc_tar.getWorld().strikeLightning(loc_tar);
@@ -287,7 +287,7 @@ public class GunUtils {
 							case SHOOTERLOCATION:
 								switch(eff){
 									case EXPLOSION:
-										loc_sp.getWorld().createExplosion(loc_sp, (Integer) eff.getArgument("SIZE"));
+										if(!Util.inRegion(player,loc_tar)) loc_sp.getWorld().createExplosion(loc_sp, (Integer) eff.getArgument("SIZE"));
 										break;
 									case LIGHTNING:
 										loc_sp.getWorld().strikeLightning(loc_sp);
@@ -380,7 +380,7 @@ public class GunUtils {
 									while(bi.hasNext()&&loop){
 										Block b = bi.next();
 										if(Util.isTransparent(b))
-										b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
+											if(!Util.inRegion(player,loc_tar)) b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
 										else loop=false;
 									}
 									break;
