@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +19,8 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
+
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -431,5 +434,14 @@ public class Util {
 				return true;
 		}
 		return false;
+	}
+	
+	public static boolean inRegion(Player player, Location loc) {
+		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+			WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+			if(!wg.canBuild(player, loc)) {
+				return false;
+			} else return true;
+		} else return false;
 	}
 }

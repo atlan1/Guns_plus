@@ -247,7 +247,7 @@ public class GunUtils {
 						case TARGETLOCATION:
 							switch(eff){
 							case EXPLOSION:
-								loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
+								if(!Util.inRegion(player,loc_tar)) loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
 								break;
 							case LIGHTNING:
 								loc_tar.getWorld().strikeLightning(loc_tar);

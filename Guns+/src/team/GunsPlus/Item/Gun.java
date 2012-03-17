@@ -89,11 +89,11 @@ public class Gun extends GenericCustomItem{
 		if(!Util.isZooming(sp)){
 			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), (int) getValue("ZOOMFACTOR")); 
 			Util.setZooming(sp, true);
-			if(GunsPlus.notifications)  (sp).sendNotification(this.getName(), "Zoomed in!", Material.ENDER_PEARL);
+			if(GunsPlus.notifications)  (sp).sendNotification(this.getName(), "Zoomed in!", Material.AIR);
 		}else{
 			GunUtils.zoomOut(sp); 
 			Util.setZooming(sp, false);
-			if(GunsPlus.notifications) (sp).sendNotification(this.getName(), "Zoomed out!", Material.GOLDEN_APPLE);
+			if(GunsPlus.notifications) (sp).sendNotification(this.getName(), "Zoomed out!", Material.AIR);
 		}
 	}
 
