@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public enum EffectType {
 
-	EXPLOSION(), LIGHTNING(), SMOKE(), POTION(), PUSH(), DRAW(), PLACE(), BREAK(), SPAWN(), FIRE(); 
+	EXPLOSION(), LIGHTNING(), SMOKE(), POTION(), PUSH(), DRAW(), PLACE(), BREAK(), SPAWN(), FIRE(), NONE(); 
 	
 	
 	private HashMap<String, Object> arguments = new HashMap<String, Object>();

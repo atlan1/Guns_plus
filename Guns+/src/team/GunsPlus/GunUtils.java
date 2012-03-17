@@ -347,24 +347,24 @@ public class GunUtils {
 							break;
 						case SHOOTER:
 							switch(eff){
-							case FIRE:
-								player.setFireTicks((Integer) eff.getArgument("DURATION"));
-								break;
-							case PUSH:
-								Vector v1 = loc_sp.getDirection();
-								v1.multiply((Double)eff.getArgument("SPEED"));
-								player.setVelocity(v1);
-								break;
-							case DRAW:
-								Vector v2 = loc_sp.getDirection();
-								v2.multiply((Double)eff.getArgument("SPEED")*-1);
-								player.setVelocity(v2);
-								break;
-							case POTION:
-								player.addPotionEffect(new PotionEffect(PotionEffectType.getById((Integer) eff.getArgument("ID")), (Integer)eff.getArgument("DURATION"), (Integer) eff.getArgument("STRENGTH")),true);
-								break;
+								case FIRE:
+									player.setFireTicks((Integer) eff.getArgument("DURATION"));
+									break;
+								case PUSH:
+									Vector v1 = loc_sp.getDirection();
+									v1.multiply((Double)eff.getArgument("SPEED"));
+									player.setVelocity(v1);
+									break;
+								case DRAW:
+									Vector v2 = loc_sp.getDirection();
+									v2.multiply((Double)eff.getArgument("SPEED")*-1);
+									player.setVelocity(v2);
+									break;
+								case POTION:
+									player.addPotionEffect(new PotionEffect(PotionEffectType.getById((Integer) eff.getArgument("ID")), (Integer)eff.getArgument("DURATION"), (Integer) eff.getArgument("STRENGTH")),true);
+									break;
 							}
-						break;
+							break;
 						case FLIGHTPATH:
 							BlockIterator bi = new BlockIterator(loc_sp, gun.getValue("RANGE"));
 							boolean loop = true;
@@ -431,6 +431,8 @@ public class GunUtils {
 								}
 								break;
 							}
+							break;
+						case UNDEFINED:
 							break;
 					}
 				}

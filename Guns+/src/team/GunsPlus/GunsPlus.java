@@ -209,6 +209,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 				
 				ArrayList<EffectType> effects = new ArrayList<EffectType>(ConfigParser.getEffects(gunsArray[i]+".effects"));
+				System.out.println(effects);
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
 				
