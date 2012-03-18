@@ -25,6 +25,7 @@ import com.griefcraft.util.matchers.DoubleChestMatcher;
 
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.Projectile;
+import team.GunsPlus.Addition;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Task;
@@ -38,6 +39,7 @@ public class Gun extends GenericCustomItem{
 	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
 	private Map<String, Object> objects = new HashMap<String, Object>(); //holds anything else 
 	private ArrayList<EffectSection> effects = new ArrayList<EffectSection>(); //Holds the effects of the gun
+	private ArrayList<Addition> additions = new ArrayList<Addition>(); //Holds all the additions that can be assigned to this gun type
 	private GunsPlus plugin;
 	
 	public Gun(Plugin plugin, String name, String texture) {
@@ -123,9 +125,9 @@ public class Gun extends GenericCustomItem{
 			if(!(getResource("SHOTSOUND")==null)){
 				//play the sound for high fire rate guns only about every third time; otherwise the sound will not be played at all
 				if(getValue("SHOTDELAY")<5&&Util.getRandomInteger(0, 100)<35){
-					Util.playCustomSound(plugin, sp, getResource("SHOTSOUND"));
+					Util.playCustomSound(plugin, sp, getResource("SHOTSOUND"), (int) getValue("SHOTSOUNDVOLUME"));
 				}else{
-					Util.playCustomSound(plugin, sp, getResource("SHOTSOUND"));
+					Util.playCustomSound(plugin, sp, getResource("SHOTSOUND"), (int) getValue("SHOTSOUNDVOLUME"));
 				}
 				
 			}
@@ -156,7 +158,7 @@ public class Gun extends GenericCustomItem{
 			reloadTask.startDelayed((int)getValue("RELOADTIME"));
 			Util.setReloading(sp);
 			if(!(getResource("RELOADSOUND")==null)){
-				Util.playCustomSound(plugin, sp, getResource("RELOADSOUND"));
+				Util.playCustomSound(plugin, sp, getResource("RELOADSOUND"), (int) getValue("RELOADSOUNDVOLUME"));
 			}
 			return;
 		}else if(Util.isReloading(sp)){
@@ -223,6 +225,24 @@ public class Gun extends GenericCustomItem{
 	public void removeEffect(EffectSection es){
 		if(effects.contains(es))
 			effects.remove(es);
+	}
+	
+	public void addAddition(Addition a){
+		additions.add(a);
+	}
+	
+	public void removeAddition(Addition a){
+		if(additions.contains(a)){
+			additions.remove(a);
+		}
+	}
+	
+	public ArrayList<Addition> getAdditions(){
+		return additions;
+	}
+
+	public void setAdditions(ArrayList<Addition> adds) {
+		additions=adds;
 	}
 
 }

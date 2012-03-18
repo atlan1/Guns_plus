@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,7 +19,6 @@ import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -127,12 +125,11 @@ public class Util {
 		return ci;
 	}
 	
-	public static void playCustomSound(GunsPlus plugin,Player player, String url)
-	{
+	public static void playCustomSound(GunsPlus plugin,Player player, String url, int volume){
 		SoundManager SM = SpoutManager.getSoundManager();
 		SpoutPlayer sp = SpoutManager.getPlayer(player);
-		SM.playCustomSoundEffect(plugin, sp, url, false, sp.getLocation() ,25, 50);
-		SM.playGlobalCustomSoundEffect(plugin, url, false, sp.getLocation(), 100, 100);
+//		SM.playCustomSoundEffect(plugin, sp, url, false, sp.getLocation() ,25, 50);
+		SM.playGlobalCustomSoundEffect(plugin, url, false, sp.getLocation(), 40, volume);
 	}
 
 	
@@ -431,9 +428,8 @@ public class Util {
 	}
 	
 	public static boolean inRegion(Player player, Location loc) {
-		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
-			if(!wg.canBuild(player, loc)) {
+		if(GunsPlus.wg!=null) {
+			if(!GunsPlus.wg.canBuild(player, loc)) {
 				return false;
 			} else return true;
 		} else return false;
