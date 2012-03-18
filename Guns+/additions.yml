@@ -1,0 +1,13 @@
+# Here you can configure your very own gun additions!
+# Look at the examples to see how it works.
+
+# that's the name of your addition
+Silencer:
+    # in here you can put any node you can find in the gun config aswell, for example: damage, accuracy, zoomfactor, ...; the gun which is enchantet with this addition will then be modified like that.
+    # the given number values will be added to the old ones; other values (strings) will be overidden
+    shot-sound:
+        volume: -50
+ExtraZoom:
+    zoom-factor: 3
+    
+    
