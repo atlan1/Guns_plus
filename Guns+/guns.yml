@@ -24,9 +24,14 @@ Sniper:
     # this ist the texture which will show up on zoom ### OPT
     zoom-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniperScreen.png'
     # The sound which is played on shot. ### OPT
-    shot-sound: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/sniper.ogg'
+    shot-sound:
+        url: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/sniper.ogg'
+        # the max volume is 100
+        volume: 100
     # The sound which is played on reload. ### OPT
-    reload-sound: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/reload.ogg'
+    reload-sound:
+        url: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/reload.ogg'
+        volume: 75
     # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell. ### OPT
     ammo: 'SniperAmmo, sulphur'
     # the zoomfactor of the gun; you can specify how to zoom in general.yml ### OPT
@@ -48,6 +53,8 @@ Sniper:
     weight: 0.3
     # specifies if the gun will be shown in the hud or not.
     hud-enabled: true
+    # with this node you can set the available additions for this gun
+    additions: Silencer
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT
