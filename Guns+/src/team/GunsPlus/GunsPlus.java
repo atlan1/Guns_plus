@@ -84,6 +84,7 @@ public class GunsPlus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		
 		init();
 		
