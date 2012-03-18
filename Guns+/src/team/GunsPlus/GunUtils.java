@@ -366,70 +366,70 @@ public class GunUtils {
 								}
 								break;
 							case FLIGHTPATH:
-								BlockIterator bi = new BlockIterator(loc_sp, gun.getValue("RANGE"));
+								BlockIterator bi = new BlockIterator(player, Math.round(gun.getValue("RANGE")));
 								boolean loop = true;
 								switch(eff){
-								case FIRE:
-									while(bi.hasNext()){
-										Block b = bi.next();
-										b.getWorld().playEffect(b.getLocation(), Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
-									}
-									break;
-								case EXPLOSION:
-									loop = true;
-									while(bi.hasNext()&&loop){
-										Block b = bi.next();
-										if(Util.isTransparent(b))
-											if(!Util.inRegion(player,loc_tar)) b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
-										else loop=false;
-									}
-									break;
-								case LIGHTNING:
-									loop=true;
-									while(bi.hasNext()&&loop){
-										Block b = bi.next();
-										if(Util.isTransparent(b))
-										b.getWorld().strikeLightning(b.getLocation());
-										else loop=false;
-									}
-									break;
-								case SMOKE:
-									while(bi.hasNext()){
-										Block b = bi.next();
-										b.getWorld().playEffect(b.getLocation(), Effect.SMOKE, BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
-									}
-									break;
-								case SPAWN:
-									loop=true;
-									while(bi.hasNext()&&loop){
-										Block b = bi.next();
-										Location l1 = b.getLocation();
-										l1.setY(loc_tar.getY()+1);
-										if(Util.isTransparent(b))
-										b.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
-										else loop=false;
-									}
-									break;
-								case PLACE:
-									loop = true;
-									while(bi.hasNext()&&loop){
-										Block b = bi.next();
-										if(Util.isTransparent(b))
-										b.setTypeId((Integer)eff.getArgument("BLOCK"));
-										else loop=false;
-									}
-									break;
-								case BREAK:
-									loop = true;
-									while(bi.hasNext()&&loop){
-										Block b = bi.next();
-										if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
-											b.setTypeId(0);
-										}else{
-											loop=false;
+									case FIRE:
+										while(bi.hasNext()){
+											Block b = bi.next();
+											b.getWorld().playEffect(b.getLocation(), Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
 										}
-									}
-									break;
+										break;
+									case EXPLOSION:
+										loop = true;
+										while(bi.hasNext()&&loop){
+											Block b = bi.next();
+											if(Util.isTransparent(b))
+												if(!Util.inRegion(player,loc_tar)) b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
+											else loop=false;
+										}
+										break;
+									case LIGHTNING:
+										loop=true;
+										while(bi.hasNext()&&loop){
+											Block b = bi.next();
+											if(Util.isTransparent(b))
+											b.getWorld().strikeLightning(b.getLocation());
+											else loop=false;
+										}
+										break;
+									case SMOKE:
+										while(bi.hasNext()){
+											Block b = bi.next();
+											b.getWorld().playEffect(b.getLocation(), Effect.SMOKE, BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
+										}
+										break;
+									case SPAWN:
+										loop=true;
+										while(bi.hasNext()&&loop){
+											Block b = bi.next();
+											Location l1 = b.getLocation();
+											l1.setY(loc_tar.getY()+1);
+											if(Util.isTransparent(b))
+											b.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+											else loop=false;
+										}
+										break;
+									case PLACE:
+										loop = true;
+										while(bi.hasNext()&&loop){
+											Block b = bi.next();
+											if(Util.isTransparent(b))
+											b.setTypeId((Integer)eff.getArgument("BLOCK"));
+											else loop=false;
+										}
+										break;
+									case BREAK:
+										loop = true;
+										while(bi.hasNext()&&loop){
+											Block b = bi.next();
+											if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
+												b.setTypeId(0);
+											}else{
+												loop=false;
+											}
+										}
+										break;
 								}
 								break;
 							case UNDEFINED:
