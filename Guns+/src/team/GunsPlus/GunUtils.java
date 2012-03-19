@@ -40,6 +40,7 @@ import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
+import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Task;
 
@@ -196,6 +197,28 @@ public class GunUtils {
 				inv.remove(ammoStack);
 			}
 			p.updateInventory();
+		}
+		
+		public static Ammo getFirstAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo){
+			if(ammo.isEmpty()) return null;
+			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
+			Inventory inv = p.getInventory();
+			ItemStack ammoStack = null; 
+			for(ItemStack theStack: ammo){
+				invAll = inv.all(theStack.getTypeId());
+				for(int j = 0; j<inv.getSize();j++){
+					if(invAll.containsKey(j)){
+						ItemStack hi = invAll.get(j);
+						if(hi.getTypeId()==theStack.getTypeId()&&hi.getDurability()==theStack.getDurability()){
+							ammoStack=hi;
+							for(Ammo y : GunsPlus.allAmmo){
+								if (new SpoutItemStack(y).getDurability()==ammoStack.getDurability()&&new SpoutItemStack(y).getTypeId()==ammoStack.getTypeId()) return y;
+							}
+						}
+					}
+				}
+			}
+			return null;
 		}
 
 		public static boolean checkInvForAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo) {
@@ -580,5 +603,9 @@ public class GunUtils {
 				}
 			}
 			return false;
+		}
+
+		public static Ammo getFirstAmmo() {
+			return null;
 		}
 }

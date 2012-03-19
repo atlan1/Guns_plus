@@ -102,6 +102,7 @@ public class Gun extends GenericCustomItem{
 
 	public void fire(SpoutPlayer sp){
 		if(!GunUtils.checkInvForAmmo(sp, getAmmo()))return;
+		Ammo usedAmmo = GunUtils.getFirstAmmo();
 		if(Util.isReloading(sp))return;
 		else if(Util.isDelayed(sp)) return;
 		else{
@@ -114,7 +115,7 @@ public class Gun extends GenericCustomItem{
 					targets_damage.put(tar, tar.getHealth()+100);
 				}
 				if(targets_damage.get(tar)==getValue("HEADSHOTDAMAGE")&&GunsPlus.notifications) sp.sendNotification(getName(), "Headshot!", new ItemStack(Material.ARROW), 2000); 
-				tar.damage(targets_damage.get(tar), sp);
+				tar.damage(targets_damage.get(tar)+(usedAmmo!=null?usedAmmo.getDamage():0), sp);
 			}
 
 			GunUtils.performEffects(effects, new HashSet<LivingEntity>(targets_damage.keySet()), sp, this);

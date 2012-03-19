@@ -16,8 +16,11 @@ import team.GunsPlus.GunsPlus;
 
 public class Ammo extends GenericCustomItem {
 
-	public Ammo(Plugin plugin, String name, String texture) {
+	private int damage = 0;
+	
+	public Ammo(Plugin plugin, String name, String texture, int dmg) {
 		super(plugin, name, texture);
+		damage = dmg;
 	}
 
 	public boolean onItemInteract(SpoutPlayer player, SpoutBlock block,
@@ -54,5 +57,13 @@ public class Ammo extends GenericCustomItem {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	public int getDamage(){
+		return damage;
+	}
+	
+	public void setDamage(int dmg){
+		damage = dmg;
 	}
 }

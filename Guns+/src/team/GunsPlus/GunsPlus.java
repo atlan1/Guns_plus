@@ -237,15 +237,17 @@ public class GunsPlus extends JavaPlugin {
 
 	public void loadAmmo() {
 		Object[] ammoArray =  ammoConfig.getKeys(false).toArray();
-		for(int i = 0;i<ammoArray.length;i++){
+		for(Object ammonode:ammoArray){
 			try{
-				String texture = ammoConfig.getString(ammoArray[i]+".texture");
-				String name = ammoArray[i].toString();
+				String texture = ammoConfig.getString(ammonode+".texture");
+				int damage = ammoConfig.getInt(ammonode+".damage", 0);
+				
+				String name = ammonode.toString();
 				
 				if(texture == null)
-					throw new Exception(" Can't find texture url for "+ammoArray[i]+"! Skipping!");
+					throw new Exception(" Can't find texture url for "+ammonode+"! Skipping!");
 				
-				Ammo a = new Ammo(this, name, texture);
+				Ammo a = new Ammo(this, name, texture, damage);
 				allAmmo.add(a);
 			} catch (Exception e) {
 				if (warnings)
@@ -320,8 +322,6 @@ public class GunsPlus extends JavaPlugin {
 				
 				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type"));
 				projectile.setSpeed(gunsConfig.getDouble(gunnode+".projectile.speed", 1.0));
-				
-				
 				
 				String[] spread_angle = gunsConfig.getString(gunnode+".accuracy.spread-angle").split("->");
 				if(spread_angle.length==2){
