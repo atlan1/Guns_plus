@@ -1,5 +1,6 @@
 package team.GunsPlus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.input.KeyReleasedEvent;
@@ -23,6 +25,7 @@ import team.GunsPlus.Item.Gun;
 public class GunsPlusListener implements Listener {
 
 	public GunsPlus plugin;
+	public static String credit;
 
 	public GunsPlusListener(GunsPlus instance) {
 		plugin = instance;
@@ -190,9 +193,27 @@ public class GunsPlusListener implements Listener {
 				plugin.hudBackground);
 		hud.start(sp);
 		GunsPlus.fireCounter.put(sp, 0);
-		if(GunsPlus.notifications)
-		sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN
-				+ "By " + plugin.getDescription().getAuthors(),
-				Material.SULPHUR);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void playerJoined(PlayerJoinEvent event) {
+		SpoutPlayer sp = (SpoutPlayer) event.getPlayer();
+		if(GunsPlus.notifications) {
+			creditsDelayed(sp);
+		}
+	}
+	
+	public void credits(SpoutPlayer sp) {
+		credit = ("This server is running " + ChatColor.GOLD + "Guns+" + ChatColor.DARK_GREEN + " By:" + plugin.getDescription().getAuthors());
+		if(sp.isSpoutCraftEnabled()) sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
+		else sp.sendMessage(credit);
+	}
+	
+	private void creditsDelayed(final SpoutPlayer sp) {
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+			public void run() {
+				credits(sp);
+			}
+		}, 100L);
 	}
 }

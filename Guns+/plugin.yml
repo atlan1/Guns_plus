@@ -1,16 +1,16 @@
 name: GunsPlus
 main: team.GunsPlus.GunsPlus
-version: 1.0
+version: 1.2-DEV
 depend: [Spout]
 soft-depend: [LWC, FurnaceAPI, WorldGuard]
 authors: [Atlan1, SirTyler]
 description: >
              Guns+ ~ Guns, Guns, Guns Galore!
 commands:
-    gunpack:
-        description: Admin commands.
-        aliases: gp
-        usage: /gunsplus reload - Reloads the config files.
+    guns+:
+        description: Guns+ commands.
+        aliases: [g+,guns,+]
+        usage: /guns+ help - Displays the Help Menu.
 permissions:
     gunsplus.*:
         description: Give all permissions

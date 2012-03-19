@@ -120,6 +120,7 @@ public class GunsPlus extends JavaPlugin {
 		}
 		
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
+		getCommand("guns+").setExecutor(new CommandEx());
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
 	}
 
