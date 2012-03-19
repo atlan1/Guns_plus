@@ -70,7 +70,7 @@ public class VersionChecker implements Listener{
 			link = (getElementValue(element,"link"));
 			String[] pubdates = (getElementValue(element,"pubDate")).split(" ");
 			pubdate = pubdates[0] + " " + pubdates[1] + " " + pubdates[2] + " " + pubdates[3];
-			version = title.replace(plugin.getDescription().getName(),"").replaceAll("\\[", "").replaceAll("\\]", "").replace(" ", "");
+			version = title.replace("Guns+","").replaceAll("\\[", "").replaceAll("\\]", "").replace(" ", "");
 			thisversion = plugin.getDescription().getVersion();
 			Bukkit.getPluginManager().registerEvents(this, plugin);
 			check();
