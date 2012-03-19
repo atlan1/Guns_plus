@@ -4,3 +4,5 @@
 SniperAmmo:
     # this is the url of the texture you want to use for this ammo.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/ammo.png'
+    # the damage this ammo will deal. NOTE: this value will be added to the base damage of the gun shooting this!
+    damage: 4
