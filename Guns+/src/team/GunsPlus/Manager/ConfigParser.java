@@ -11,6 +11,7 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Addition;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
 
@@ -194,5 +195,21 @@ public class ConfigParser {
 	    		break;
     	}
     	return efftyp;
+    }
+    
+    public static ArrayList<Addition> getAdditions(String path){
+    	ArrayList<Addition> adds = new ArrayList<Addition>();
+    	String string = GunsPlus.additionsConfig.getString(path);
+    	string.trim();
+    	String[] split = string.split(",");
+    	for(String splitString : split){
+    		for(Addition a : GunsPlus.allAdditions){
+	    		if(a.getName().equalsIgnoreCase(splitString)){
+	    			adds.add(a);
+	    		}
+	    	}
+    	}
+    	
+    	return adds;
     }
 }
