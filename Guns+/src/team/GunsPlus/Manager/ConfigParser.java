@@ -11,6 +11,8 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Item.Ammo;
+import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Addition;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
@@ -51,14 +53,19 @@ public class ConfigParser {
     	SpoutItemStack custom = null;
         Material m = getMaterial(item);
         if(m==null){
-			for(int j = 0;j<GunsPlus.allAmmo.size();j++){
-				if(GunsPlus.allAmmo.get(j).getName().toString().equals(item)){
-					custom = new SpoutItemStack(GunsPlus.allAmmo.get(j));
+			for(Ammo a:GunsPlus.allAmmo){
+				if(a.getName().toString().equals(item)){
+					custom = new SpoutItemStack(a);
 				}
 			}
-			for(int i = 0;i<GunsPlus.allGuns.size();i++){
-				if(GunsPlus.allGuns.get(i).getName().toString().equals(item)){
-					custom = new SpoutItemStack(GunsPlus.allGuns.get(i));
+			for(Gun g:GunsPlus.allGuns){
+				if(g.getName().toString().equals(item)){
+					custom = new SpoutItemStack(g);
+				}
+			}
+			for(Addition a : GunsPlus.allAdditions){
+				if(a.getName().toString().equals(item)){
+					custom = new SpoutItemStack(a);
 				}
 			}
         }
@@ -200,16 +207,17 @@ public class ConfigParser {
     public static ArrayList<Addition> getAdditions(String path){
     	ArrayList<Addition> adds = new ArrayList<Addition>();
     	String string = GunsPlus.additionsConfig.getString(path);
-    	string.trim();
-    	String[] split = string.split(",");
-    	for(String splitString : split){
-    		for(Addition a : GunsPlus.allAdditions){
-	    		if(a.getName().equalsIgnoreCase(splitString)){
-	    			adds.add(a);
-	    		}
+    	if(string!=null){
+    		string=string.trim();
+	    	String[] split = string.split(",");
+	    	for(String splitString : split){
+	    		for(Addition a : GunsPlus.allAdditions){
+		    		if(a.getName().equalsIgnoreCase(splitString)){
+		    			adds.add(a);
+		    		}
+		    	}
 	    	}
     	}
-    	
     	return adds;
     }
 }

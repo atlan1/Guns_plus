@@ -3,23 +3,16 @@ package team.GunsPlus;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Addition {
+import org.getspout.spoutapi.material.item.GenericCustomItem;
+
+public class Addition extends GenericCustomItem{
 	
-	private String name;
 	private Map<String,Float> numbers = new HashMap<String,Float>(); 
 	private Map<String, String> strings = new HashMap<String, String>();
 	
 	
-	public Addition(String n){
-		name = n;
-	}
-	
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String n) {
-		this.name = n;
+	public Addition(GunsPlus gp, String n, String tex){
+		super(gp, n, tex);
 	}
 	
 	public String getString(String s) {

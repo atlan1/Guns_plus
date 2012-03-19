@@ -5,8 +5,8 @@ import team.GunsPlus.GunsPlus;
 
 public class AdditionManager {
 	
-	public static Addition buildAddition(String name){
-		Addition add = new Addition(name);
+	public static Addition buildAddition(GunsPlus plugin, String name, String tex){
+		Addition add = new Addition(plugin, name, tex);
 		GunsPlus.allAdditions.add(add);
 		return add;
 	}
