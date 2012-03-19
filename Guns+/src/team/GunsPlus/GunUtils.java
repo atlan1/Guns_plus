@@ -171,7 +171,7 @@ public class GunUtils {
 
 		@SuppressWarnings("deprecation")
 		public static void removeAmmo(ArrayList<ItemStack> ammo ,SpoutPlayer p){
-			if(ammo==null) return;
+			if(ammo.isEmpty()) return;
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			Inventory inv = p.getInventory();
 			ItemStack ammoStack = null; 
@@ -199,7 +199,7 @@ public class GunUtils {
 		}
 
 		public static boolean checkInvForAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo) {
-			if(ammo==null) return true;
+			if(ammo.isEmpty()) return true;
 			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 			Inventory inv = p.getInventory();
 			for(ItemStack theStack : ammo){

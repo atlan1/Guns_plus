@@ -190,6 +190,7 @@ public class GunsPlusListener implements Listener {
 				plugin.hudBackground);
 		hud.start(sp);
 		GunsPlus.fireCounter.put(sp, 0);
+		if(GunsPlus.notifications)
 		sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN
 				+ "By " + plugin.getDescription().getAuthors(),
 				Material.SULPHUR);

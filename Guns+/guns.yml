@@ -65,3 +65,6 @@ Sniper:
                 id: 9
                 duration: 20
                 strenght: 1
+        targetlocation:
+            smoke:
+                density: 4
