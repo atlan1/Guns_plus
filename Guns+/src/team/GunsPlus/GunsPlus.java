@@ -332,11 +332,6 @@ public class GunsPlus extends JavaPlugin {
 				
 				ArrayList<Addition> adds = new ArrayList<Addition>(ConfigParser.getAdditions(gunsArray[i]+".additions"));
 				
-				if(ammo.isEmpty()){
-						throw new Exception(" Can't find any valid ammo for "+gunsArray[i]);
-				}
-				
-				
 				if(texture==null){
 						throw new Exception(" Can't find texture url for "+gunsArray[i]+"!");
 				}
