@@ -138,38 +138,40 @@ public class GunsPlus extends JavaPlugin {
 		for(Object additionnode:additionsConfig.getKeys(false)){
 			try{
 				String name = additionnode.toString();
-				float randomfactor = (float) gunsConfig.getDouble(additionnode+".accuracy.random-factor");
+				String addtexture = additionsConfig.getString(additionnode+".add-texture");
+				float randomfactor = (float) additionsConfig.getDouble(additionnode+".accuracy.random-factor");
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
-				int critical =  gunsConfig.getInt(additionnode+".critical");
-				int range =  gunsConfig.getInt(additionnode+".range");
-				int damage =  gunsConfig.getInt(additionnode+".damage");
-				int reloadTime =   gunsConfig.getInt(additionnode+".reload-time");
-				int shotDelay=  gunsConfig.getInt(additionnode+".shot-delay");
-				int shotsBetweenReload =  gunsConfig.getInt(additionnode+".shots-between-reload");
-				float recoil = (float) gunsConfig.getDouble(additionnode+".recoil");
-				float weight = (float) gunsConfig.getDouble(additionnode+".weight");
-				float knockback =  (float) gunsConfig.getDouble(additionnode+".knockback");
-				float changedamage =  (float) gunsConfig.getDouble(additionnode+".damage-change");
-				int zoomfactor =  gunsConfig.getInt(additionnode+".zoom-factor", 0);
-				int headShotDamage =  gunsConfig.getInt(additionnode+".head-shot-damage");
-				int shotsoundvolume = gunsConfig.getInt(additionnode+".shot-sound.volume");
-				int reloadsoundvolume = gunsConfig.getInt(additionnode+".reload-sound.volume");
-				String shotSound = gunsConfig.getString(additionnode+".shot-sound.url");
-				String reloadSound = gunsConfig.getString(additionnode+".reload-sound.url");
-				String zoomTexture = gunsConfig.getString(additionnode+".zoom-texture");
+				int critical =  additionsConfig.getInt(additionnode+".critical");
+				int range =  additionsConfig.getInt(additionnode+".range");
+				int damage =  additionsConfig.getInt(additionnode+".damage");
+				int reloadTime =   additionsConfig.getInt(additionnode+".reload-time");
+				int shotDelay=  additionsConfig.getInt(additionnode+".shot-delay");
+				int shotsBetweenReload =  additionsConfig.getInt(additionnode+".shots-between-reload");
+				float recoil = (float) additionsConfig.getDouble(additionnode+".recoil");
+				float weight = (float) additionsConfig.getDouble(additionnode+".weight");
+				float knockback =  (float) additionsConfig.getDouble(additionnode+".knockback");
+				float changedamage =  (float) additionsConfig.getDouble(additionnode+".damage-change");
+				int zoomfactor =  additionsConfig.getInt(additionnode+".zoom-factor");
+				int headShotDamage =  additionsConfig.getInt(additionnode+".head-shot-damage");
+				int shotsoundvolume = additionsConfig.getInt(additionnode+".shot-sound.volume");
+				int reloadsoundvolume = additionsConfig.getInt(additionnode+".reload-sound.volume");
+				String shotSound = additionsConfig.getString(additionnode+".shot-sound.url");
+				String reloadSound = additionsConfig.getString(additionnode+".reload-sound.url");
+				String zoomTexture = additionsConfig.getString(additionnode+".zoom-texture");
+				String spread_angle = additionsConfig.getString(additionnode+".accuracy.spread-angle");
 				
-				String[] spread_angle = gunsConfig.getString(additionnode+".accuracy.spread-angle").split("->");
-				if(spread_angle.length==2){
-					spreadangleIN=Integer.parseInt(spread_angle[1]);
-					spreadangleOUT=Integer.parseInt(spread_angle[0]);
+				if(spread_angle!=null){
+					String[] split = spread_angle.split("->");
+					spreadangleIN=Integer.parseInt(split[1]);
+					spreadangleOUT=Integer.parseInt(split[0]);
 				}
 				
 //				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(additionnode+".effects"));
 //		TODO:
 //				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString(additionnode+".ammo")));
 				
-				Addition a = AdditionManager.buildAddition(name);
+				Addition a = AdditionManager.buildAddition(this, name, addtexture);
 				if(weight!=0)
 					AdditionManager.editNumberValue(a, "WEIGHT", weight);
 				if(changedamage!=0)
@@ -289,51 +291,56 @@ public class GunsPlus extends JavaPlugin {
 
 	public void loadGuns() {
 		Object[] gunsArray =  gunsConfig.getKeys(false).toArray();
-		for(int i = 0;i<gunsArray.length;i++){
+		for(Object gunnode : gunsArray){
 			try{
-				String name = gunsArray[i].toString();
-				boolean hudenabled = gunsConfig.getBoolean(gunsArray[i]+".hud-enabled", true);
-				float randomfactor = (float) gunsConfig.getDouble(gunsArray[i]+".accuracy.random-factor", 1.0);
+				String name = gunnode.toString();
+				boolean hudenabled = gunsConfig.getBoolean(gunnode+".hud-enabled", true);
+				float randomfactor = (float) gunsConfig.getDouble(gunnode+".accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
-				int critical =  gunsConfig.getInt((String) gunsArray[i]+".critical", 0);
-				int range =  gunsConfig.getInt((String) gunsArray[i]+".range", 0);
-				int damage =  gunsConfig.getInt((String) gunsArray[i]+".damage", 0);
-				int reloadTime =   gunsConfig.getInt((String) gunsArray[i]+".reload-time", 0);
-				int shotDelay=  gunsConfig.getInt((String) gunsArray[i]+".shot-delay", 0);
-				int shotsBetweenReload =  gunsConfig.getInt((String) gunsArray[i]+".shots-between-reload", 0);
-				float recoil = (float) gunsConfig.getDouble((String) gunsArray[i]+".recoil", 0);
-				float weight = (float) gunsConfig.getDouble((String) gunsArray[i]+".weight", 0);
-				float knockback =  (float) gunsConfig.getDouble((String) gunsArray[i]+".knockback", 1.0);
-				float changedamage =  (float) gunsConfig.getDouble((String) gunsArray[i]+".damage-change", 0);
-				int zoomfactor =  gunsConfig.getInt((String) gunsArray[i]+".zoom-factor", 0);
-				int headShotDamage =  gunsConfig.getInt((String) gunsArray[i]+".head-shot-damage", 0);
-				int shotsoundvolume = gunsConfig.getInt(gunsArray[i]+".shot-sound.volume", 50);
-				int reloadsoundvolume = gunsConfig.getInt(gunsArray[i]+".reload-sound.volume", 50);
-				String shotSound = gunsConfig.getString(gunsArray[i]+".shot-sound.url");
-				String reloadSound = gunsConfig.getString(gunsArray[i]+".reload-sound.url");
-				String zoomTexture = gunsConfig.getString(gunsArray[i]+".zoom-texture");
-				String texture = gunsConfig.getString(gunsArray[i]+".texture");
+				int critical =  gunsConfig.getInt((String) gunnode+".critical", 0);
+				int range =  gunsConfig.getInt((String) gunnode+".range", 0);
+				int damage =  gunsConfig.getInt((String) gunnode+".damage", 0);
+				int reloadTime =   gunsConfig.getInt((String) gunnode+".reload-time", 0);
+				int shotDelay=  gunsConfig.getInt((String) gunnode+".shot-delay", 0);
+				int shotsBetweenReload =  gunsConfig.getInt((String) gunnode+".shots-between-reload", 0);
+				float recoil = (float) gunsConfig.getDouble((String) gunnode+".recoil", 0);
+				float weight = (float) gunsConfig.getDouble((String) gunnode+".weight", 0);
+				float knockback =  (float) gunsConfig.getDouble((String) gunnode+".knockback", 1.0);
+				float changedamage =  (float) gunsConfig.getDouble((String)gunnode+".damage-change", 0);
+				int zoomfactor =  gunsConfig.getInt((String) gunnode+".zoom-factor", 0);
+				int headShotDamage =  gunsConfig.getInt((String) gunnode+".head-shot-damage", 0);
+				int shotsoundvolume = gunsConfig.getInt(gunnode+".shot-sound.volume", 50);
+				int reloadsoundvolume = gunsConfig.getInt(gunnode+".reload-sound.volume", 50);
+				String shotSound = gunsConfig.getString(gunnode+".shot-sound.url");
+				String reloadSound = gunsConfig.getString(gunnode+".reload-sound.url");
+				String zoomTexture = gunsConfig.getString(gunnode+".zoom-texture");
+				String texture = gunsConfig.getString(gunnode+".texture");
 				
-				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunsArray[i]+".projectile.type"));
-				projectile.setSpeed(gunsConfig.getDouble(gunsArray[i]+".projectile.speed", 1.0));
+				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type"));
+				projectile.setSpeed(gunsConfig.getDouble(gunnode+".projectile.speed", 1.0));
 				
 				
 				
-				String[] spread_angle = gunsConfig.getString(gunsArray[i]+".accuracy.spread-angle").split("->");
+				String[] spread_angle = gunsConfig.getString(gunnode+".accuracy.spread-angle").split("->");
 				if(spread_angle.length==2){
 					spreadangleIN=Integer.parseInt(spread_angle[1]);
 					spreadangleOUT=Integer.parseInt(spread_angle[0]);
 				}
 				
-				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(gunsArray[i]+".effects"));
-		
-				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString((String) gunsArray[i]+".ammo")));
+				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(gunnode+".effects"));
 				
-				ArrayList<Addition> adds = new ArrayList<Addition>(ConfigParser.getAdditions(gunsArray[i]+".additions"));
+				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>();
+				List<ItemStack> ammoStacks= ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
+				if(!(ammoStacks==null||ammoStacks.isEmpty())){
+					ammo = new ArrayList<ItemStack>(ammoStacks);
+				}
+				
+				ArrayList<Addition> adds = new ArrayList<Addition>(ConfigParser.getAdditions(gunnode+".additions"));
+				
 				
 				if(texture==null){
-						throw new Exception(" Can't find texture url for "+gunsArray[i]+"!");
+						throw new Exception(" Can't find texture url for "+gunnode+"!");
 				}
 				//CREATING GUN
 				Gun g = GunManager.buildNewGun(this,name, texture);
