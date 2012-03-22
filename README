@@ -4,7 +4,7 @@ The properties of the items can be set in the configuration files.
 Enjoy! :)
 
 ***TO-DO***
-	 * ---NEWS---
+	 * ---NEW---
 	 * 1. Better fire rate...perhaps with a milisecond timer instead of ticks
 	 * 2. Combine Accuracy and Bullet Spread # but has to be improved
 	 * 3. Improve target detection
@@ -14,6 +14,8 @@ Enjoy! :)
 	 * 7. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be sellable)
 	 *    MoreMaterials (you should be able to use MM items in gun recipes)
 	 * 8. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
+	 * 9. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
+	 * 10. Add Area of Effect option (such as targetenity in effects, area that is influnced)
 	 * ---FIX---
 	 * 1. Permissions ? #
 	 * 2. Sound texture precache -> seems to be fixed on latest spout update  # ?
