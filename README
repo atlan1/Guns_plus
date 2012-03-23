@@ -4,26 +4,23 @@ The properties of the items can be set in the configuration files.
 Enjoy! :)
 
 ***TO-DO***
-	 * ---NEWS---
-	 * 1. Better fire rate...
-	 * 2. Combine Accuracy and Bullet Spread #
-	 * 3. Ranged damages #
-	 * 4. Improve bullet hits, option to define bullet number
-	 * 5. Placeable Guns: make guns mountable on a tripod and make tripod-gun combination
-	 * 6. Explosion damage protect  +
-	 * 7. Gun weight to specify the walk speed  # but seems to does not work
-	 * 8. Disable HUD for specific guns  
-	 * 9. Hook into certain plugins: Citizens, Chestshop, MoreMaterials
-	 * 
+	 * ---NEW---
+	 * 1. Better fire rate...perhaps with a milisecond timer instead of ticks
+	 * 2. Combine Accuracy and Bullet Spread # but has to be improved
+	 * 3. Improve target detection
+	 * 4. Placeable Guns: make guns mountable on a tripod and make tripod-gun combination;  
+	 * 5. Explosion damage protect  # 
+	 * 6. Gun weight to specify the walk speed  # perhaps scale the values a bit  
+	 * 7. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be sellable)
+	 *    MoreMaterials (you should be able to use MM items in gun recipes)
+	 * 8. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
+	 * 9. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
+	 * 10. Add Area of Effect option (such as targetenity in effects, area that is influnced)
 	 * ---FIX---
 	 * 1. Permissions ? #
 	 * 2. Sound texture precache -> seems to be fixed on latest spout update  # ?
 	 * 3. HUD should overlay the zoomtexture #
 	 * 4. make shorter smoke trail; less density 
-	 * 5. Bypassing reload time if you switch weapons #
-	 * 6. Reload command  #
-  	 * 7. Fireballs, Projectiles #
-         * 8. All Custom Items can bypass LWC protections, they can still do this after our hook into lwc :( 
-         * 9. shoot delay seems to be broken... #
+	 * 5. Reload command 
          A '#' behind the todo/fix means they are done.
          A '+' behind a todo/fix means they are in progress of being added. 
