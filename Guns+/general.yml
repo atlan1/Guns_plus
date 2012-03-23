@@ -3,7 +3,7 @@
 # Write the ids of the custom items so you can copy them and use it in other plugins( e.g. mobarena)
 id-info-guns: true
 id-info-ammo: true
-id-info-additions: ture
+id-info-additions: true
 
 # Write the loaded items in the log on plugin start
 loaded-guns: true

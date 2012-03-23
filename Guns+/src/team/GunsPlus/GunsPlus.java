@@ -27,7 +27,6 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
-import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Item.Ammo;
@@ -133,6 +132,7 @@ public class GunsPlus extends JavaPlugin {
 		loadRecipes();
 		Util.printCustomIDs();
 		updateHUD();
+		for(Gun g: allGuns) System.out.println(g.getName()+"|"+g.getValue("ZOOMFACTOR"));
 	}
 	
 	public void loadAdditions(){
@@ -329,10 +329,10 @@ public class GunsPlus extends JavaPlugin {
 					spreadangleOUT=Integer.parseInt(spread_angle[0]);
 				}
 				
-				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(gunnode+".effects"));
+				ArrayList<Effect> effects = new ArrayList<Effect>(ConfigParser.getEffects(gunnode+".effects"));
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>();
-				List<ItemStack> ammoStacks= ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
+				List<ItemStack> ammoStacks = ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
 				if(!(ammoStacks==null||ammoStacks.isEmpty())){
 					ammo = new ArrayList<ItemStack>(ammoStacks);
 				}
@@ -340,11 +340,12 @@ public class GunsPlus extends JavaPlugin {
 				ArrayList<Addition> adds = new ArrayList<Addition>(ConfigParser.getAdditions(gunnode+".additions"));
 				
 				
-				if(texture==null){
+				if(texture==null)
 						throw new Exception(" Can't find texture url for "+gunnode+"!");
-				}
+				
 				//CREATING GUN
 				Gun g = GunManager.buildNewGun(this,name, texture);
+
 				GunManager.editGunValue(g, "WEIGHT", weight);
 				GunManager.editGunValue(g, "CHANGEDAMAGE", changedamage);
 				GunManager.editGunValue(g, "DAMAGE", damage);
@@ -368,8 +369,19 @@ public class GunsPlus extends JavaPlugin {
 			 	GunManager.editAmmo(g, ammo);
 				GunManager.editObject(g, "PROJECTILE", projectile);
 				GunManager.editObject(g, "HUDENABLED", hudenabled);
-				GunManager.addGunAdditions(g, adds);
-				for(EffectSection es : effects)  GunManager.addGunEffect(g, es);
+				GunManager.editEffects(g, effects);
+				
+				//registering shapeless recipes for additions&&building an extra gun for each addition
+				for(Addition a: adds){
+					List<ItemStack> listIngred = new ArrayList<ItemStack>();
+						listIngred.add(new SpoutItemStack(a));
+						listIngred.add(new SpoutItemStack(g));
+					Gun gpa = GunManager.buildNewGun(this, GunUtils.getGunNameWithAdditions(g, a), texture);
+					GunManager.copyGunProperties(g, gpa);
+					GunManager.buildAdditionGun(this, gpa, a);
+					RecipeManager.addShapelessRecipe(listIngred, new SpoutItemStack(gpa));
+					System.out.println("IN MAIN: "+gpa.getName()+"|"+allGuns.get(allGuns.indexOf(gpa)).getValue("ZOOMFACTOR"));
+				}
 			}catch(Exception e){
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
@@ -377,11 +389,10 @@ public class GunsPlus extends JavaPlugin {
 					e.printStackTrace();
 			}
 		}
+		for(Gun o:allGuns) System.out.println("IN MAIN 2: "+o.getName()+"|"+o.getValue("ZOOMFACTOR"));
 		if(generalConfig.getBoolean("loaded-guns")==true){
 			log.log(Level.INFO, PRE + " -------------- Guns loaded: ---------------");
-			for(int k=0;k<allGuns.size();k++){
-				log.log(Level.INFO, "- "+allGuns.get(k).getName());
-			}
+			for(Gun g : allGuns) log.log(Level.INFO, "- "+g.getName());
 		}
 	}
 

@@ -2,7 +2,6 @@ package team.GunsPlus;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.block.Block;
 import org.getspout.spoutapi.block.SpoutBlock;
@@ -15,8 +14,8 @@ import com.griefcraft.util.matchers.DoubleChestMatcher;
 
 public class Addition extends GenericCustomItem{
 	
-	private Map<String,Float> numbers = new HashMap<String,Float>(); 
-	private Map<String, String> strings = new HashMap<String, String>();
+	private HashMap<String,Float> numbers = new HashMap<String,Float>(); 
+	private HashMap<String, String> strings = new HashMap<String, String>();
 	
 	
 	public Addition(GunsPlus gp, String n, String tex){
@@ -86,11 +85,11 @@ public class Addition extends GenericCustomItem{
 		return numbers.containsKey(name)?numbers.get(name):null;
 	}
 	
-	public Map<String, Float> getNumberValues(){
+	public HashMap<String, Float> getNumberValues(){
 		return numbers;
 	}
 	
-	public Map<String, String> getStringValues(){
+	public HashMap<String, String> getStringValues(){
 		return strings;
 	}
 	

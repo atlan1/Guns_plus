@@ -248,7 +248,7 @@ public class Util {
 			if(GunsPlus.allGuns.isEmpty()) GunsPlus.log.log(Level.INFO, "EMPTY");
 			for (Gun gun : GunsPlus.allGuns) {
 				GunsPlus.log.log(Level.INFO, "ID of " + gun.getName() + ":"
-						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(gun).getTypeId() + ":"
 						+ new SpoutItemStack(gun).getDurability());
 			}
 		}
@@ -258,8 +258,18 @@ public class Util {
 			if(GunsPlus.allAmmo.isEmpty()) GunsPlus.log.log(Level.INFO, "EMPTY");
 			for (Ammo ammo : GunsPlus.allAmmo) {
 				GunsPlus.log.log(Level.INFO, "ID of " + ammo.getName() + ":"
-						+ Material.FLINT.getId() + ":"
+						+ new SpoutItemStack(ammo).getTypeId() + ":"
 						+ new SpoutItemStack(ammo).getDurability());
+			}
+		}
+		if (GunsPlus.generalConfig.getBoolean("id-info-additions", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
+					+ " ------------  ID's of the additions: -----------------");
+			if(GunsPlus.allAdditions.isEmpty()) GunsPlus.log.log(Level.INFO, "EMPTY");
+			for (Addition add : GunsPlus.allAdditions) {
+				GunsPlus.log.log(Level.INFO, "ID of " + add.getName() + ":"
+						+ new SpoutItemStack(add).getTypeId() + ":"
+						+ new SpoutItemStack(add).getDurability());
 			}
 		}
 	}

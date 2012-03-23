@@ -14,18 +14,17 @@ import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Addition;
+import team.GunsPlus.Effect;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Util;
 
 public class ConfigParser {
 
-	public static List<ItemStack> parseItems(String s)
-    {
+	public static List<ItemStack> parseItems(String s){
         List<ItemStack> result = new LinkedList<ItemStack>();
         
         String[] items = s.split(",");
-        for (String item : items)
-        {
+        for (String item : items){
             ItemStack mat = parseItem(item.trim());
             if (mat != null)
                 result.add(mat);
@@ -34,8 +33,7 @@ public class ConfigParser {
         return result;
     }
     
-    public static ItemStack parseItem(String item)
-    {
+    public static ItemStack parseItem(String item){
         if (item == null || item.equals(""))
             return null;
         
@@ -48,8 +46,7 @@ public class ConfigParser {
         return null;
     }
     
-    private static ItemStack singleItem(String item)
-    {
+    private static ItemStack singleItem(String item){
     	SpoutItemStack custom = null;
         Material m = getMaterial(item);
         if(m==null){
@@ -80,8 +77,7 @@ public class ConfigParser {
         }
     }
     
-    private static ItemStack withDurability(String item, String durab)
-    {
+    private static ItemStack withDurability(String item, String durab){
     	Material m = getMaterial(item);
         if (m == null)
             return null;
@@ -93,8 +89,7 @@ public class ConfigParser {
         return sis;
     }
     
-    private static Material getMaterial(String item)
-    {
+    private static Material getMaterial(String item){
         if (item.matches("[0-9]*"))
             return Material.getMaterial(Integer.parseInt(item));
         
@@ -149,70 +144,72 @@ public class ConfigParser {
     	return key;
     }
     
-    public static List<EffectSection> getEffects(String path){
-    	List<EffectSection> effects = new ArrayList<EffectSection>();
+    public static List<Effect> getEffects(String path){
+    	List<Effect> effects = new ArrayList<Effect>();
+    	if(!GunsPlus.gunsConfig.isConfigurationSection(path)||GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
     	for(String effectsection: GunsPlus.gunsConfig.getConfigurationSection(path).getKeys(false)){
     		EffectSection effsec = EffectSection.valueOf(effectsection.toUpperCase());
     		for(String effecttype : GunsPlus.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
     			EffectType efftyp = EffectType.valueOf(effecttype.toUpperCase());
     			if(Util.isAllowedInEffectSection(efftyp, effsec)){
-    				effsec.addEffect(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
+    				effects.add(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
     			}
     		}
-    		effects.add(effsec);
     	}
+    	if(GunsPlus.debug)
+    		for(Effect es : effects) System.out.println("SECTION: "+es.getEffectsection()+"| TYPE:"+es.getEffecttype());
     	return effects;
     }
     
-    private static EffectType buildEffect(EffectType efftyp, EffectSection es, String path){
-    	switch(efftyp){
-	    	case EXPLOSION:
-	    		efftyp.addArgument("SIZE", GunsPlus.gunsConfig.getInt(path+".size"));
-	    		break;
-	    	case LIGHTNING:
-	    		break;
-	    	case SMOKE:
-	    		efftyp.addArgument("DENSITY", GunsPlus.gunsConfig.getInt(path+".density"));
-	    		break;
-	    	case FIRE:
-	    		if(es.equals(EffectSection.SHOOTER)||es.equals(EffectSection.TARGETENTITY))
-	    			efftyp.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
-	    		else
-	    			efftyp.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
-	    		break;
-	    	case PUSH:
-	    		efftyp.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
-	    		break;
-	    	case DRAW:
-	    		efftyp.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
-	    		break;
-	    	case POTION:
-	    		efftyp.addArgument("ID", GunsPlus.gunsConfig.getInt(path+".id"));
-	    		efftyp.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
-	    		efftyp.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
-	    		break;
-	    	case SPAWN:
-	    		efftyp.addArgument("ENTITY", GunsPlus.gunsConfig.getInt(path+".entity"));
-	    		break;
-	    	case PLACE:
-	    		efftyp.addArgument("BLOCK", GunsPlus.gunsConfig.getInt(path+".block"));
-	    		break;
-	    	case BREAK:
-	    		efftyp.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
-	    		break;
+    private static Effect buildEffect(EffectType efftyp, EffectSection es, String path){
+    		Effect e = new Effect(efftyp, es);
+    		switch(efftyp){
+		    	case EXPLOSION:
+		    		e.addArgument("SIZE", GunsPlus.gunsConfig.getInt(path+".size"));
+		    		break;
+		    	case LIGHTNING:
+		    		break;
+		    	case SMOKE:
+		    		e.addArgument("DENSITY", GunsPlus.gunsConfig.getInt(path+".density"));
+		    		break;
+		    	case FIRE:
+		    		if(es.equals(EffectSection.SHOOTER)||es.equals(EffectSection.TARGETENTITY))
+		    			e.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
+		    		else
+		    			e.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
+		    		break;
+		    	case PUSH:
+		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+		    		break;
+		    	case DRAW:
+		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+		    		break;
+		    	case POTION:
+		    		e.addArgument("ID", GunsPlus.gunsConfig.getInt(path+".id"));
+		    		e.addArgument("DURATION", GunsPlus.gunsConfig.getInt(path+".duration"));
+		    		e.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
+		    		break;
+		    	case SPAWN:
+		    		e.addArgument("ENTITY", GunsPlus.gunsConfig.getInt(path+".entity"));
+		    		break;
+		    	case PLACE:
+		    		e.addArgument("BLOCK", GunsPlus.gunsConfig.getInt(path+".block"));
+		    		break;
+		    	case BREAK:
+		    		e.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
+		    		break;
     	}
-    	return efftyp;
+    	return e;
     }
     
     public static ArrayList<Addition> getAdditions(String path){
     	ArrayList<Addition> adds = new ArrayList<Addition>();
-    	String string = GunsPlus.additionsConfig.getString(path);
+    	String string = GunsPlus.gunsConfig.getString(path);
     	if(string!=null){
-    		string=string.trim();
 	    	String[] split = string.split(",");
 	    	for(String splitString : split){
 	    		for(Addition a : GunsPlus.allAdditions){
-		    		if(a.getName().equalsIgnoreCase(splitString)){
+		    		if(a.getName().equalsIgnoreCase(splitString.trim())){
 		    			adds.add(a);
 		    		}
 		    	}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 
 import org.bukkit.Material;
@@ -23,9 +22,8 @@ import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 
-import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.Projectile;
-import team.GunsPlus.Addition;
+import team.GunsPlus.Effect;
 import team.GunsPlus.GunUtils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Task;
@@ -35,11 +33,10 @@ public class Gun extends GenericCustomItem{
 
 	//PRIVATE PROPERTIES
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>(); //Holds all accepted ammo itemstacks
-	private Map<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
-	private Map<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
-	private Map<String, Object> objects = new HashMap<String, Object>(); //holds anything else 
-	private ArrayList<EffectSection> effects = new ArrayList<EffectSection>(); //Holds the effects of the gun
-	private ArrayList<Addition> additions = new ArrayList<Addition>(); //Holds all the additions that can be assigned to this gun type
+	private HashMap<String,Float> values = new HashMap<String,Float>(); //Holds Damage, Recoil, Etc in single location
+	private HashMap<String, String> resources = new HashMap<String, String>(); //Holds file resources like texture and sounds
+	private HashMap<String, Object> objects = new HashMap<String, Object>(); //holds anything else 
+	private ArrayList<Effect> effects = new ArrayList<Effect>(); //Holds the effects of the gun
 	private GunsPlus plugin;
 	
 	public Gun(Plugin plugin, String name, String texture) {
@@ -90,6 +87,7 @@ public class Gun extends GenericCustomItem{
 			objects.put("ZOOMTEXTURE", zoomtex);
 		}
 		if(!Util.isZooming(sp)){
+			System.out.println(this.getName()+"|"+getValue("ZOOMFACTOR"));
 			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), (int) getValue("ZOOMFACTOR")); 
 			Util.setZooming(sp, true);
 			if(GunsPlus.notifications)  (sp).sendNotification(this.getName(), "Zoomed in!", Material.SULPHUR);
@@ -102,10 +100,11 @@ public class Gun extends GenericCustomItem{
 
 	public void fire(SpoutPlayer sp){
 		if(!GunUtils.checkInvForAmmo(sp, getAmmo()))return;
-		Ammo usedAmmo = GunUtils.getFirstAmmo();
 		if(Util.isReloading(sp))return;
 		else if(Util.isDelayed(sp)) return;
 		else{
+			
+			Ammo usedAmmo = GunUtils.getFirstAmmo();
 			GunUtils.shootProjectile(sp, (Projectile) getObject("PROJECTILE"));
 			HashMap<LivingEntity, Integer> targets_damage = GunUtils.getTargets(sp, this);
 			for(LivingEntity tar : targets_damage.keySet()){
@@ -212,38 +211,53 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public void setValue(String name, Float value) {
+		if(name.equalsIgnoreCase("zoomfactor"))System.out.println(this.getName()+"|"+this.getValue("ZOOMFACTOR")+"->"+value);
 		values.put(name, value);
 	}
 	
 	public float getValue(String name) {
-		return values.containsKey(name)?values.get(name):null;
+		return values.containsKey(name)?values.get(name):0;
 	}
 	
-	public void addEffect(EffectSection es){
+	public void addEffect(Effect es){
 		effects.add(es);
 	}
 	
-	public void removeEffect(EffectSection es){
+	public void removeEffect(Effect es){
 		if(effects.contains(es))
 			effects.remove(es);
 	}
 	
-	public void addAddition(Addition a){
-		additions.add(a);
+	public ArrayList<Effect> getEffects(){
+		return effects;
 	}
 	
-	public void removeAddition(Addition a){
-		if(additions.contains(a)){
-			additions.remove(a);
-		}
+	public void setEffects(ArrayList<Effect> effects){
+		this.effects = effects;
 	}
 	
-	public ArrayList<Addition> getAdditions(){
-		return additions;
+	public HashMap<String, String> getResources(){
+		return resources;
 	}
 
-	public void setAdditions(ArrayList<Addition> adds) {
-		additions=adds;
+	public HashMap<String, Object> getObjects(){
+		return objects;
 	}
-
+	
+	public void setResources(HashMap<String, String> resources){
+		this.resources = resources;
+	}
+	
+	public void setObjects(HashMap<String, Object> objects){
+		this.objects = objects;
+	}
+	
+	public HashMap<String, Float> getValues(){
+		return values;
+	}
+	
+	public void setValues(HashMap<String, Float>values){
+		if(values.containsKey("ZOOMFACTOR")) System.out.println(this.getName()+"|"+this.getValue("ZOOMFACTOR")+"->"+values.get("ZOOMFACTOR"));
+		this.values = values;
+	}
 }
