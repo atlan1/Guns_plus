@@ -43,6 +43,12 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Task;
 
 public class GunUtils {
+	
+	public static Gun getGun(String name){
+		for(Gun g : GunsPlus.allGuns)
+			if(g.getName().equalsIgnoreCase(name)) return g;
+		return null;
+	}
 
 	
 	public static String getGunNameWithAdditions(Gun g, Addition...adds){
@@ -89,24 +95,23 @@ public class GunUtils {
 			HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 			Location loc = p.getEyeLocation();
 			HashMap<LivingEntity,Integer > e = null;
-			for(int i=0; i<=(Util.isZooming(p)?(g.getValue("SPREAD_IN")/2):(g.getValue("SPREAD_OUT")/2)); i+=3){
-				loc = p.getEyeLocation();
-				loc.setYaw(loc.getYaw()+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR"))));
-				e = getTargetEntities(loc, p,g);
-				targets.putAll(e);
-				loc = p.getEyeLocation();
-				loc.setYaw(loc.getYaw()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc, p,g);
-				targets.putAll(e);
-				loc = p.getEyeLocation();
-				loc.setPitch(loc.getPitch()+Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc,p, g);
-				targets.putAll(e);
-				loc = p.getEyeLocation();
-				loc.setPitch(loc.getPitch()-Util.getRandomInteger(i, i+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR")))));
-				e = getTargetEntities(loc,p, g);
-				targets.putAll(e);
-			}
+			int acc = Util.getRandomInteger(0, 101)+1;
+			if(acc>=g.getValue(Util.isZooming(p)?"MISSING_IN":"MISSING_OUT"))
+				for(int i=1; i<=(Util.isZooming(p)?(g.getValue("SPREAD_IN")/2)+1:(g.getValue("SPREAD_OUT")/2)+1); i+=4){
+					loc = p.getEyeLocation();
+					loc.setYaw(loc.getYaw()+Util.getRandomInteger(i, Math.round(i*g.getValue("RANDOMFACTOR"))));
+					e = getTargetEntities(loc, p,g);
+					targets.putAll(e);
+					loc.setYaw(loc.getYaw()-Util.getRandomInteger(i, i+ Math.round(i*g.getValue("RANDOMFACTOR"))));
+					e = getTargetEntities(loc, p,g);
+					targets.putAll(e);
+					loc.setPitch(loc.getPitch()+Util.getRandomInteger(i, i+ Math.round(i*g.getValue("RANDOMFACTOR"))));
+					e = getTargetEntities(loc,p, g);
+					targets.putAll(e);
+					loc.setPitch(loc.getPitch()-Util.getRandomInteger(i, i+ Math.round(i*g.getValue("RANDOMFACTOR"))));
+					e = getTargetEntities(loc,p, g);
+					targets.putAll(e);
+				}
 			return targets;
 		}
 

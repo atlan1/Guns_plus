@@ -14,9 +14,8 @@ import com.griefcraft.util.matchers.DoubleChestMatcher;
 
 public class Addition extends GenericCustomItem{
 	
-	private HashMap<String,Float> numbers = new HashMap<String,Float>(); 
+	private HashMap<String,Float> numbers = new HashMap<String,Float>();
 	private HashMap<String, String> strings = new HashMap<String, String>();
-	
 	
 	public Addition(GunsPlus gp, String n, String tex){
 		super(gp, n, tex);
@@ -72,13 +71,13 @@ public class Addition extends GenericCustomItem{
 	}
 	
 	public void removeString(String name) {
-		if(strings.containsKey(name))
-			this.strings.remove(name);
+		if(strings.containsKey(name)){
+			this.strings.remove(name);}
 	}
 	
 	public void removeValue(String name) {
-		if(numbers.containsKey(name))
-			this.numbers.remove(name);
+		if(numbers.containsKey(name)){
+			this.numbers.remove(name);}
 	}
 	
 	public float getValue(String name) {
@@ -92,7 +91,6 @@ public class Addition extends GenericCustomItem{
 	public HashMap<String, String> getStringValues(){
 		return strings;
 	}
-	
 	
 	
 }

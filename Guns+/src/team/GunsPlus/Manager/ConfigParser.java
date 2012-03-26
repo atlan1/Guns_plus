@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.morematerials.morematerials.materials.SMCustomItem;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.CustomBlock;
 
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -63,6 +66,16 @@ public class ConfigParser {
 			for(Addition a : GunsPlus.allAdditions){
 				if(a.getName().toString().equals(item)){
 					custom = new SpoutItemStack(a);
+				}
+			}
+			for(SMCustomItem smci : GunsPlus.allMoreMaterialsItems){
+				if(smci.getName().toString().equals(item)){
+					custom = new SpoutItemStack(smci);
+				}
+			}
+			for(CustomBlock cb : GunsPlus.allMoreMaterialsBlocks){
+				if(cb.getName().toString().equals(item)){
+					custom = new SpoutItemStack(cb);
 				}
 			}
         }
@@ -156,8 +169,6 @@ public class ConfigParser {
     			}
     		}
     	}
-    	if(GunsPlus.debug)
-    		for(Effect es : effects) System.out.println("SECTION: "+es.getEffectsection()+"| TYPE:"+es.getEffecttype());
     	return effects;
     }
     
@@ -179,10 +190,10 @@ public class ConfigParser {
 		    			e.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
 		    		break;
 		    	case PUSH:
-		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getDouble(path+".speed"));
 		    		break;
 		    	case DRAW:
-		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getInt(path+".speed"));
+		    		e.addArgument("SPEED", GunsPlus.gunsConfig.getDouble(path+".speed"));
 		    		break;
 		    	case POTION:
 		    		e.addArgument("ID", GunsPlus.gunsConfig.getInt(path+".id"));
@@ -190,13 +201,13 @@ public class ConfigParser {
 		    		e.addArgument("STRENGTH", GunsPlus.gunsConfig.getInt(path+".strength"));
 		    		break;
 		    	case SPAWN:
-		    		e.addArgument("ENTITY", GunsPlus.gunsConfig.getInt(path+".entity"));
+		    		e.addArgument("ENTITY", GunsPlus.gunsConfig.getString(path+".entity"));
 		    		break;
 		    	case PLACE:
 		    		e.addArgument("BLOCK", GunsPlus.gunsConfig.getInt(path+".block"));
 		    		break;
 		    	case BREAK:
-		    		e.addArgument("POTENCY", GunsPlus.gunsConfig.getInt(path+".potency"));
+		    		e.addArgument("POTENCY", GunsPlus.gunsConfig.getDouble(path+".potency"));
 		    		break;
     	}
     	return e;

@@ -87,7 +87,6 @@ public class Gun extends GenericCustomItem{
 			objects.put("ZOOMTEXTURE", zoomtex);
 		}
 		if(!Util.isZooming(sp)){
-			System.out.println(this.getName()+"|"+getValue("ZOOMFACTOR"));
 			GunUtils.zoomIn(plugin, sp, (GenericTexture)objects.get("ZOOMTEXTURE"), (int) getValue("ZOOMFACTOR")); 
 			Util.setZooming(sp, true);
 			if(GunsPlus.notifications)  (sp).sendNotification(this.getName(), "Zoomed in!", Material.SULPHUR);
@@ -190,7 +189,8 @@ public class Gun extends GenericCustomItem{
 	}
 
 	public void setAmmo(ArrayList<ItemStack> ammo) {
-		this.ammo = ammo;
+			ArrayList<ItemStack> list = new ArrayList<ItemStack>(ammo);
+			this.ammo = list;
 	}
 
 	public String getResource(String s) {
@@ -211,7 +211,6 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public void setValue(String name, Float value) {
-		if(name.equalsIgnoreCase("zoomfactor"))System.out.println(this.getName()+"|"+this.getValue("ZOOMFACTOR")+"->"+value);
 		values.put(name, value);
 	}
 	
@@ -233,7 +232,8 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public void setEffects(ArrayList<Effect> effects){
-		this.effects = effects;
+		ArrayList<Effect> list = new ArrayList<Effect>(effects);
+		this.effects = list;
 	}
 	
 	public HashMap<String, String> getResources(){
@@ -245,11 +245,13 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public void setResources(HashMap<String, String> resources){
-		this.resources = resources;
+		HashMap<String, String> list = new HashMap<String, String>(resources);
+		this.resources = list;
 	}
 	
 	public void setObjects(HashMap<String, Object> objects){
-		this.objects = objects;
+		HashMap<String, Object> list = new HashMap<String, Object>(objects);
+		this.objects = list;
 	}
 	
 	public HashMap<String, Float> getValues(){
@@ -257,7 +259,7 @@ public class Gun extends GenericCustomItem{
 	}
 	
 	public void setValues(HashMap<String, Float>values){
-		if(values.containsKey("ZOOMFACTOR")) System.out.println(this.getName()+"|"+this.getValue("ZOOMFACTOR")+"->"+values.get("ZOOMFACTOR"));
-		this.values = values;
+		HashMap<String, Float> list = new HashMap<String, Float>(values);
+		this.values = list;
 	}
 }

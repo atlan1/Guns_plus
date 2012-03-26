@@ -103,13 +103,16 @@ public class GunsPlusListener implements Listener {
 		}
 	}
 
-	// does not work pretty much? dont know why...
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onHeldItemChange(PlayerItemHeldEvent e) {
 		Player p = e.getPlayer();
 		if (!Util.hasSpoutcraft(p))
 			return;
 		SpoutPlayer sp = (SpoutPlayer) p;
+		if(Util.isZooming(sp)) {
+			Util.setZooming(sp, false);
+			GunUtils.zoomOut(sp);
+		}
 		ItemStack preItem = p.getInventory().getItem(e.getPreviousSlot());
 		ItemStack nextItem = p.getInventory().getItem(e.getNewSlot());
 		if (GunUtils.isGun(preItem)) {
@@ -117,11 +120,10 @@ public class GunsPlusListener implements Listener {
 		}
 		if (GunUtils.isGun(nextItem)) {
 			Gun g = GunUtils.getGun(nextItem);
-			sp.setWalkingMultiplier(1 - g.getValue("WEIGHT"));
-
+			sp.setWalkingMultiplier(1 - (g.getValue("WEIGHT")/100));
 		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onKeyPressed(KeyPressedEvent e) {
 		SpoutPlayer sp = e.getPlayer();

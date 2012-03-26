@@ -4,12 +4,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import net.morematerials.morematerials.Main;
+import net.morematerials.morematerials.SmpManager;
+import net.morematerials.morematerials.SmpPackage;
+import net.morematerials.morematerials.materials.SMCustomBlock;
+import net.morematerials.morematerials.materials.SMCustomItem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,6 +27,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -44,27 +52,26 @@ public class GunsPlus extends JavaPlugin {
 	
 	public static Logger log = Logger.getLogger("Minecraft");;
 	
+	public static List<SpoutPlayer> inZoom = new ArrayList<SpoutPlayer>();
+	public static HashMap<SpoutPlayer, Boolean> reloading = new HashMap<SpoutPlayer, Boolean>();
+	public static HashMap<SpoutPlayer, Boolean> delaying = new HashMap<SpoutPlayer, Boolean>();
+	public static HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
+	
+	public static HashMap<SpoutPlayer, GenericTexture> zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
+	public static HashMap<SpoutPlayer, HUD> playerHUD = new HashMap<SpoutPlayer, HUD>();
+	
 	public static boolean warnings = true;
 	public static boolean debug = false;
 	public static boolean notifications = true;
 	public static boolean autoreload = true;
-
-	public KeyType zoomKey = KeyType.RIGHT;
-	public static List<SpoutPlayer> inZoom = new ArrayList<SpoutPlayer>();
-	public static HashMap<SpoutPlayer, Boolean> reloading = new HashMap<SpoutPlayer, Boolean>();
-	public static HashMap<SpoutPlayer, Boolean> delaying = new HashMap<SpoutPlayer, Boolean>();
-	public static HashMap<SpoutPlayer, GenericTexture> zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
-	public static HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
-	public static HashMap<SpoutPlayer, HUD> playerHUD = new HashMap<SpoutPlayer, HUD>();
-	public static HashMap<SpoutPlayer, HashMap<ItemStack, Addition>> gunAdditions = new HashMap<SpoutPlayer, HashMap<ItemStack, Addition>>();
-	
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
 	public boolean hudenabled = false;
 	public int hudX = 0;
 	public int hudY = 0;
 	public String hudBackground = null;
-
+	public KeyType zoomKey = KeyType.RIGHT;
+	
 	public File gunsFile;
 	public static FileConfiguration gunsConfig;
 	public File additionsFile;
@@ -74,13 +81,13 @@ public class GunsPlus extends JavaPlugin {
 	public File recipeFile;
 	public static FileConfiguration recipeConfig;
 	public File generalFile;
-	
-	
 	public static FileConfiguration generalConfig;
 
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
+	public static List<SMCustomItem> allMoreMaterialsItems = new ArrayList<SMCustomItem>();
+	public static List<CustomBlock> allMoreMaterialsBlocks = new ArrayList<CustomBlock>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
 
 	@Override
@@ -92,15 +99,16 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
-		
+		config();
 		init();
 		
-		if(debug)
-			log.setLevel(Level.ALL);
+		if(debug) log.setLevel(Level.ALL);
+			
 		Plugin spout = getServer().getPluginManager().getPlugin("Spout");
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
+		Plugin mm = getServer().getPluginManager().getPlugin("MoreMaterials");
 		if(spout != null) {
 		    log.log(Level.INFO, PRE+" Plugged into Spout!");
 		}else{
@@ -117,14 +125,41 @@ public class GunsPlus extends JavaPlugin {
 			wg = (WorldGuardPlugin) worldguard;
 			log.log(Level.INFO, PRE+" Plugged into WorldGuard!");
 		}
+		//just experimental, hook into mm and provide the custom items in gun recipes
+		if(mm != null) {
+			Main moremats = (Main) mm;
+			SmpManager smpManager = moremats.getSmpManager();
+			if(smpManager!=null)
+				try {
+					Field f1 = SmpManager.class.getDeclaredField("smpPackages");
+					f1.setAccessible(true);
+					System.out.println(moremats+"|"+f1);
+					@SuppressWarnings("unchecked")
+					HashMap<String, SmpPackage> packages = (HashMap<String, SmpPackage>)f1.get(smpManager);
+					for(SmpPackage smp:packages.values()){
+						Field f2 = SmpPackage.class.getDeclaredField("customItemsList");
+						f2.setAccessible(true);
+						@SuppressWarnings("unchecked")
+						HashMap<String, SMCustomItem> items = (HashMap<String, SMCustomItem>)f2.get(smp);
+						for(SMCustomItem ci : items.values()) allMoreMaterialsItems.add(ci);
+						Field f3 = SmpPackage.class.getDeclaredField("customItemsList");
+						f3.setAccessible(true);
+						@SuppressWarnings("unchecked")
+						HashMap<String, SMCustomBlock> blocks = (HashMap<String, SMCustomBlock>)f3.get(smp);
+						for(SMCustomBlock cb : blocks.values()) allMoreMaterialsBlocks.add(cb);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			log.log(Level.INFO, PRE+" Plugged into MoreMaterials!");
+		}
 		
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
-		getCommand("guns+").setExecutor(new CommandEx());
+		getCommand("guns+").setExecutor(new CommandEx(this));
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
 	}
 
 	public void init() {
-		config();
 		performGeneral();
 		loadAdditions();
 		loadAmmo();
@@ -132,7 +167,6 @@ public class GunsPlus extends JavaPlugin {
 		loadRecipes();
 		Util.printCustomIDs();
 		updateHUD();
-		for(Gun g: allGuns) System.out.println(g.getName()+"|"+g.getValue("ZOOMFACTOR"));
 	}
 	
 	public void loadAdditions(){
@@ -143,6 +177,8 @@ public class GunsPlus extends JavaPlugin {
 				float randomfactor = (float) additionsConfig.getDouble(additionnode+".accuracy.random-factor");
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
+				int missingchanceIN = 0;
+				int missingchanceOUT = 0;
 				int critical =  additionsConfig.getInt(additionnode+".critical");
 				int range =  additionsConfig.getInt(additionnode+".range");
 				int damage =  additionsConfig.getInt(additionnode+".damage");
@@ -161,11 +197,17 @@ public class GunsPlus extends JavaPlugin {
 				String reloadSound = additionsConfig.getString(additionnode+".reload-sound.url");
 				String zoomTexture = additionsConfig.getString(additionnode+".zoom-texture");
 				String spread_angle = additionsConfig.getString(additionnode+".accuracy.spread-angle");
+				String missing_chance = additionsConfig.getString(additionnode+".accuracy.missing-chance");
 				
 				if(spread_angle!=null){
 					String[] split = spread_angle.split("->");
 					spreadangleIN=Integer.parseInt(split[1]);
 					spreadangleOUT=Integer.parseInt(split[0]);
+				}
+				if(missing_chance!=null){
+					String[] split = missing_chance.split("->");
+					missingchanceIN=Integer.parseInt(split[1]);
+					missingchanceOUT=Integer.parseInt(split[0]);
 				}
 				
 //				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(additionnode+".effects"));
@@ -193,6 +235,10 @@ public class GunsPlus extends JavaPlugin {
 					AdditionManager.editNumberValue(a, "SPREAD_OUT", (float) spreadangleOUT);
 				if(spreadangleIN!=0)
 					AdditionManager.editNumberValue(a, "SPREAD_IN", (float) spreadangleIN);
+				if(missingchanceOUT!=0)
+					AdditionManager.editNumberValue(a, "MISSING_OUT", (float) missingchanceOUT);
+				if(missingchanceIN!=0)
+					AdditionManager.editNumberValue(a, "MISSING_IN", (float) missingchanceIN);
 				if(recoil!=0)
 					AdditionManager.editNumberValue(a, "RECOIL", recoil);
 				if(reloadTime!=0)
@@ -259,9 +305,7 @@ public class GunsPlus extends JavaPlugin {
 		
 		if(generalConfig.getBoolean("loaded-ammo")==true){
 			log.log(Level.INFO, PRE + " -------------- Ammo loaded: ---------------");
-			for(int k=0;k<allAmmo.size();k++){
-				log.log(Level.INFO, "- "+allAmmo.get(k).getName());
-			}
+			for(Ammo a : allAmmo)log.log(Level.INFO, "- "+a.getName());
 		}		
 	}
 	
@@ -301,6 +345,8 @@ public class GunsPlus extends JavaPlugin {
 				float randomfactor = (float) gunsConfig.getDouble(gunnode+".accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
+				int missingchanceIN = 0;
+				int missingchanceOUT = 0;
 				int critical =  gunsConfig.getInt((String) gunnode+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunnode+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunnode+".damage", 0);
@@ -327,6 +373,11 @@ public class GunsPlus extends JavaPlugin {
 				if(spread_angle.length==2){
 					spreadangleIN=Integer.parseInt(spread_angle[1]);
 					spreadangleOUT=Integer.parseInt(spread_angle[0]);
+				}
+				String[] missing_chance = gunsConfig.getString(gunnode+".accuracy.missing-chance").split("->");
+				if(missing_chance.length==2){
+					missingchanceIN=Integer.parseInt(missing_chance[1]);
+					missingchanceOUT=Integer.parseInt(missing_chance[0]);
 				}
 				
 				ArrayList<Effect> effects = new ArrayList<Effect>(ConfigParser.getEffects(gunnode+".effects"));
@@ -356,6 +407,8 @@ public class GunsPlus extends JavaPlugin {
 				GunManager.editGunValue(g, "RANDOMFACTOR", randomfactor);
 				GunManager.editGunValue(g, "SPREAD_OUT", spreadangleOUT);
 				GunManager.editGunValue(g, "SPREAD_IN", spreadangleIN);
+				GunManager.editGunValue(g, "MISSING_OUT", missingchanceOUT);
+				GunManager.editGunValue(g, "MISSING_IN", missingchanceIN);
 				GunManager.editGunValue(g, "RECOIL", recoil);
 				GunManager.editGunValue(g, "RELOADTIME", reloadTime);
 				GunManager.editGunValue(g, "SHOTSBETWEENRELOAD", shotsBetweenReload);
@@ -376,12 +429,10 @@ public class GunsPlus extends JavaPlugin {
 					List<ItemStack> listIngred = new ArrayList<ItemStack>();
 						listIngred.add(new SpoutItemStack(a));
 						listIngred.add(new SpoutItemStack(g));
-					Gun gpa = GunManager.buildNewGun(this, GunUtils.getGunNameWithAdditions(g, a), texture);
-					GunManager.copyGunProperties(g, gpa);
-					GunManager.buildAdditionGun(this, gpa, a);
-					RecipeManager.addShapelessRecipe(listIngred, new SpoutItemStack(gpa));
-					System.out.println("IN MAIN: "+gpa.getName()+"|"+allGuns.get(allGuns.indexOf(gpa)).getValue("ZOOMFACTOR"));
+					Gun addgun = GunManager.buildNewAdditionGun(this, GunUtils.getGunNameWithAdditions(g, a), texture, a, g);
+					RecipeManager.addShapelessRecipe(listIngred, new SpoutItemStack(addgun));
 				}
+
 			}catch(Exception e){
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
@@ -389,7 +440,6 @@ public class GunsPlus extends JavaPlugin {
 					e.printStackTrace();
 			}
 		}
-		for(Gun o:allGuns) System.out.println("IN MAIN 2: "+o.getName()+"|"+o.getValue("ZOOMFACTOR"));
 		if(generalConfig.getBoolean("loaded-guns")==true){
 			log.log(Level.INFO, PRE + " -------------- Guns loaded: ---------------");
 			for(Gun g : allGuns) log.log(Level.INFO, "- "+g.getName());
@@ -522,5 +572,13 @@ public class GunsPlus extends JavaPlugin {
 			if (debug)
 				e.printStackTrace();
 		}
+	}
+
+	public void resetFields() {
+		GunsPlus.allGuns = new ArrayList<Gun>();
+		GunsPlus.allAmmo = new ArrayList<Ammo>();
+		GunsPlus.allAdditions = new ArrayList<Addition>();
+		GunsPlus.transparentMaterials = new ArrayList<Material>();
+		GunsPlus.zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
 	}
 }
