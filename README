@@ -6,21 +6,16 @@ Enjoy! :)
 ***TO-DO***
 	 * ---NEW---
 	 * 1. Better fire rate...perhaps with a milisecond timer instead of ticks
-	 * 2. Combine Accuracy and Bullet Spread # but has to be improved
-	 * 3. Improve target detection
-	 * 4. Placeable Guns: make guns mountable on a tripod and make tripod-gun combination;  
-	 * 5. Explosion damage protect  # 
-	 * 6. Gun weight to specify the walk speed  # perhaps scale the values a bit  
-	 * 7. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be sellable)
-	 *    MoreMaterials (you should be able to use MM items in gun recipes)
-	 * 8. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
-	 * 9. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
-	 * 10. Add Area of Effect option (such as targetenity in effects, area that is influnced)
+	 * 2. Improve target detection
+	 * 3. Placeable Guns: make guns mountable on a tripod and make tripod-gun combination;  
+	 * 4. Explosion damage protect  # perhaps do it like the explosion effect keeps but no damage to blocks  
+	 * 5. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be sellable)
+	 *    MoreMaterials (you should be able to use MM items in gun recipes)# hooked into MM, but not sure if it works
+	 * 6. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
+	 * 7. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
+	 * 8. Add Area of Effect option (such as targetenity in effects, area that is influnced)
 	 * ---FIX---
-	 * 1. Permissions ? #
-	 * 2. Sound texture precache -> seems to be fixed on latest spout update  # ?
-	 * 3. HUD should overlay the zoomtexture #
-	 * 4. make shorter smoke trail; less density 
-	 * 5. Reload command 
+	 * 1. HUD should overlay the zoomtexture 
+	 * 2. improve smoke effects (lower density)  
          A '#' behind the todo/fix means they are done.
          A '+' behind a todo/fix means they are in progress of being added. 
