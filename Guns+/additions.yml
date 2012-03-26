@@ -9,6 +9,8 @@ Silencer:
     # the given number values will be added to the old ones; other values (strings) will be overidden
     shot-sound:
         volume: -50
+    accuracy:
+        spread-angle: '0->0'
 ExtraScope:
     add-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/ExtraScope.png'
     zoom-factor: 3
