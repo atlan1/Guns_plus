@@ -41,20 +41,22 @@ Sniper:
         type: 'NONE'
         speed: 0
     # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out   ### OPT
+    # missing-chance defines a chance of missing the target in percent. e.g. 50 means the gun misses every second shot. Again the pointer separates between zoomed or not
     # this nodes can be modified to very custom accuracy values. 
     accuracy: 
         random-factor: 3.0
         spread-angle: '3->0'
+        missing-chance: '60->5'
     # defines the de-/increase of the damage per block (e.g. 1 would be an increase of 1 per 1 block distance to the target, -1 would decrease the damage by one per block)
     damage-change: -0.1
     # here you put the probability of a critical hit, which means a one-hit-kill. 100 is every shoot, 1 is very rare. ### OPT
     critical: 10
     # this node sets the weight of the gun, this will modify the walk speed of the player that holds the gun
-    weight: 0.3
+    weight: 30
     # specifies if the gun will be shown in the hud or not.
     hud-enabled: true
     # with this node you can set the available additions for this gun
-    additions: Silencer
+    additions: Silencer, ExtraScope
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT
@@ -68,3 +70,6 @@ Sniper:
         targetlocation:
             smoke:
                 density: 4
+        flightpath:
+            smoke:
+                density: 1
