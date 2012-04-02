@@ -8,9 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.input.KeyReleasedEvent;
@@ -123,6 +126,39 @@ public class GunsPlusListener implements Listener {
 			sp.setWalkingMultiplier(1 - (g.getValue("WEIGHT")/100));
 		}
 	}
+	
+	//make guns unstackable
+	@EventHandler(ignoreCancelled=true)
+    public void onInventoryClick(InventoryClickEvent event) {
+            ItemStack clicked = event.getCurrentItem();
+            ItemStack cursor = event.getCursor();
+            if (clicked != null && GunUtils.isGun(clicked)) {
+                    if (cursor != null && GunUtils.isGun(cursor) && event.isLeftClick() && !event.isShiftClick() && clicked.getDurability() == cursor.getDurability()) {
+                    		event.setCancelled(true);
+                            event.setCursor(clicked.clone());
+                            event.setCurrentItem(cursor.clone());
+                    } else if (event.isShiftClick()) {
+                            event.setCancelled(true);
+                            Inventory main = event.getView().getBottomInventory();
+                            Inventory top = event.getView().getTopInventory();
+                            if (top.getType() == InventoryType.CHEST) {
+                                    if (event.getRawSlot() < top.getSize()) {
+                                            int slot = main.firstEmpty();
+                                            if (slot >= 0) {
+                                                    main.setItem(slot, event.getCurrentItem().clone());
+                                                    top.setItem(event.getSlot(), null);
+                                            }
+                                    } else {
+                                            int slot = top.firstEmpty();
+                                            if (slot >= 0) {
+                                                    top.setItem(slot, event.getCurrentItem().clone());
+                                                    main.setItem(event.getSlot(), null);
+                                            }
+                                    }
+                            }
+                    }
+            }
+    }
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onKeyPressed(KeyPressedEvent e) {
