@@ -35,6 +35,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Item.Ammo;
@@ -90,6 +91,8 @@ public class GunsPlus extends JavaPlugin {
 	public static List<CustomBlock> allMoreMaterialsBlocks = new ArrayList<CustomBlock>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
 
+	public static String tripodTexture = "http://dl.dropbox.com/u/44243469/GunPack/Textures/itemOil.png";
+
 	@Override
 	public void onDisable() {
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
@@ -99,6 +102,7 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
+		new Tripod(this);
 		config();
 		init();
 		
