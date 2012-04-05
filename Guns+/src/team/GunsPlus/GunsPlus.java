@@ -36,8 +36,10 @@ import com.griefcraft.lwc.LWCPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.GunsPlus.Block.Tripod;
+import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
+import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.AdditionManager;
@@ -90,8 +92,10 @@ public class GunsPlus extends JavaPlugin {
 	public static List<SMCustomItem> allMoreMaterialsItems = new ArrayList<SMCustomItem>();
 	public static List<CustomBlock> allMoreMaterialsBlocks = new ArrayList<CustomBlock>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
+	
+	public static List<TripodData> allTripodBlocks = new ArrayList<TripodData>();
 
-	public static String tripodTexture = "http://dl.dropbox.com/u/44243469/GunPack/Textures/itemOil.png";
+	public static String tripodTexture = "http://dl.dropbox.com/u/44243469/GunPack/Textures/landmine.png";
 
 	@Override
 	public void onDisable() {
@@ -102,7 +106,7 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
-		new Tripod(this);
+		new Tripod(this, tripodTexture);
 		config();
 		init();
 		
@@ -171,6 +175,7 @@ public class GunsPlus extends JavaPlugin {
 		loadRecipes();
 		Util.printCustomIDs();
 		updateHUD();
+		updateTripods();
 	}
 	
 	public void loadAdditions(){
@@ -529,6 +534,18 @@ public class GunsPlus extends JavaPlugin {
 			}
 		};
 		update.startRepeating(5);
+	}
+	
+	
+	public void updateTripods(){
+		Task update = new Task(this){
+			public void run(){
+				for(TripodData td: GunsPlus.allTripodBlocks){
+					td.update();
+				}
+			}
+		};
+		update.startRepeating(20);
 	}
 
 	public void performGeneral() {

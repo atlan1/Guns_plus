@@ -1,5 +1,7 @@
 package team.GunsPlus.Block;
 
+
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.block.design.GenericBlockDesign;
 import org.getspout.spoutapi.block.design.Quad;
 import org.getspout.spoutapi.block.design.SubTexture;
@@ -11,13 +13,14 @@ import team.GunsPlus.GunsPlus;
 public class TripodDesign extends GenericBlockDesign {
 
 	
-	public TripodDesign(GunsPlus plugin){
+	public TripodDesign(GunsPlus plugin, String texture){
+			SpoutManager.getFileManager().addToCache(plugin, texture);
 			this.setBoundingBox(0, 0, 0, 1, 1, 1);
 			this.setRenderPass(0);
-			Texture tex = new Texture(plugin, GunsPlus.tripodTexture, 1, 1, 1);
+			Texture tex = new Texture(plugin, texture, 16, 16, 1);
 			this.setTexture(plugin, tex);
 			this.setQuadNumber(8);
-			SubTexture  subTex = new SubTexture(tex, 1, 1, 1);
+			SubTexture  subTex = new SubTexture(tex, 0, 0, 1);
 			
 			Quad edge1 = new Quad(0, subTex);
 			edge1.addVertex(0, 0.5f, 1.0f, 0.5f);

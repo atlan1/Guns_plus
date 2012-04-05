@@ -209,27 +209,44 @@ public class GunUtils {
 			p.updateInventory();
 		}
 		
-		public static Ammo getFirstAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo){
-			if(ammo.isEmpty()) return null;
-			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
-			Inventory inv = p.getInventory();
-			ItemStack ammoStack = null; 
-			for(ItemStack theStack: ammo){
-				invAll = inv.all(theStack.getTypeId());
-				for(int j = 0; j<inv.getSize();j++){
-					if(invAll.containsKey(j)){
-						ItemStack hi = invAll.get(j);
-						if(hi.getTypeId()==theStack.getTypeId()&&hi.getDurability()==theStack.getDurability()){
-							ammoStack=hi;
-							for(Ammo y : GunsPlus.allAmmo){
-								if (new SpoutItemStack(y).getDurability()==ammoStack.getDurability()&&new SpoutItemStack(y).getTypeId()==ammoStack.getTypeId()) return y;
-							}
-						}
-					}
+		@SuppressWarnings("deprecation")
+		public static void removeGunInHand(SpoutPlayer sp){
+			if(isGun(sp.getItemInHand())){
+				ItemStack remove = sp.getItemInHand();
+				if(remove == null)
+					return;
+				if(remove.getAmount() > 1){
+					remove.setAmount(remove.getAmount()-1);
+				}else{
+					remove = null;
+					sp.setItemInHand(null);
 				}
+				sp.updateInventory();
 			}
-			return null;
 		}
+		
+// NOT USED
+//		public static Ammo getFirstAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo){
+//			if(ammo.isEmpty()) return null;
+//			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
+//			Inventory inv = p.getInventory();
+//			ItemStack ammoStack = null; 
+//			for(ItemStack theStack: ammo){
+//				invAll = inv.all(theStack.getTypeId());
+//				for(int j = 0; j<inv.getSize();j++){
+//					if(invAll.containsKey(j)){
+//						ItemStack hi = invAll.get(j);
+//						if(hi.getTypeId()==theStack.getTypeId()&&hi.getDurability()==theStack.getDurability()){
+//							ammoStack=hi;
+//							for(Ammo y : GunsPlus.allAmmo){
+//								if (new SpoutItemStack(y).getDurability()==ammoStack.getDurability()&&new SpoutItemStack(y).getTypeId()==ammoStack.getTypeId()) return y;
+//							}
+//						}
+//					}
+//				}
+//			}
+//			return null;
+//		}
 
 		public static boolean checkInvForAmmo(SpoutPlayer p, ArrayList<ItemStack> ammo) {
 			if(ammo.isEmpty()) return true;
@@ -243,6 +260,23 @@ public class GunUtils {
 						if(hi.getTypeId()==theStack.getTypeId()&&hi.getDurability()==theStack.getDurability()){
 							return true;
 						}
+					}
+				}
+			}
+			return false;
+		}
+		
+		public static boolean checkInvForGun(SpoutPlayer p, Gun g) {
+			if(g==null) return true;
+			HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
+			Inventory inv = p.getInventory();
+			SpoutItemStack theStack = new SpoutItemStack(g);
+			invAll = inv.all(theStack.getTypeId());
+			for(int j = 0; j<inv.getSize();j++){
+				if(invAll.containsKey(j)){
+					ItemStack hi = invAll.get(j);
+					if(hi.getTypeId()==theStack.getTypeId()&&hi.getDurability()==theStack.getDurability()){
+						return true;
 					}
 				}
 			}

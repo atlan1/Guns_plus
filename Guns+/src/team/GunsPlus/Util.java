@@ -20,6 +20,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
 
+import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.GunsPlus;
@@ -443,5 +444,19 @@ public class Util {
 				return false;
 			} else return true;
 		} else return false;
+	}
+
+	public static TripodData loadTripodData(Location location) {
+		for(TripodData td :  GunsPlus.allTripodBlocks)
+			if(td.getLoc().equals(location))
+				return td;
+		return null;
+	}
+	
+	public static boolean isTripod(Block b){
+		for(TripodData td : GunsPlus.allTripodBlocks)
+			if(td.getLoc().equals(b.getLocation()))
+				return true;
+		return false;
 	}
 }
