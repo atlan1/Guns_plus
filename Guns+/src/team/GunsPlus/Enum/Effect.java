@@ -1,9 +1,7 @@
-package team.GunsPlus;
+package team.GunsPlus.Enum;
 
 import java.util.HashMap;
 
-import team.GunsPlus.Enum.EffectSection;
-import team.GunsPlus.Enum.EffectType;
 
 public class Effect {
 

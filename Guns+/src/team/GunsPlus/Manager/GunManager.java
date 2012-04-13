@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.bukkit.inventory.ItemStack;
 
 
-import team.GunsPlus.Addition;
-import team.GunsPlus.Effect;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Enum.Effect;
+import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Gun;
 
 public class GunManager {

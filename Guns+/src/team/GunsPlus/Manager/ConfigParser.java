@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.morematerials.morematerials.materials.SMCustomItem;
+//import net.morematerials.morematerials.materials.SMCustomItem;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.material.CustomBlock;
+//import org.getspout.spoutapi.material.CustomBlock;
 
+import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
-import team.GunsPlus.Addition;
-import team.GunsPlus.Effect;
+import team.GunsPlus.Util.Util;
 import team.GunsPlus.GunsPlus;
-import team.GunsPlus.Util;
 
 public class ConfigParser {
 
@@ -45,6 +45,8 @@ public class ConfigParser {
             return singleItem(parts[0]);
         if (parts.length == 2)
             return withDurability(parts[0], parts[1]);
+        if(parts.length == 3)
+        	return withAmount(parts[0], parts[1], parts[2]);
         
         return null;
     }
@@ -68,16 +70,6 @@ public class ConfigParser {
 					custom = new SpoutItemStack(a);
 				}
 			}
-			for(SMCustomItem smci : GunsPlus.allMoreMaterialsItems){
-				if(smci.getName().toString().equals(item)){
-					custom = new SpoutItemStack(smci);
-				}
-			}
-			for(CustomBlock cb : GunsPlus.allMoreMaterialsBlocks){
-				if(cb.getName().toString().equals(item)){
-					custom = new SpoutItemStack(cb);
-				}
-			}
         }
         if(custom==null){
         	if(m==null){
@@ -95,6 +87,18 @@ public class ConfigParser {
         if (m == null)
             return null;
         SpoutItemStack sis = new SpoutItemStack(new ItemStack(m));
+        if(durab.matches("[0-9]+")){
+        	sis.setDurability(Short.parseShort(durab));
+        }
+        
+        return sis;
+    }
+    
+    private static ItemStack withAmount(String item, String durab, String amount){
+    	Material m = getMaterial(item);
+        if (m == null)
+            return null;
+        SpoutItemStack sis = new SpoutItemStack(new ItemStack(m, Integer.parseInt(amount)));
         if(durab.matches("[0-9]+")){
         	sis.setDurability(Short.parseShort(durab));
         }

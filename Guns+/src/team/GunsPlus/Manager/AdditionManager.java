@@ -1,7 +1,7 @@
 package team.GunsPlus.Manager;
 
-import team.GunsPlus.Addition;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Item.Addition;
 
 public class AdditionManager {
 	

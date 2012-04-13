@@ -57,6 +57,8 @@ Sniper:
     hud-enabled: true
     # with this node you can set the available additions for this gun
     additions: Silencer, ExtraScope
+    # this sets wheater you can mount a gun on the tripod or not
+    mountable: false
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT

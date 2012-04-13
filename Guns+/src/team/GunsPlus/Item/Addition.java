@@ -1,4 +1,4 @@
-package team.GunsPlus;
+package team.GunsPlus.Item;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +7,8 @@ import org.bukkit.block.Block;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import team.GunsPlus.GunsPlus;
 
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;

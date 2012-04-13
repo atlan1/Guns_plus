@@ -1,23 +1,10 @@
 package team.GunsPlus;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.morematerials.morematerials.Main;
-import net.morematerials.morematerials.SmpManager;
-import net.morematerials.morematerials.SmpPackage;
-import net.morematerials.morematerials.materials.SMCustomBlock;
-import net.morematerials.morematerials.materials.SMCustomItem;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,11 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -37,44 +21,54 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
+import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
-import team.GunsPlus.Gui.HUD;
+import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.AdditionManager;
 import team.GunsPlus.Manager.ConfigParser;
+import team.GunsPlus.Manager.FileManager;
 import team.GunsPlus.Manager.GunManager;
 import team.GunsPlus.Manager.RecipeManager;
+import team.GunsPlus.Manager.TripodDataHandler;
+import team.GunsPlus.Util.GunUtils;
+import team.GunsPlus.Util.Task;
+import team.GunsPlus.Util.Util;
+import team.GunsPlus.Util.VersionChecker;
 
 public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
 	
+	//Plugins
+	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
 	
-	public static Logger log = Logger.getLogger("Minecraft");;
+	public static Logger log = Logger.getLogger("Minecraft");
 	
-	public static List<SpoutPlayer> inZoom = new ArrayList<SpoutPlayer>();
-	public static HashMap<SpoutPlayer, Boolean> reloading = new HashMap<SpoutPlayer, Boolean>();
-	public static HashMap<SpoutPlayer, Boolean> delaying = new HashMap<SpoutPlayer, Boolean>();
-	public static HashMap<SpoutPlayer, Integer> fireCounter = new HashMap<SpoutPlayer, Integer>();
+	public static List<GunsPlusPlayer> GunsPlusPlayers = new ArrayList<GunsPlusPlayer>();
 	
-	public static HashMap<SpoutPlayer, GenericTexture> zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
-	public static HashMap<SpoutPlayer, HUD> playerHUD = new HashMap<SpoutPlayer, HUD>();
-	
+	//DEFAULT VALUES
 	public static boolean warnings = true;
 	public static boolean debug = false;
 	public static boolean notifications = true;
 	public static boolean autoreload = true;
+	public static boolean hudenabled = false;
+	public static int hudX = 20;
+	public static int hudY = 20;
+	public static String hudBackground = null;
+	public static String tripodTexture = null;
+	public static int maxtripodcount = -1;
+	public static int tripodinvsize = 9;
+	public static boolean tripodenabled = true;
+	public static boolean forcezoom = true;
+	public KeyType zoomKey = KeyType.RIGHT;
 	public KeyType fireKey = KeyType.LEFT;
 	public KeyType reloadKey = KeyType.LETTER("R");
-	public boolean hudenabled = false;
-	public int hudX = 0;
-	public int hudY = 0;
-	public String hudBackground = null;
-	public KeyType zoomKey = KeyType.RIGHT;
 	
+	//CONFIG SECTION
 	public File gunsFile;
 	public static FileConfiguration gunsConfig;
 	public File additionsFile;
@@ -85,41 +79,79 @@ public class GunsPlus extends JavaPlugin {
 	public static FileConfiguration recipeConfig;
 	public File generalFile;
 	public static FileConfiguration generalConfig;
+	public File dataFile;
+	public static FileConfiguration dataDB;
 
+	//ITEM AND BLOCK LISTS
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
-	public static List<SMCustomItem> allMoreMaterialsItems = new ArrayList<SMCustomItem>();
-	public static List<CustomBlock> allMoreMaterialsBlocks = new ArrayList<CustomBlock>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
-	
 	public static List<TripodData> allTripodBlocks = new ArrayList<TripodData>();
+	public static Tripod tripod;
 
-	public static String tripodTexture = "http://dl.dropbox.com/u/44243469/GunPack/Textures/landmine.png";
+
+	
 
 	@Override
 	public void onDisable() {
+		for(TripodData td : allTripodBlocks)
+			td.resetDroppedGun();
+		TripodDataHandler.saveAll();
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now disabled.");
 	}
 
 	@Override
 	public void onEnable() {
-		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
-		new Tripod(this, tripodTexture);
+		plugin = this;
+		
 		config();
+		
+		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
+
+		hook();
+		
 		init();
 		
-		if(debug) log.setLevel(Level.ALL);
-			
+		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
+		
+		getCommand("guns+").setExecutor(new CommandEx(this));
+
+		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
+	}
+
+	public void init() {
+		performGeneral();
+		loadAdditions();
+		loadAmmo();
+		loadGuns();
+		loadRecipes();
+		if(tripodenabled)
+			initTripod();
+		Util.printCustomIDs();
+		if(hudenabled)
+			updateHUD();
+		updateTripods();
+	}
+	
+	public void initTripod(){
+		tripod = new Tripod(this, tripodTexture);
+		TripodDataHandler.nextID = dataDB.getKeys(false).size();
+		TripodDataHandler.allowLoading();//uhh ugly hack ;)
+		TripodDataHandler.loadAll();
+		TripodDataHandler.denyLoading(); 
+	}
+	
+	public void hook(){
 		Plugin spout = getServer().getPluginManager().getPlugin("Spout");
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
-		Plugin mm = getServer().getPluginManager().getPlugin("MoreMaterials");
 		if(spout != null) {
 		    log.log(Level.INFO, PRE+" Plugged into Spout!");
 		}else{
+			//disable this, because it would do nothing without spout
 			this.setEnabled(false);
 		}
 		if(lwcPlugin != null) {
@@ -133,49 +165,6 @@ public class GunsPlus extends JavaPlugin {
 			wg = (WorldGuardPlugin) worldguard;
 			log.log(Level.INFO, PRE+" Plugged into WorldGuard!");
 		}
-		//just experimental, hook into mm and provide the custom items in gun recipes
-		if(mm != null) {
-			Main moremats = (Main) mm;
-			SmpManager smpManager = moremats.getSmpManager();
-			if(smpManager!=null)
-				try {
-					Field f1 = SmpManager.class.getDeclaredField("smpPackages");
-					f1.setAccessible(true);
-					System.out.println(moremats+"|"+f1);
-					@SuppressWarnings("unchecked")
-					HashMap<String, SmpPackage> packages = (HashMap<String, SmpPackage>)f1.get(smpManager);
-					for(SmpPackage smp:packages.values()){
-						Field f2 = SmpPackage.class.getDeclaredField("customItemsList");
-						f2.setAccessible(true);
-						@SuppressWarnings("unchecked")
-						HashMap<String, SMCustomItem> items = (HashMap<String, SMCustomItem>)f2.get(smp);
-						for(SMCustomItem ci : items.values()) allMoreMaterialsItems.add(ci);
-						Field f3 = SmpPackage.class.getDeclaredField("customItemsList");
-						f3.setAccessible(true);
-						@SuppressWarnings("unchecked")
-						HashMap<String, SMCustomBlock> blocks = (HashMap<String, SMCustomBlock>)f3.get(smp);
-						for(SMCustomBlock cb : blocks.values()) allMoreMaterialsBlocks.add(cb);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			log.log(Level.INFO, PRE+" Plugged into MoreMaterials!");
-		}
-		
-		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
-		getCommand("guns+").setExecutor(new CommandEx(this));
-		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
-	}
-
-	public void init() {
-		performGeneral();
-		loadAdditions();
-		loadAmmo();
-		loadGuns();
-		loadRecipes();
-		Util.printCustomIDs();
-		updateHUD();
-		updateTripods();
 	}
 	
 	public void loadAdditions(){
@@ -222,6 +211,9 @@ public class GunsPlus extends JavaPlugin {
 //				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(additionnode+".effects"));
 //		TODO:
 //				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString(additionnode+".ammo")));
+				
+				if(addtexture == null)
+					throw new Exception (" Texture for "+name+" is missing or could not be found! Skipping!");
 				
 				Addition a = AdditionManager.buildAddition(this, name, addtexture);
 				if(weight!=0)
@@ -329,11 +321,12 @@ public class GunsPlus extends JavaPlugin {
 				SpoutItemStack result = new SpoutItemStack(ci, amount);
 				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
 				if(recipeConfig.getString(key+".type").equalsIgnoreCase("shaped")){
-					if(ingredients.size()!=9) throw new Exception(PRE + " Wrong number of ingredients in shaped recipe for: "+key+"! Skipping!");
+					if(ingredients.size()!=9) throw new Exception(" Wrong number of ingredients in shaped recipe for: "+key+"! Skipping!");
 					RecipeManager.addShapedRecipe(ingredients, result);
 				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("shapeless")){
 					RecipeManager.addShapelessRecipe(ingredients, result);
 				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("furnace")){
+					if(ingredients.get(0)==null) throw new Exception(" You need at least one ingredient for the furnace recipe for "+ key+"! Skipping!");
 					RecipeManager.addFurnaceRecipe(ingredients.get(0), result);
 				}
 			}catch (Exception e) {
@@ -350,7 +343,15 @@ public class GunsPlus extends JavaPlugin {
 		for(Object gunnode : gunsArray){
 			try{
 				String name = gunnode.toString();
+				
+				YamlConfiguration defaultConfig = new YamlConfiguration();
+				defaultConfig.load(getResource("guns.yml"));
+				for(String node : defaultConfig.getConfigurationSection("Sniper").getKeys(false)){
+					Util.warnIfNull(gunsConfig.get(name+"."+node), "The node '"+node+"' in gun "+name+" is missing or invalid!");
+				}
+				
 				boolean hudenabled = gunsConfig.getBoolean(gunnode+".hud-enabled", true);
+				boolean mountable = gunsConfig.getBoolean(gunnode+".mountable", true);
 				float randomfactor = (float) gunsConfig.getDouble(gunnode+".accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
@@ -431,9 +432,10 @@ public class GunsPlus extends JavaPlugin {
 			 	GunManager.editAmmo(g, ammo);
 				GunManager.editObject(g, "PROJECTILE", projectile);
 				GunManager.editObject(g, "HUDENABLED", hudenabled);
+				GunManager.editObject(g, "MOUNTABLE", mountable);
 				GunManager.editEffects(g, effects);
 				
-				//registering shapeless recipes for additions&&building an extra gun for each addition
+				//registering shapeless recipes for additions + building an extra gun for each addition
 				for(Addition a: adds){
 					List<ItemStack> listIngred = new ArrayList<ItemStack>();
 						listIngred.add(new SpoutItemStack(a));
@@ -461,75 +463,52 @@ public class GunsPlus extends JavaPlugin {
 		recipeFile = new File(getDataFolder(), "recipes.yml");
 		generalFile = new File(getDataFolder(), "general.yml");
 		additionsFile = new File(getDataFolder(), "additions.yml");
+		dataFile = new File(getDataFolder(), "data.dat");
 		try {
 			firstRun();
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(debug)
+				e.printStackTrace();
 		}
 		gunsConfig = new YamlConfiguration();
 		ammoConfig = new YamlConfiguration();
 		recipeConfig = new YamlConfiguration();
 		generalConfig = new YamlConfiguration();
 		additionsConfig = new YamlConfiguration();
-		loadYamls();
-	}
-
-	private void firstRun() {
-		if (!gunsFile.exists()) {
-			gunsFile.getParentFile().mkdirs();
-			copy(getResource("guns.yml"), gunsFile);
-		}
-		if (!ammoFile.exists()) {
-			ammoFile.getParentFile().mkdirs();
-			copy(getResource("ammo.yml"), ammoFile);
-		}
-		if (!recipeFile.exists()) {
-			recipeFile.getParentFile().mkdirs();
-			copy(getResource("recipes.yml"), recipeFile);
-		}
-		if (!generalFile.exists()) {
-			generalFile.getParentFile().mkdirs();
-			copy(getResource("general.yml"), generalFile);
-		}
-		if (!additionsFile.exists()) {
-			additionsFile.getParentFile().mkdirs();
-			copy(getResource("additions.yml"), additionsFile);
-		}
-	}
-
-	private void copy(InputStream in, File file) {
-		try {
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			out.close();
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void loadYamls() {
+		dataDB = new YamlConfiguration();
 		try {
 			gunsConfig.load(gunsFile);
 			ammoConfig.load(ammoFile);
 			recipeConfig.load(recipeFile);
 			generalConfig.load(generalFile);
 			additionsConfig.load(additionsFile);
+			dataDB.load(dataFile);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(debug)
+				e.printStackTrace();
 		}
+	}
+
+	private void firstRun() {
+		if(FileManager.create(gunsFile))
+			FileManager.copy(getResource("guns.yml"), gunsFile);
+		if(FileManager.create(ammoFile))
+			FileManager.copy(getResource("ammo.yml"), ammoFile);
+		if(FileManager.create(recipeFile))
+			FileManager.copy(getResource("recipes.yml"), recipeFile);
+		if(FileManager.create(generalFile))
+			FileManager.copy(getResource("general.yml"), generalFile);
+		if(FileManager.create(additionsFile))
+			FileManager.copy(getResource("additions.yml"), additionsFile);
+		if(FileManager.create(dataFile))
+			FileManager.copy(getResource("data.dat"), dataFile);
 	}
 	
 	public void updateHUD(){
 		Task update = new Task(this){
 			public void run(){
-				Set<SpoutPlayer> ps = GunsPlus.playerHUD.keySet();
-				for(SpoutPlayer sp:ps){
-					GunsPlus.playerHUD.get(sp).update(sp);
+				for(GunsPlusPlayer gp:GunsPlus.GunsPlusPlayers){
+					gp.getHUD().update(gp.getPlayer());
 				}
 			}
 		};
@@ -540,26 +519,50 @@ public class GunsPlus extends JavaPlugin {
 	public void updateTripods(){
 		Task update = new Task(this){
 			public void run(){
+				
 				for(TripodData td: GunsPlus.allTripodBlocks){
 					td.update();
+					TripodDataHandler.save(td);
+				}
+				try {
+					dataDB.save(dataFile);
+					dataDB.load(dataFile);
+				} catch (Exception e) {
+					if(debug)
+						e.printStackTrace();
 				}
 			}
 		};
-		update.startRepeating(20);
+		update.startRepeating(1);
 	}
 
 	public void performGeneral() {
 		try {
+			YamlConfiguration defaultConfig = new YamlConfiguration();
+			defaultConfig.load(getResource("general.yml"));
+			for(String node : defaultConfig.getKeys(true)){
+				Util.warnIfNull(generalConfig.get(node), "The node '"+node+"' in general.yml is missing or invalid! Defaulting!");
+			}
+			
+			
 			warnings = generalConfig.getBoolean("show-warnings", true);
 			debug = generalConfig.getBoolean("show-debug", false);
 			notifications = generalConfig.getBoolean("show-notifications", true);
 			autoreload = generalConfig.getBoolean("auto-reload", true);
 			
+			tripodenabled = generalConfig.getBoolean("tripod.enabled", true);
+			tripodTexture = generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");
+			maxtripodcount = generalConfig.getInt("tripod.max-count-per-player", -1);
+			forcezoom = generalConfig.getBoolean("tripod.force-zoom",  true);
+			tripodinvsize = generalConfig.getInt("tripod.inventory-size", 9);
+			if(!((tripodinvsize%9)==0)){
+				tripodinvsize = 9;
+			}
+			
 			List<ItemStack> il = ConfigParser.parseItems(generalConfig.getString("transparent-materials"));
 			for(int m=0;m<il.size();m++){
 				transparentMaterials.add(il.get(m).getType());
 			}
-
 			hudenabled = generalConfig.getBoolean("hud.enabled", true);
 			hudBackground = generalConfig.getString("hud.background",
 					"http://dl.dropbox.com/u/44243469/GunPack/Textures/HUDBackground.png");
@@ -600,6 +603,6 @@ public class GunsPlus extends JavaPlugin {
 		GunsPlus.allAmmo = new ArrayList<Ammo>();
 		GunsPlus.allAdditions = new ArrayList<Addition>();
 		GunsPlus.transparentMaterials = new ArrayList<Material>();
-		GunsPlus.zoomTextures = new HashMap<SpoutPlayer, GenericTexture>();
+		GunsPlus.allTripodBlocks = new ArrayList<TripodData>();
 	}
 }
