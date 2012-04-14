@@ -13,6 +13,24 @@ import org.getspout.spoutapi.inventory.SpoutShapelessRecipe;
 import org.getspout.spoutapi.material.MaterialData;
 
 public class RecipeManager {
+	
+	public enum Type{
+		SHAPED, SHAPELESS, FURNACE;
+	}
+	
+	public static void addRecipe(Type type, List<ItemStack> ingredients, ItemStack result) throws Exception{
+		if(type.equals(Type.SHAPED)&&ingredients.size()!=9) throw new Exception( "Number of ingredients in a shaped recipe must be 9!");
+		if(type.equals(Type.FURNACE)&&(ingredients.size()==0||ingredients.get(0)==null)) throw new Exception( "You need at one ingredient for a furnace recipe!");
+		switch(type){
+			case SHAPED:
+				addShapedRecipe(ingredients, result);
+			case SHAPELESS:
+				addShapelessRecipe(ingredients, result);
+			case FURNACE:
+				addFurnaceRecipe(ingredients.get(0), result);
+		}
+	}
+	
 	public static void addShapedRecipe(List<ItemStack> ingredients, ItemStack result){
 		char[] name = {'a','b','c',
 						'd','e','f',
