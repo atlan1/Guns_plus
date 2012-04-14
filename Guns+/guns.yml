@@ -59,6 +59,8 @@ Sniper:
     additions: Silencer, ExtraScope
     # this sets wheater you can mount a gun on the tripod or not
     mountable: false
+    # if you put false in here you can't shoot with this gun at all, but you can configure it like mountable true and shootable false so that you can only use it if mounted
+    shootable: true
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT
