@@ -6,6 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -92,9 +94,6 @@ public class GunsPlusListener implements Listener {
 		if (!PlayerUtils.hasSpoutcraft(p))return;
 		SpoutPlayer sp = (SpoutPlayer) p;
 		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
-		Inventory inv = null;
-		if(Util.enteredTripod(sp)) inv = Util.getTripodDataOfEntered(sp).getInventory();
-		else inv = sp.getInventory();
 		if(gp==null) return;
 		Gun g = null;
 		if (GunUtils.holdsGun(sp))
@@ -107,13 +106,13 @@ public class GunsPlusListener implements Listener {
 					if (plugin.reloadKey.equals(KeyType.RIGHT))
 						gp.reload(g);
 					if (plugin.fireKey.equals(KeyType.RIGHT))
-						gp.fire(g, inv);
+						gp.fire(g);
 					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.RIGHTSHIFT))
 						gp.zoom(g);
 					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.RIGHTSHIFT))
 						gp.reload(g);
 					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.RIGHTSHIFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 				}
 				break;
 			case RIGHT_CLICK_BLOCK:
@@ -123,13 +122,13 @@ public class GunsPlusListener implements Listener {
 					if (plugin.reloadKey.equals(KeyType.RIGHT))
 						gp.reload(g);
 					if (plugin.fireKey.equals(KeyType.RIGHT))
-						gp.fire(g, inv);
+						gp.fire(g);
 					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.RIGHTSHIFT))
 						gp.zoom(g);
 					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.RIGHTSHIFT))
 						gp.reload(g);
 					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.RIGHTSHIFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 				}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock());
@@ -159,13 +158,13 @@ public class GunsPlusListener implements Listener {
 					if (plugin.reloadKey.equals(KeyType.LEFT))
 						gp.reload(g);
 					if (plugin.fireKey.equals(KeyType.LEFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.LEFTSHIFT))
 						gp.zoom(g);
 					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.LEFTSHIFT))
 						gp.reload(g);
 					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.LEFTSHIFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 				}
 				break;
 			case LEFT_CLICK_BLOCK:
@@ -175,13 +174,13 @@ public class GunsPlusListener implements Listener {
 					if (plugin.reloadKey.equals(KeyType.LEFT))
 						gp.reload(g);
 					if (plugin.fireKey.equals(KeyType.LEFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.LEFTSHIFT))
 						gp.zoom(g);
 					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.LEFTSHIFT))
 						gp.reload(g);
 					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.LEFTSHIFT))
-						gp.fire(g, inv);
+						gp.fire(g);
 				}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
@@ -280,15 +279,6 @@ public class GunsPlusListener implements Listener {
 		ItemStack itemstack = i.getItemStack();
 		if(!PlayerUtils.hasSpoutcraft(p)) return;
 		SpoutPlayer sp = (SpoutPlayer) p ;
-//		//prevent pick up of tripod guns
-//		for(TripodData td : GunsPlus.allTripodBlocks){
-//			if(td.getDroppedGun()!=null){
-//				if(td.getDroppedGun().equals(i)){
-//					e.setCancelled(true);
-//					return;
-//				}
-//			}
-//		}
 		//if the player entered a tripod put the stack in his normal inventory (stored in the tripoddata)
 		if(Util.enteredTripod(sp)){
 			e.setCancelled(true);
@@ -306,6 +296,12 @@ public class GunsPlusListener implements Listener {
 	
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent e){
+		if(e.getEntityType().equals(EntityType.FIREBALL)&&((Fireball)e.getEntity()).getShooter()==null){
+			Fireball fireball = (Fireball) e.getEntity();
+			fireball.setIsIncendiary(false);
+			e.setCancelled(true);
+			e.setYield(0);
+		}
 		for(Block b: e.blockList()){
 			if(Util.isTripod(b)){
 				Location l = b.getLocation();
@@ -349,9 +345,6 @@ public class GunsPlusListener implements Listener {
 		if(g==null) return;
 		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
 		if(gp==null) return;
-		Inventory inv = null;
-		if(Util.enteredTripod(sp)) inv = Util.getTripodDataOfEntered(sp).getInventory();
-		else inv = sp.getInventory();
 		Keyboard key = e.getKey();
 		String keyString = key.toString().split("_")[1].toLowerCase();
 		ScreenType st = e.getScreenType();
@@ -375,7 +368,7 @@ public class GunsPlusListener implements Listener {
 					.equals(KeyType.HOLDLETTER))
 				&& plugin.fireKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			gp.fire(g, inv);
+			gp.fire(g);
 		}
 	}
 
