@@ -602,15 +602,15 @@ public class GunUtils {
 	}
 
 	public static boolean isHudEnabled(Gun g) {
-		if ((Boolean) g.getObject("HUDENABLED"))
-			return true;
-		return false;
+		return ((Boolean) g.getObject("HUDENABLED"));
 	}
 
 	public static boolean isMountable(Gun g) {
-		if ((Boolean) g.getObject("MOUNTABLE"))
-			return true;
-		return false;
+		return ((Boolean) g.getObject("MOUNTABLE"));
+	}
+	
+	public static boolean isShootable(Gun g) {
+		return ((Boolean) g.getObject("SHOOTABLE"));
 	}
 
 	public static boolean isGun(ItemStack i) {
