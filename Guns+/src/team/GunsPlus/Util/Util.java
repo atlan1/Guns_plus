@@ -16,7 +16,6 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
@@ -31,6 +30,17 @@ import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 
 public class Util {
+
+	public static Block getBlockInSight(Location l, int blockIndex, int maxradius){
+		BlockIterator bi = new BlockIterator(l.getWorld(), l.toVector(), l.getDirection(), 0d, maxradius);
+		Block b = null;
+		for(int i = 0; i<blockIndex; i++){
+			if(bi.hasNext()){
+				b =  bi.next(); 
+			}else break;
+		}
+		return b;
+	}
 
 	public static void warn(String msg) {
 		if (GunsPlus.warnings) {
@@ -111,7 +121,7 @@ public class Util {
 	}
 
 	public static Location getMiddle(Location l, float YShift) {
-		Location loc = l;
+ 		Location loc = l;
 		loc = loc.getBlock().getLocation();
 		Vector vec = loc.toVector();
 		vec.add(new Vector(0.5, YShift, 0.5));
@@ -119,7 +129,7 @@ public class Util {
 		return loc;
 	}
 
-	public static boolean isGunsPlusItem(String name) {
+	public static boolean isGunsPlusMaterial(String name) {
 		for (int j = 0; j < GunsPlus.allGuns.size(); j++) {
 			if (GunsPlus.allGuns.get(j).getName().equalsIgnoreCase(name))
 				return true;
@@ -132,32 +142,37 @@ public class Util {
 			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name))
 				return true;
 		}
+		if(GunsPlus.tripod.getName().equals(name))
+			return true;
 		return false;
 	}
 
-	public static CustomItem getGunsPlusItem(String name) {
-		CustomItem ci = null;
+	public static Object getGunsPlusMaterial(String name) {
+		Object cm = null;
+		if(!isGunsPlusMaterial(name)) return cm;
 		for (int i = 0; i < GunsPlus.allGuns.size(); i++) {
 			if (GunsPlus.allGuns.get(i).getName().equalsIgnoreCase(name)) {
-				ci = GunsPlus.allGuns.get(i);
-				return ci;
+				cm = GunsPlus.allGuns.get(i);
+				return cm;
 			}
 		}
 		for (int j = 0; j < GunsPlus.allAmmo.size(); j++) {
 			if (GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name)) {
-				ci = GunsPlus.allAmmo.get(j);
-				return ci;
+				cm = GunsPlus.allAmmo.get(j);
+				return cm;
 			}
 		}
 		for (int j = 0; j < GunsPlus.allAdditions.size(); j++) {
 			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name)) {
-				ci = GunsPlus.allAdditions.get(j);
-				return ci;
+				cm = GunsPlus.allAdditions.get(j);
+				return cm;
 			}
 		}
-		return ci;
+		if(name.equals(GunsPlus.tripod.getName()))
+			cm = GunsPlus.tripod;
+		return cm;
 	}
-
+	
 	public static void playCustomSound(GunsPlus plugin, Location l, String url,
 			int volume) {
 		SoundManager SM = SpoutManager.getSoundManager();
@@ -183,91 +198,6 @@ public class Util {
 	public static int getRandomInteger(int start, int end) {
 		Random rand = new Random();
 		return start + rand.nextInt(end + 1);
-	}
-
-	public static boolean is1x1x2(Entity e) {
-		int id = e.getEntityId();
-
-		switch (id) {
-		case 50:
-			return true;
-		case 51:
-			return true;
-		case 54:
-			return true;
-		case 57:
-			return true;
-		case 61:
-			return true;
-		case 97:
-			return true;
-		case 120:
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean is1x1x1(Entity e) {
-		int id = e.getEntityId();
-
-		switch (id) {
-		case 60:
-			return true;
-		case 90:
-			return true;
-		case 91:
-			return true;
-		case 92:
-			return true;
-		case 93:
-			return true;
-		case 94:
-			return true;
-		case 95:
-			return true;
-		case 96:
-			return true;
-		case 98:
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean is1x1x3(Entity e) {
-		int id = e.getEntityId();
-
-		switch (id) {
-		case 58:
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean is2x2x1(Entity e) {
-		int id = e.getEntityId();
-
-		switch (id) {
-		case 59:
-			return true;
-		case 52:
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean is2x2x2(Entity e) {
-		int id = e.getEntityId();
-		switch (id) {
-		case 56:
-			return true;
-		case 55:
-			return true;
-		case 62:
-			return true;
-		case 99:
-			return true;
-		}
-		return false;
 	}
 
 	public static void printCustomIDs() {
