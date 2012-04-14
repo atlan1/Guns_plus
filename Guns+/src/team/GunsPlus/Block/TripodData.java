@@ -1,8 +1,8 @@
 package team.GunsPlus.Block;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,11 +17,14 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
+import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Enum.Target;
+import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.PlayerUtils;
 import team.GunsPlus.Util.Shooter;
+import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class TripodData extends Shooter implements InventoryHolder {
@@ -113,28 +116,104 @@ public class TripodData extends Shooter implements InventoryHolder {
 		}
 		return le;
 	}
-
+	
 	@Override
-	public Map<LivingEntity, Integer> getTargets(Gun gun) {
-		return GunUtils.getTargets(getLocation(), gun, false);
+	public void reload(Gun g){
+		if(getFireCounter(g) == 0)return;
+		if(isReloadResetted()){
+			setOnReloadingQueue();
+		}
+		if(isOnReloadingQueue()){
+			Task reloadTask = new Task(GunsPlus.plugin, this, g){
+				public void run() {
+					Shooter s = (Shooter) this.getArg(0);
+					Gun g = (Gun) this.getArg(1);
+					s.resetReload();
+					s.resetFireCounter(g);
+				}
+			};
+			reloadTask.startDelayed((int)g.getValue("RELOADTIME"));
+			setReloading();
+			if(!(g.getResource("RELOADSOUND")==null)){
+				Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("RELOADSOUND"), (int) g.getValue("RELOADSOUNDVOLUME"));
+			}
+			return;
+		}else if(isReloading()){
+			return;
+		}
 	}
-
+	
 	@Override
-	public void damage(LivingEntity target, int damage) {
-		target.damage(damage);
+	public void delay(Gun g){
+		if(isDelayResetted()){
+			setOnDelayingQueue();
+		}
+		if(isOnDelayingQueue()){
+			Task t = new Task(GunsPlus.plugin, this){
+				public void run() {
+					Shooter sp = (Shooter) this.getArg(0);
+					sp.resetDelay();
+				}
+			};
+			t.startDelayed((long) g.getValue("SHOTDELAY"));
+			setDelaying();
+		}else if(isDelaying()){
+			return;
+		}
+	}
+	
+	@Override
+	public void fire(Gun g){
+		Inventory inv = getInventory();
+		if(!GunUtils.isMountable(g))
+			return;
+		if(!GunUtils.checkInvForAmmo(inv, g.getAmmo()))return;
+		if(isReloading())return;
+		else if(isDelaying()) return;
+		else if(isOutOfAmmo(g)) return;
+		else{
+			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
+			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(getLocation(), gun, false));
+			for(LivingEntity tar : targets_damage.keySet()){
+				int damage = Math.abs(targets_damage.get(tar));
+				GunUtils.shootProjectile(getLocation(), tar.getLocation(), (Projectile) g.getObject("PROJECTILE"));
+				if(Util.getRandomInteger(0, 100)<=g.getValue("CRITICAL")){
+					damage = tar.getHealth()+1000;
+				}
+				if(usedAmmo!=null){
+					damage += usedAmmo.getDamage();
+				}
+				tar.damage(damage);
+			}
+
+			GunUtils.removeAmmo(inv, g.getAmmo());
+			
+			setFireCounter(g, getFireCounter(g)+1);
+			
+			if(!(g.getResource("SHOTSOUND")==null)){
+				if(g.getValue("SHOTDELAY")<5&&Util.getRandomInteger(0, 100)<35){
+					Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("SHOTSOUND"), (int) g.getValue("SHOTSOUNDVOLUME"));
+				}else{
+					Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("SHOTSOUND"), (int) g.getValue("SHOTSOUNDVOLUME"));
+				}
+				
+			}
+			
+			if(GunsPlus.autoreload&&getFireCounter(g)>=g.getValue("SHOTSBETWEENRELOAD")) reload(g);
+			if((int)g.getValue("SHOTDELAY")>0) delay(g);
+		}
+	}
+	
+	@Override
+	public Inventory getInventory() {
+		return inventory;
 	}
 	
 	public Location getOwnerLocation(){
 		return Util.getMiddle(getLocation(), 0.0f);
 	}
 
-	@Override
-	public Inventory getInventory() {
-		return inventory;
-	}
 	
-	@Override //dont do anything because you can't really perform recoil on a block (can you =D)
-	public void recoil(Gun g) {}
 
 	public void setEntered(boolean entered) {
 		if(entered==true){
