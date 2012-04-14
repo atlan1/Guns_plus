@@ -53,4 +53,9 @@ tripod:
     force-zoom: true
     # inventory size of the tripod NOTE: this has to be a multiple of 9
     inventory-size: 9
+    # the crafting recipe, like in recipes.yml
+    recipe:
+        type: shaped
+        amount: 1
+        ingredients: blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod
     
