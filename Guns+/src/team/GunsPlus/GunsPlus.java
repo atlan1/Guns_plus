@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
 
 import com.griefcraft.lwc.LWC;
@@ -123,6 +124,7 @@ public class GunsPlus extends JavaPlugin {
 
 	public void init() {
 		performGeneral();
+		tripod = new Tripod(this, tripodTexture);
 		loadAdditions();
 		loadAmmo();
 		loadGuns();
@@ -136,7 +138,6 @@ public class GunsPlus extends JavaPlugin {
 	}
 	
 	public void initTripod(){
-		tripod = new Tripod(this, tripodTexture);
 		TripodDataHandler.nextID = dataDB.getKeys(false).size();
 		TripodDataHandler.allowLoading();//uhh ugly hack ;)
 		TripodDataHandler.loadAll();
@@ -314,21 +315,22 @@ public class GunsPlus extends JavaPlugin {
 		Object[] recipeKeys = recipeConfig.getKeys(false).toArray();
 		for(Object key : recipeKeys){
 			try{
-				CustomItem ci = null;
-				if(Util.isGunsPlusItem(key.toString()))ci = Util.getGunsPlusItem(key.toString());
+				Object cm = null;
+				if(Util.isGunsPlusMaterial(key.toString()))cm = Util.getGunsPlusMaterial(key.toString());
 				else throw new Exception(PRE + " Recipe output not found: "+key+"! Skipping!");
 				int amount = recipeConfig.getInt(key.toString()+".amount");
-				SpoutItemStack result = new SpoutItemStack(ci, amount);
-				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
-				if(recipeConfig.getString(key+".type").equalsIgnoreCase("shaped")){
-					if(ingredients.size()!=9) throw new Exception(" Wrong number of ingredients in shaped recipe for: "+key+"! Skipping!");
-					RecipeManager.addShapedRecipe(ingredients, result);
-				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("shapeless")){
-					RecipeManager.addShapelessRecipe(ingredients, result);
-				}else if(recipeConfig.getString(key+".type").equalsIgnoreCase("furnace")){
-					if(ingredients.get(0)==null) throw new Exception(" You need at least one ingredient for the furnace recipe for "+ key+"! Skipping!");
-					RecipeManager.addFurnaceRecipe(ingredients.get(0), result);
+				SpoutItemStack result = null;
+				if(cm instanceof CustomItem){
+					CustomItem ci = (CustomItem)cm;
+					result = new SpoutItemStack(ci, amount);
 				}
+				else if(cm instanceof CustomBlock){
+					CustomBlock cb = (CustomBlock) cm;
+					result = new SpoutItemStack(cb, amount);
+				}
+				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
+				team.GunsPlus.Manager.RecipeManager.Type type = team.GunsPlus.Manager.RecipeManager.Type.valueOf(recipeConfig.getString(key+".type").toUpperCase());
+				RecipeManager.addRecipe(type, ingredients, result);
 			}catch (Exception e) {
 				if (warnings)
 					log.log(Level.WARNING, PRE + "Config Error:" + e.getMessage());
@@ -352,6 +354,7 @@ public class GunsPlus extends JavaPlugin {
 				
 				boolean hudenabled = gunsConfig.getBoolean(gunnode+".hud-enabled", true);
 				boolean mountable = gunsConfig.getBoolean(gunnode+".mountable", true);
+				boolean shootable = gunsConfig.getBoolean(gunnode+".shootable", true);
 				float randomfactor = (float) gunsConfig.getDouble(gunnode+".accuracy.random-factor", 1.0);
 				int spreadangleIN = 0;
 				int spreadangleOUT = 0;
@@ -433,6 +436,7 @@ public class GunsPlus extends JavaPlugin {
 				GunManager.editObject(g, "PROJECTILE", projectile);
 				GunManager.editObject(g, "HUDENABLED", hudenabled);
 				GunManager.editObject(g, "MOUNTABLE", mountable);
+				GunManager.editObject(g, "SHOOTABLE", shootable);
 				GunManager.editEffects(g, effects);
 				
 				//registering shapeless recipes for additions + building an extra gun for each addition
@@ -512,18 +516,22 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		update.startRepeating(5);
+		update.startRepeating(5, false);
 	}
 	
 	
 	public void updateTripods(){
 		Task update = new Task(this){
 			public void run(){
-				
 				for(TripodData td: GunsPlus.allTripodBlocks){
 					td.update();
 					TripodDataHandler.save(td);
 				}
+			}
+		};
+		update.startRepeating(5, false);
+		Task save = new Task(this){
+			public void run(){
 				try {
 					dataDB.save(dataFile);
 					dataDB.load(dataFile);
@@ -533,7 +541,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		update.startRepeating(1);
+		save.startRepeating(200, false);
 	}
 
 	public void performGeneral() {
@@ -556,8 +564,26 @@ public class GunsPlus extends JavaPlugin {
 			forcezoom = generalConfig.getBoolean("tripod.force-zoom",  true);
 			tripodinvsize = generalConfig.getInt("tripod.inventory-size", 9);
 			if(!((tripodinvsize%9)==0)){
+				Util.warn("Tripod inventory size has to be a multiple of 9!");
 				tripodinvsize = 9;
 			}
+			Task trecipe = new Task(this){
+				public void run(){
+					if(tripod!=null){
+						SpoutItemStack result = new SpoutItemStack(tripod, generalConfig.getInt("tripod.recipe.amount", 1));
+						List<ItemStack> ingred = ConfigParser.parseItems(generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
+						try {
+							RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.Type.valueOf(generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
+						} catch (Exception e) {
+							if(debug)
+								e.printStackTrace();
+							Util.warn("Config Error: "+e.getMessage());
+						}
+						this.stop();
+					}
+				}
+			};
+			trecipe.startRepeating(5, false);
 			
 			List<ItemStack> il = ConfigParser.parseItems(generalConfig.getString("transparent-materials"));
 			for(int m=0;m<il.size();m++){
