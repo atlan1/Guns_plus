@@ -2,7 +2,6 @@ package team.GunsPlus;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
+import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Enum.Projectile;
@@ -96,7 +96,20 @@ public class GunsPlusPlayer extends Shooter {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void fire(Gun g, Inventory inv) {
+	public void fire(Gun g) {
+		Inventory inv = getPlayer().getInventory();
+		if(!GunUtils.isShootable(g)&&!GunUtils.isMountable(g)){
+			PlayerUtils.sendNotification(getPlayer(), "This gun is ready for", "the scrap heap!", new ItemStack(Material.IRON_INGOT), 2000);
+			return;
+		}else if(GunUtils.isShootable(g)&&!GunUtils.isMountable(g)&&Util.enteredTripod(getPlayer())){
+			PlayerUtils.sendNotification(getPlayer(), "Use this gun ", "only outside a tripod!", new SpoutItemStack(GunsPlus.tripod), 2000);
+			return;
+		}else if(!GunUtils.isShootable(g)&&GunUtils.isMountable(g)&&!Util.enteredTripod(getPlayer())){
+			PlayerUtils.sendNotification(getPlayer(), "Enter a tripod to", "use this heavy gun!", new SpoutItemStack(g), 2000);
+			return;
+		}
+		if(Util.enteredTripod(getPlayer()))
+			inv = Util.getTripodDataOfEntered(getPlayer()).getInventory();
 		if (!GunUtils.checkInvForAmmo(inv, g.getAmmo()))
 			return;
 		if (isReloading())
@@ -108,7 +121,12 @@ public class GunsPlusPlayer extends Shooter {
 		else {
 			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
 			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(
-					getTargets(g));
+					GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
+			if(targets_damage.isEmpty()){
+				Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
+						(Projectile) g.getObject("PROJECTILE"));
+			}
 			for (LivingEntity tar : targets_damage.keySet()) {
 				if (tar.equals(getPlayer())) {
 					continue;
@@ -131,7 +149,7 @@ public class GunsPlusPlayer extends Shooter {
 				if (usedAmmo != null) {
 					damage += usedAmmo.getDamage();
 				}
-				damage(tar, Math.abs(damage));
+				tar.damage(damage, getPlayer());
 			}
 			
 			GunUtils.performEffects(new HashSet<LivingEntity>(targets_damage.keySet()),player, g);
@@ -195,15 +213,24 @@ public class GunsPlusPlayer extends Shooter {
 			return;
 		}
 	}
-
+	
 	@Override
-	public Map<LivingEntity, Integer> getTargets(Gun gun) {
-		return GunUtils.getTargets(player.getEyeLocation(), gun, isZooming());
-	}
-
-	@Override
-	public void damage(LivingEntity target, int damage) {
-		target.damage(damage, getPlayer());
+	public void delay(Gun g){
+		if(isDelayResetted()){
+			setOnDelayingQueue();
+		}
+		if(isOnDelayingQueue()){
+			Task t = new Task(GunsPlus.plugin, this){
+				public void run() {
+					Shooter sp = (Shooter) this.getArg(0);
+					sp.resetDelay();
+				}
+			};
+			t.startDelayed((long) g.getValue("SHOTDELAY"));
+			setDelaying();
+		}else if(isDelaying()){
+			return;
+		}
 	}
 
 	@Override
@@ -220,7 +247,6 @@ public class GunsPlusPlayer extends Shooter {
 		}
 	}
 
-	@Override
 	public void recoil(Gun gun) {
 		if (!Util.enteredTripod(getPlayer())) {
 			if (gun.getValue("KNOCKBACK") > 0)
