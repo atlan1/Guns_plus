@@ -38,8 +38,6 @@ public class CommandEx implements CommandExecutor{
 					return true;
 				}else if(cmd.equalsIgnoreCase("reload")){
 					plugin.config();
-					plugin.resetFields();
-					plugin.init();
 					sender.sendMessage(GunsPlus.PRE + " Configuration files reloaded!");
 				}
 			}
