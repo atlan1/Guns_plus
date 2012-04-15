@@ -100,10 +100,12 @@ public class GunsPlus extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		for(TripodData td : allTripodBlocks) {
-			td.resetDroppedGun();
+		if(tripodenabled = true) {
+			for(TripodData td : allTripodBlocks) {
+				td.resetDroppedGun();
+			}
+			TripodDataHandler.saveAll();
 		}
-		TripodDataHandler.saveAll();
 		plugin.resetFields();
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now disabled.");

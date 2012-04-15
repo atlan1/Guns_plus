@@ -15,10 +15,10 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-import team.GunsPlus.API.GunFireEvent;
-import team.GunsPlus.API.GunReloadEvent;
-import team.GunsPlus.API.GunZoomInEvent;
-import team.GunsPlus.API.GunZoomOutEvent;
+import team.GunsPlus.API.Event.GunFireEvent;
+import team.GunsPlus.API.Event.GunReloadEvent;
+import team.GunsPlus.API.Event.GunZoomInEvent;
+import team.GunsPlus.API.Event.GunZoomOutEvent;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
