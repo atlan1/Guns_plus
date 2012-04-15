@@ -415,8 +415,10 @@ public class GunsPlusListener implements Listener {
 				Util.getTripodDataOfEntered(gp.getPlayer()).setEntered(false);
 			}
 			for(TripodData td : GunsPlus.allTripodBlocks){
-				if(td.getOwner().equals(gp)){
-					TripodDataHandler.save(td);
+				if(td!=null){
+					if(td.getOwner().equals(gp)){
+						TripodDataHandler.save(td);
+					}
 				}
 			}
 			GunsPlus.GunsPlusPlayers.remove(gp);
