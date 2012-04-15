@@ -32,7 +32,9 @@ public class CommandEx implements CommandExecutor{
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					plugin.config();
-					sender.sendMessage(ChatColor.GREEN + GunsPlus.PRE + " Configuration files reloaded!");
+					plugin.resetFields();
+					plugin.init();
+					sender.sendMessage(ChatColor.YELLOW + GunsPlus.PRE + " Configuration files reloaded!");
 				}
 				return true;
 			} else if(cmd.equalsIgnoreCase("help")) {

@@ -126,7 +126,8 @@ public class GunsPlus extends JavaPlugin {
 
 	public void init() {
 		performGeneral();
-		tripod = new Tripod(this, tripodTexture);
+		if(tripodenabled)
+			tripod = new Tripod(this, tripodTexture);
 		loadAdditions();
 		loadAmmo();
 		loadGuns();
@@ -293,6 +294,12 @@ public class GunsPlus extends JavaPlugin {
 		Object[] ammoArray =  ammoConfig.getKeys(false).toArray();
 		for(Object ammonode:ammoArray){
 			try{
+				YamlConfiguration defaultConfig = new YamlConfiguration();
+				defaultConfig.load(getResource("ammo.yml"));
+				for(String node : defaultConfig.getConfigurationSection("SniperAmmo").getKeys(false)){
+					Util.warnIfNull(ammoConfig.get(ammonode+"."+node), "The node '"+node+"' in "+ammonode+" is missing or invalid!");
+				}
+				
 				String texture = ammoConfig.getString(ammonode+".texture");
 				int damage = ammoConfig.getInt(ammonode+".damage", 0);
 				
@@ -321,6 +328,12 @@ public class GunsPlus extends JavaPlugin {
 		Object[] recipeKeys = recipeConfig.getKeys(false).toArray();
 		for(Object key : recipeKeys){
 			try{
+				YamlConfiguration defaultConfig = new YamlConfiguration();
+				defaultConfig.load(getResource("recipes.yml"));
+				for(String node : defaultConfig.getConfigurationSection("Sniper").getKeys(false)){
+					Util.warnIfNull(recipeConfig.get(key+"."+node), "The node '"+node+"' in the recipe for "+key+" is missing or invalid!");
+				}
+				
 				Object cm = null;
 				if(Util.isGunsPlusMaterial(key.toString()))cm = Util.getGunsPlusMaterial(key.toString());
 				else throw new Exception(PRE + " Recipe output not found: "+key+"! Skipping!");
