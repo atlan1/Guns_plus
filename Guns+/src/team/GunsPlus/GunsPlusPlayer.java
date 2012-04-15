@@ -17,6 +17,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.API.GunFireEvent;
 import team.GunsPlus.API.GunReloadEvent;
+import team.GunsPlus.API.GunZoomEvent;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
@@ -88,6 +89,7 @@ public class GunsPlusPlayer extends Shooter {
 			if (GunsPlus.notifications)
 				(getPlayer()).sendNotification(g.getName(), "Zoomed in!",
 						Material.SULPHUR);
+			Bukkit.getPluginManager().callEvent(new GunZoomEvent(this.getPlayer(), g));
 		} else {
 			GunUtils.zoomOut(this);
 			setZooming(false);
@@ -158,7 +160,7 @@ public class GunsPlusPlayer extends Shooter {
 			GunUtils.performEffects(new HashSet<LivingEntity>(targets_damage.keySet()),player, g);
 
 			GunUtils.removeAmmo(inv, g.getAmmo());
-			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer()));
+			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer(),g));
 			getPlayer().updateInventory();
 			setFireCounter(g, getFireCounter(g) + 1);
 
