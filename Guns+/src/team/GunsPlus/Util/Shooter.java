@@ -5,7 +5,7 @@ import java.util.Map;
 import org.bukkit.Location;
 import team.GunsPlus.Item.Gun;
 
-public abstract class Shooter {
+public abstract class Shooter{
 	
 	private Location location;
 	private Boolean reloading = null;

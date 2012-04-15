@@ -3,6 +3,7 @@ package team.GunsPlus;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -14,6 +15,8 @@ import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.GunsPlus.API.GunFireEvent;
+import team.GunsPlus.API.GunReloadEvent;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
@@ -155,6 +158,7 @@ public class GunsPlusPlayer extends Shooter {
 			GunUtils.performEffects(new HashSet<LivingEntity>(targets_damage.keySet()),player, g);
 
 			GunUtils.removeAmmo(inv, g.getAmmo());
+			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer()));
 			getPlayer().updateInventory();
 			setFireCounter(g, getFireCounter(g) + 1);
 
@@ -189,6 +193,7 @@ public class GunsPlusPlayer extends Shooter {
 		PlayerUtils.sendNotification(getPlayer(),
 				GunUtils.getGunNameWITHOUTAdditions(g), "Reloading...",
 				new ItemStack(Material.WATCH), 2000);
+		Bukkit.getPluginManager().callEvent(new GunReloadEvent(this.getPlayer(),g));
 		if (isReloadResetted()) {
 			setOnReloadingQueue();
 		}

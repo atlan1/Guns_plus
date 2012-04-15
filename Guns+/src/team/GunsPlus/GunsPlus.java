@@ -20,6 +20,7 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
+import team.GunsPlus.API.GunsPlusAPI;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Effect;
@@ -47,7 +48,9 @@ public class GunsPlus extends JavaPlugin {
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
 	
-	public static Logger log = Logger.getLogger("Minecraft");
+	public static GunsPlusAPI api;
+	
+	public static Logger log = Bukkit.getLogger();
 	
 	public static List<GunsPlusPlayer> GunsPlusPlayers = new ArrayList<GunsPlusPlayer>();
 	
@@ -108,19 +111,13 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		
 		config();
-		
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
-
 		hook();
-		
 		init();
-		
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
-		
 		getCommand("guns+").setExecutor(new CommandEx(this));
-
+		api = new GunsPlusAPI(this);
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
 	}
 
@@ -632,5 +629,9 @@ public class GunsPlus extends JavaPlugin {
 		GunsPlus.allAdditions = new ArrayList<Addition>();
 		GunsPlus.transparentMaterials = new ArrayList<Material>();
 		GunsPlus.allTripodBlocks = new ArrayList<TripodData>();
+	}
+	
+	public GunsPlusAPI getAPI() {
+		return api;
 	}
 }
