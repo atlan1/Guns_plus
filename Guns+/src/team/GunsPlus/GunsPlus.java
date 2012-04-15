@@ -128,7 +128,7 @@ public class GunsPlus extends JavaPlugin {
 		loadAmmo();
 		loadGuns();
 		loadRecipes();
-		if(tripodenabled) {
+		if(tripodenabled == true) {
 			initTripod();
 			updateTripods();
 		}
@@ -523,6 +523,7 @@ public class GunsPlus extends JavaPlugin {
 	
 	
 	public void updateTripods(){
+		if(tripodenabled == false) return;
 		Task update = new Task(this){
 			public void run(){
 				for(TripodData td: GunsPlus.allTripodBlocks){
@@ -569,7 +570,7 @@ public class GunsPlus extends JavaPlugin {
 				Util.warn("Tripod inventory size has to be a multiple of 9!");
 				tripodinvsize = 9;
 			}
-			if(tripodenabled = true){
+			if(tripodenabled == true){
 				Task trecipe = new Task(this){
 					public void run(){
 						if(tripod!=null){
