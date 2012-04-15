@@ -47,6 +47,7 @@ public class GunsPlus extends JavaPlugin {
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
+	public static boolean useFurnaceAPI = false;
 	
 	public static GunsPlusAPI api;
 	
@@ -99,10 +100,12 @@ public class GunsPlus extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		for(TripodData td : allTripodBlocks) {
-			td.resetDroppedGun();
+		if(tripodenabled = true) {
+			for(TripodData td : allTripodBlocks) {
+				td.resetDroppedGun();
+			}
+			TripodDataHandler.saveAll();
 		}
-		TripodDataHandler.saveAll();
 		plugin.resetFields();
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
 				+ " is now disabled.");
@@ -159,11 +162,12 @@ public class GunsPlus extends JavaPlugin {
 			this.setEnabled(false);
 		}
 		if(lwcPlugin != null) {
-		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
+			lwc = ((LWCPlugin) lwcPlugin).getLWC();
 		    log.log(Level.INFO, PRE+" Plugged into LWC!");
 		}
 		if(furnaceAPI != null) {
-			 log.log(Level.INFO, PRE+" Plugged into FurnaceAPI!");
+			useFurnaceAPI = true;	
+			log.log(Level.INFO, PRE+" Plugged into FurnaceAPI!");
 		}
 		if(worldguard != null) {
 			wg = (WorldGuardPlugin) worldguard;

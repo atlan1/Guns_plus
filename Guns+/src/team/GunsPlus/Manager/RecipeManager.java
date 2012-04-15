@@ -12,6 +12,8 @@ import org.getspout.spoutapi.inventory.SpoutShapedRecipe;
 import org.getspout.spoutapi.inventory.SpoutShapelessRecipe;
 import org.getspout.spoutapi.material.MaterialData;
 
+import team.GunsPlus.GunsPlus;
+
 public class RecipeManager {
 	
 	public enum Type{
@@ -60,7 +62,9 @@ public class RecipeManager {
 	}
 	
 	public static void addFurnaceRecipe(ItemStack input, ItemStack result){
-		SpoutFurnaceRecipe x = new SpoutFurnaceRecipe(new SpoutItemStack(input), new SpoutItemStack(result));
-		SpoutFurnaceRecipes.registerSpoutRecipe(x);
+		if(GunsPlus.useFurnaceAPI) {
+			SpoutFurnaceRecipe x = new SpoutFurnaceRecipe(new SpoutItemStack(input), new SpoutItemStack(result));
+			SpoutFurnaceRecipes.registerSpoutRecipe(x);
+		}
 	}
 }
