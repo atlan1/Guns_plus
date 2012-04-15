@@ -47,6 +47,7 @@ public class GunsPlus extends JavaPlugin {
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
+	public static boolean useFurnaceAPI = false;
 	
 	public static GunsPlusAPI api;
 	
@@ -158,11 +159,12 @@ public class GunsPlus extends JavaPlugin {
 			this.setEnabled(false);
 		}
 		if(lwcPlugin != null) {
-		    lwc = ((LWCPlugin) lwcPlugin).getLWC();
+			lwc = ((LWCPlugin) lwcPlugin).getLWC();
 		    log.log(Level.INFO, PRE+" Plugged into LWC!");
 		}
 		if(furnaceAPI != null) {
-			 log.log(Level.INFO, PRE+" Plugged into FurnaceAPI!");
+			useFurnaceAPI = true;	
+			log.log(Level.INFO, PRE+" Plugged into FurnaceAPI!");
 		}
 		if(worldguard != null) {
 			wg = (WorldGuardPlugin) worldguard;
