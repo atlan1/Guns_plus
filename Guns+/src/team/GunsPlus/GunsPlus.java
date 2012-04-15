@@ -155,6 +155,7 @@ public class GunsPlus extends JavaPlugin {
 		    log.log(Level.INFO, PRE+" Plugged into Spout!");
 		}else{
 			//disable this, because it would do nothing without spout
+			log.log(Level.INFO, PRE+" disableing because Spout is missing!");
 			this.setEnabled(false);
 		}
 		if(lwcPlugin != null) {
