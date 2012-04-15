@@ -32,6 +32,8 @@ public class CommandEx implements CommandExecutor{
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					plugin.config();
+					plugin.resetFields();
+					plugin.init();
 					sender.sendMessage(ChatColor.YELLOW + GunsPlus.PRE + " Configuration files reloaded!");
 				}
 				return true;
