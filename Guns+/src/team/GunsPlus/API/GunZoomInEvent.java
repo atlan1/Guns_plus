@@ -6,12 +6,12 @@ import org.bukkit.event.HandlerList;
 
 import team.GunsPlus.Item.Gun;
 
-public class GunZoomEvent extends Event{
+public class GunZoomInEvent extends Event{
     private static final HandlerList handlers = new HandlerList();
     private Player player = null;
     private Gun gun = null;
     
-    public GunZoomEvent(Player p, Gun g) {
+    public GunZoomInEvent(Player p, Gun g) {
     	player = p;
     	gun = g;
     }

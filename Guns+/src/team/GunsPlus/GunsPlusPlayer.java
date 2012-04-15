@@ -17,7 +17,8 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.API.GunFireEvent;
 import team.GunsPlus.API.GunReloadEvent;
-import team.GunsPlus.API.GunZoomEvent;
+import team.GunsPlus.API.GunZoomInEvent;
+import team.GunsPlus.API.GunZoomOutEvent;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
@@ -89,13 +90,14 @@ public class GunsPlusPlayer extends Shooter {
 			if (GunsPlus.notifications)
 				(getPlayer()).sendNotification(g.getName(), "Zoomed in!",
 						Material.SULPHUR);
-			Bukkit.getPluginManager().callEvent(new GunZoomEvent(this.getPlayer(), g));
+			Bukkit.getPluginManager().callEvent(new GunZoomInEvent(this.getPlayer(), g));
 		} else {
 			GunUtils.zoomOut(this);
 			setZooming(false);
 			if (GunsPlus.notifications)
 				(getPlayer()).sendNotification(g.getName(), "Zoomed out!",
 						Material.SULPHUR);
+			Bukkit.getPluginManager().callEvent(new GunZoomOutEvent(this.getPlayer(), g));
 		}
 	}
 
