@@ -92,7 +92,12 @@ public class VersionChecker implements Listener{
 		if(version.equalsIgnoreCase(thisversion)){
 			return true;
 		} else {
-			double a = Double.parseDouble(version);
+			double a = 0;
+			try {
+				a = Double.parseDouble(version);
+			} catch (Exception e) {
+				a = Double.parseDouble(version.split("\\.")[0] + "." + version.split("\\.")[1]);
+			}
 			double b;
 			if(thisversion.contains("-DEV")) b = Double.parseDouble(thisversion.replace("-DEV", ""));
 			else b = Double.parseDouble(thisversion);

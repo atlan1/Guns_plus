@@ -128,12 +128,14 @@ public class GunsPlus extends JavaPlugin {
 		loadAmmo();
 		loadGuns();
 		loadRecipes();
-		if(tripodenabled)
+		if(tripodenabled) {
 			initTripod();
+			updateTripods();
+		}
 		Util.printCustomIDs();
 		if(hudenabled)
 			updateHUD();
-		updateTripods();
+		
 	}
 	
 	public void initTripod(){
@@ -567,23 +569,26 @@ public class GunsPlus extends JavaPlugin {
 				Util.warn("Tripod inventory size has to be a multiple of 9!");
 				tripodinvsize = 9;
 			}
-			Task trecipe = new Task(this){
-				public void run(){
-					if(tripod!=null){
-						SpoutItemStack result = new SpoutItemStack(tripod, generalConfig.getInt("tripod.recipe.amount", 1));
-						List<ItemStack> ingred = ConfigParser.parseItems(generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
-						try {
-							RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.Type.valueOf(generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
-						} catch (Exception e) {
-							if(debug)
-								e.printStackTrace();
-							Util.warn("Config Error: "+e.getMessage());
+			if(tripodenabled = true){
+				Task trecipe = new Task(this){
+					public void run(){
+						if(tripod!=null){
+							SpoutItemStack result = new SpoutItemStack(tripod, generalConfig.getInt("tripod.recipe.amount", 1));
+							List<ItemStack> ingred = ConfigParser.parseItems(generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
+							try {
+								RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.Type.valueOf(generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
+							} catch (Exception e) {
+								if(debug)
+									e.printStackTrace();
+								Util.warn("Config Error: "+e.getMessage());
+							}
+							this.stop();
 						}
-						this.stop();
 					}
-				}
-			};
-			trecipe.startRepeating(5, false);
+				};
+				trecipe.startRepeating(5, false);
+			}
+			
 			
 			List<ItemStack> il = ConfigParser.parseItems(generalConfig.getString("transparent-materials"));
 			for(int m=0;m<il.size();m++){
