@@ -2,12 +2,10 @@ package team.GunsPlus.Util;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Location;
 import team.GunsPlus.Item.Gun;
 
 public abstract class Shooter{
 	
-	private Location location;
 	private Boolean reloading = null;
 	private Boolean delaying = null;
 	private Map<Gun, Integer> fireCounter = new HashMap<Gun, Integer>();
@@ -70,14 +68,6 @@ public abstract class Shooter{
 	
 	public void resetFireCounter(Gun g){
 			fireCounter.put(g, 0);
-	}
-	
-	public Location getLocation() {
-		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
 	}
 	
 	public boolean isOutOfAmmo(Gun g){
