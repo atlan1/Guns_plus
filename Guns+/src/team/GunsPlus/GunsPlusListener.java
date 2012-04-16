@@ -296,6 +296,7 @@ public class GunsPlusListener implements Listener {
 	
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent e){
+		if(e.isCancelled()) return;
 		if(e.getEntityType().equals(EntityType.FIREBALL)&&((Fireball)e.getEntity()).getShooter()==null){
 			Fireball fireball = (Fireball) e.getEntity();
 			fireball.setIsIncendiary(false);
