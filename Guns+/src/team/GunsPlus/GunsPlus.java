@@ -105,18 +105,19 @@ public class GunsPlus extends JavaPlugin {
 
 	private void init() {
 		ConfigLoader.loadGeneral();
-
+		if(tripodenabled)
+			tripod = new Tripod(this, tripodTexture);
 		ConfigLoader.loadAdditions();
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
 		ConfigLoader.loadRecipes();
-		Util.printCustomIDs();
-		if(tripodenabled) {
-			tripod = new Tripod(this, tripodTexture);
+		if(tripodenabled == true) {
 			initTripod();
 			updateTripods();
 		}
-		if(hudenabled) updateHUD();
+		Util.printCustomIDs();
+		if(hudenabled)
+			updateHUD();
 		
 	}
 	
@@ -208,6 +209,7 @@ public class GunsPlus extends JavaPlugin {
 	
 	
 	private void updateTripods(){
+		if(tripodenabled == false) return;
 		Task update = new Task(this){
 			public void run(){
 				for(TripodData td: GunsPlus.allTripodBlocks){
