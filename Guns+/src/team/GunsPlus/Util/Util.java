@@ -21,13 +21,14 @@ import org.getspout.spoutapi.sound.SoundManager;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
+import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
-import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
 
@@ -51,10 +52,12 @@ public class Util {
 	public static void info(String msg) {
 		GunsPlus.log.info(GunsPlus.PRE + " " + msg);
 	}
-
-	public static void warnIfNull(Object o, String msg) {
-		if (o == null)
-			warn(msg);
+	
+	public static void debug(Exception e){
+		if(GunsPlus.debug){
+			GunsPlus.log.info(GunsPlus.PRE + "[Debug] " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public static Projectile launchProjectile(Class<? extends Projectile> c,
@@ -201,7 +204,7 @@ public class Util {
 	}
 
 	public static void printCustomIDs() {
-		if (GunsPlus.generalConfig.getBoolean("id-info-guns", true)) {
+		if (ConfigLoader.generalConfig.getBoolean("id-info-guns", true)) {
 			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
 					+ " ------------  ID's of the guns: -----------------");
 			if (GunsPlus.allGuns.isEmpty())
@@ -212,7 +215,7 @@ public class Util {
 						+ new SpoutItemStack(gun).getDurability());
 			}
 		}
-		if (GunsPlus.generalConfig.getBoolean("id-info-ammo", true)) {
+		if (ConfigLoader.generalConfig.getBoolean("id-info-ammo", true)) {
 			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
 					+ " ------------  ID's of the ammo: -----------------");
 			if (GunsPlus.allAmmo.isEmpty())
@@ -223,7 +226,7 @@ public class Util {
 						+ new SpoutItemStack(ammo).getDurability());
 			}
 		}
-		if (GunsPlus.generalConfig.getBoolean("id-info-additions", true)) {
+		if (ConfigLoader.generalConfig.getBoolean("id-info-additions", true)) {
 			GunsPlus.log
 					.log(Level.INFO,
 							GunsPlus.PRE
