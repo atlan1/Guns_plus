@@ -4,16 +4,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Item.Gun;
 
-public class GunZoomOutEvent extends Event{
+public class GunEffectEvent extends Event{
     private static final HandlerList handlers = new HandlerList();
     private Player player = null;
     private Gun gun = null;
+    private Effect eff = null;
     
-    public GunZoomOutEvent(Player p, Gun g) {
+    public GunEffectEvent(Player p, Gun g, Effect e) {
     	player = p;
     	gun = g;
+    	eff = e;
     }
     
     public HandlerList getHandlers() {
@@ -30,5 +33,9 @@ public class GunZoomOutEvent extends Event{
     
     public Gun getGun() {
     	return gun;
+    }
+    
+    public Effect getEffect() {
+    	return eff;
     }
 }
