@@ -31,6 +31,7 @@ public class CommandEx implements CommandExecutor{
 				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.reload")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
+					plugin.getServer().resetRecipes();
 					plugin.config();
 					plugin.resetFields();
 					plugin.init();
