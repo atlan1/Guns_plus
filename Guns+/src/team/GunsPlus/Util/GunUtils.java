@@ -25,6 +25,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -38,9 +39,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 
 import team.GunsPlus.API.Event.*;
-import team.GunsPlus.API.Event.Block.GunBlockBreakEvent;
-import team.GunsPlus.API.Event.Block.GunBlockPlaceEvent;
-import team.GunsPlus.API.Event.Gun.GunProjectileEvent;
+import team.GunsPlus.API.Event.Gun.*;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
@@ -380,7 +379,7 @@ public class GunUtils {
 							case BREAK:
 								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
 									loc_tar.getBlock().setTypeId(0);
-									Bukkit.getServer().getPluginManager().callEvent(new GunBlockBreakEvent(player, gun, loc_tar.getBlock()));
+									Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 								}
 								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 								break;
@@ -429,7 +428,7 @@ public class GunUtils {
 							case BREAK:
 								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
 									loc_tar.getBlock().setTypeId(0);
-									Bukkit.getServer().getPluginManager().callEvent(new GunBlockBreakEvent(player, gun, loc_tar.getBlock()));
+									Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 								}
 								break;
 							}
@@ -550,7 +549,7 @@ public class GunUtils {
 									Block b = bi.next();
 									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
 										b.setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new GunBlockBreakEvent(player, gun, b));
+										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 									}else{
 										loop=false;
 									}
