@@ -191,7 +191,6 @@ public class GunUtils {
 		return targets;
 	}
 
-//	 @SuppressWarnings("deprecation")
 	public static void removeAmmo(Inventory inv, ArrayList<ItemStack> ammo) {
 		if (ammo.isEmpty())
 			return;
@@ -218,7 +217,6 @@ public class GunUtils {
 		} else {
 			inv.remove(ammoStack);
 		}
-//		 p.updateInventory();
 	}
 
 	@SuppressWarnings("deprecation")

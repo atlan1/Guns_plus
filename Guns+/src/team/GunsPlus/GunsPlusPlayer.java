@@ -67,7 +67,6 @@ public class GunsPlusPlayer extends Shooter {
 		return player;
 	}
 
-	@Override
 	public Location getLocation(){
 		return getPlayer().getLocation();
 	}

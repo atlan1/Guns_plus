@@ -101,33 +101,33 @@ public class GunsPlusListener implements Listener {
 		switch (a) {
 			case RIGHT_CLICK_AIR:
 				if(g!=null){
-					if (plugin.zoomKey.equals(KeyType.RIGHT))
+					if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
 						gp.zoom(g);
-					if (plugin.reloadKey.equals(KeyType.RIGHT))
+					if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
 						gp.reload(g);
-					if (plugin.fireKey.equals(KeyType.RIGHT))
+					if (GunsPlus.fireKey.equals(KeyType.RIGHT))
 						gp.fire(g);
-					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
 						gp.zoom(g);
-					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
 						gp.reload(g);
-					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
 						gp.fire(g);
 				}
 				break;
 			case RIGHT_CLICK_BLOCK:
 				if(g!=null){
-					if (plugin.zoomKey.equals(KeyType.RIGHT))
+					if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
 						gp.zoom(g);
-					if (plugin.reloadKey.equals(KeyType.RIGHT))
+					if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
 						gp.reload(g);
-					if (plugin.fireKey.equals(KeyType.RIGHT))
+					if (GunsPlus.fireKey.equals(KeyType.RIGHT))
 						gp.fire(g);
-					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
 						gp.zoom(g);
-					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
 						gp.reload(g);
-					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.RIGHTSHIFT))
+					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
 						gp.fire(g);
 				}
 				if(Util.isTripod(e.getClickedBlock())){
@@ -153,33 +153,33 @@ public class GunsPlusListener implements Listener {
 				break;
 			case LEFT_CLICK_AIR:
 				if(g!=null){
-					if (plugin.zoomKey.equals(KeyType.LEFT))
+					if (GunsPlus.zoomKey.equals(KeyType.LEFT))
 						gp.zoom(g);
-					if (plugin.reloadKey.equals(KeyType.LEFT))
+					if (GunsPlus.reloadKey.equals(KeyType.LEFT))
 						gp.reload(g);
-					if (plugin.fireKey.equals(KeyType.LEFT))
+					if (GunsPlus.fireKey.equals(KeyType.LEFT))
 						gp.fire(g);
-					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
 						gp.zoom(g);
-					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
 						gp.reload(g);
-					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
 						gp.fire(g);
 				}
 				break;
 			case LEFT_CLICK_BLOCK:
 				if(g!=null){
-					if (plugin.zoomKey.equals(KeyType.LEFT))
+					if (GunsPlus.zoomKey.equals(KeyType.LEFT))
 						gp.zoom(g);
-					if (plugin.reloadKey.equals(KeyType.LEFT))
+					if (GunsPlus.reloadKey.equals(KeyType.LEFT))
 						gp.reload(g);
-					if (plugin.fireKey.equals(KeyType.LEFT))
+					if (GunsPlus.fireKey.equals(KeyType.LEFT))
 						gp.fire(g);
-					if (sp.isSneaking() && plugin.zoomKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
 						gp.zoom(g);
-					if (sp.isSneaking() && plugin.reloadKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
 						gp.reload(g);
-					if (sp.isSneaking() && plugin.fireKey.equals(KeyType.LEFTSHIFT))
+					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
 						gp.fire(g);
 				}
 				if(Util.isTripod(e.getClickedBlock())){
@@ -348,25 +348,25 @@ public class GunsPlusListener implements Listener {
 		Keyboard key = e.getKey();
 		String keyString = key.toString().split("_")[1].toLowerCase();
 		ScreenType st = e.getScreenType();
-		if ((plugin.zoomKey.equals(KeyType.LETTER)
-				|| plugin.zoomKey.equals(KeyType.NUMBER)
-				|| plugin.zoomKey.equals(KeyType.HOLDNUMBER) || plugin.zoomKey
+		if ((GunsPlus.zoomKey.equals(KeyType.LETTER)
+				|| GunsPlus.zoomKey.equals(KeyType.NUMBER)
+				|| GunsPlus.zoomKey.equals(KeyType.HOLDNUMBER) || GunsPlus.zoomKey
 					.equals(KeyType.HOLDLETTER))
-				&& plugin.zoomKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.zoomKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			gp.zoom(g);
-		} else if ((plugin.reloadKey.equals(KeyType.LETTER)
-				|| plugin.reloadKey.equals(KeyType.NUMBER)
-				|| plugin.reloadKey.equals(KeyType.HOLDNUMBER) || plugin.reloadKey
+		} else if ((GunsPlus.reloadKey.equals(KeyType.LETTER)
+				|| GunsPlus.reloadKey.equals(KeyType.NUMBER)
+				|| GunsPlus.reloadKey.equals(KeyType.HOLDNUMBER) || GunsPlus.reloadKey
 					.equals(KeyType.HOLDLETTER))
-				&& plugin.reloadKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.reloadKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			gp.reload(g);
-		} else if ((plugin.fireKey.equals(KeyType.LETTER)
-				|| plugin.fireKey.equals(KeyType.NUMBER)
-				|| plugin.fireKey.equals(KeyType.HOLDNUMBER) || plugin.fireKey
+		} else if ((GunsPlus.fireKey.equals(KeyType.LETTER)
+				|| GunsPlus.fireKey.equals(KeyType.NUMBER)
+				|| GunsPlus.fireKey.equals(KeyType.HOLDNUMBER) || GunsPlus.fireKey
 					.equals(KeyType.HOLDLETTER))
-				&& plugin.fireKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.fireKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			gp.fire(g);
 		}
@@ -381,19 +381,19 @@ public class GunsPlusListener implements Listener {
 		Keyboard key = e.getKey();
 		String keyString = key.toString().split("_")[1].toLowerCase();
 		ScreenType st = e.getScreenType();
-		if ((plugin.zoomKey.equals(KeyType.HOLDNUMBER) || plugin.zoomKey
+		if ((GunsPlus.zoomKey.equals(KeyType.HOLDNUMBER) || GunsPlus.zoomKey
 				.equals(KeyType.HOLDLETTER))
-				&& plugin.zoomKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.zoomKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			gp.zoom(g);
-		} else if ((plugin.reloadKey.equals(KeyType.HOLDNUMBER) || plugin.reloadKey
+		} else if ((GunsPlus.reloadKey.equals(KeyType.HOLDNUMBER) || GunsPlus.reloadKey
 				.equals(KeyType.HOLDLETTER))
-				&& plugin.reloadKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.reloadKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			// stop reloading ?
-		} else if ((plugin.fireKey.equals(KeyType.HOLDNUMBER) || plugin.fireKey
+		} else if ((GunsPlus.fireKey.equals(KeyType.HOLDNUMBER) || GunsPlus.fireKey
 				.equals(KeyType.HOLDLETTER))
-				&& plugin.fireKey.getData().equalsIgnoreCase(keyString)
+				&& GunsPlus.fireKey.getData().equalsIgnoreCase(keyString)
 				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
 			// stop fireing ?
 		}

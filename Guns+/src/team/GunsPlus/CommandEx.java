@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.material.CustomItem;
 
+
 public class CommandEx implements CommandExecutor{
 	private GunsPlus plugin;
 	
@@ -31,10 +32,7 @@ public class CommandEx implements CommandExecutor{
 				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.reload")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
-					plugin.getServer().resetRecipes();
-					plugin.config();
-					plugin.resetFields();
-					plugin.init();
+					plugin.reload();
 					sender.sendMessage(ChatColor.YELLOW + GunsPlus.PRE + " Configuration files reloaded!");
 				}
 				return true;

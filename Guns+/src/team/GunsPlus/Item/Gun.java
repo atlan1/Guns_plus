@@ -15,8 +15,8 @@ import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 
-import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Enum.Effect;
 
 public class Gun extends GenericCustomItem {
 
