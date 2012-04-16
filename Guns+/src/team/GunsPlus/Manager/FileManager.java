@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Util.Util;
+
 
 public class FileManager {
 
@@ -39,8 +40,7 @@ public class FileManager {
 			try {
 				f.createNewFile();
 			} catch (IOException e) {
-				if(GunsPlus.debug)
-					e.printStackTrace();
+				Util.debug(e);
 				return false;
 			}
 		}else{

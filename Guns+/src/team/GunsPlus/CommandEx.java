@@ -7,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.material.CustomItem;
 
-import team.GunsPlus.Manager.GunsPlus;
 
 public class CommandEx implements CommandExecutor{
 	private GunsPlus plugin;

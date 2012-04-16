@@ -3,7 +3,7 @@ package team.GunsPlus.Enum;
 
 import org.bukkit.entity.EntityType;
 
-import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Util.Util;
 
 public enum Target {
 
@@ -143,8 +143,7 @@ public enum Target {
 			t.setEntity(name);
 			t.setPriority(priority);
 		}catch(Exception e){
-			if(GunsPlus.debug)
-				e.printStackTrace();
+			Util.debug(e);
 		}
 		return t;
 	}

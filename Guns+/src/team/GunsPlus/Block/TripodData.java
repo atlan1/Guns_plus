@@ -39,6 +39,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	private String ownername;
 	private GunsPlusPlayer owner;
 	private Location gunLoc;
+	private Location location;
 	private Item droppedGun;
 	
 	public TripodData(String name, Location l, Gun g, ArrayList<Target> tars){
@@ -304,6 +305,14 @@ public class TripodData extends Shooter implements InventoryHolder {
 
 	public void setOwnername(String ownername) {
 		this.ownername = ownername;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 	public boolean isWorking() {

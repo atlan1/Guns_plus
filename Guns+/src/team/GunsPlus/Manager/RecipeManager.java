@@ -14,6 +14,7 @@ import org.getspout.spoutapi.material.MaterialData;
 
 import team.GunsPlus.GunsPlus;
 
+
 public class RecipeManager {
 	
 	public enum Type{

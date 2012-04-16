@@ -19,6 +19,7 @@ import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
+import team.GunsPlus.Util.Util;
 
 public class TripodDataHandler {
 	
@@ -66,8 +67,7 @@ public class TripodDataHandler {
 			GunsPlus.allTripodBlocks.add(td);
 			return td;
 		}catch(Exception e){
-			if(GunsPlus.debug)
-				e.printStackTrace();
+			Util.debug(e);
 		}
 		return null;
 	}
@@ -193,8 +193,7 @@ public class TripodDataHandler {
 				cs.set("inventory."+k,item!=null?item.getTypeId()+":"+item.getDurability()+":"+item.getAmount(): null);
 			}
 		}catch(Exception e){
-			if(GunsPlus.debug)
-				e.printStackTrace();
+			Util.debug(e);
 			return false;
 		}
 		return true;
