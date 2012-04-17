@@ -377,7 +377,7 @@ public class GunUtils {
 								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 								break;
 							case BREAK:
-								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
+								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Float) eff.getArgument("POTENCY")){
 									loc_tar.getBlock().setTypeId(0);
 									Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 								}
@@ -426,7 +426,7 @@ public class GunUtils {
 								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 								break;
 							case BREAK:
-								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
+								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Float) eff.getArgument("POTENCY")){
 									loc_tar.getBlock().setTypeId(0);
 									Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 								}
@@ -547,7 +547,7 @@ public class GunUtils {
 								loop = true;
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
-									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
+									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Float)eff.getArgument("POTENCY")){
 										b.setTypeId(0);
 										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 									}else{
