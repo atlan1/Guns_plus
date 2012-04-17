@@ -1,5 +1,6 @@
 package team.GunsPlus.API.Event.Gun;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -30,5 +31,10 @@ public class GunFireEvent extends Event{
     
     public Gun getGun() {
     	return gun;
+    }
+    
+    public Block getTargetBlock() {
+    	//GunUtils.get
+    	return null;
     }
 }
