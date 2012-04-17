@@ -294,7 +294,7 @@ public class GunsPlusListener implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onEntityExplode(EntityExplodeEvent e){
 		if(e.isCancelled()) return;
 		if(e.getEntityType().equals(EntityType.FIREBALL)&&((Fireball)e.getEntity()).getShooter()==null){
@@ -427,7 +427,7 @@ public class GunsPlusListener implements Listener {
 		
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		SpoutPlayer sp = (SpoutPlayer) event.getPlayer();
 		if(GunsPlus.notifications) {
