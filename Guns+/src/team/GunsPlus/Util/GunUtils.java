@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.server.EntityLiving;
@@ -13,6 +14,7 @@ import net.minecraft.server.Packet42RemoveMobEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -668,5 +670,16 @@ public class GunUtils {
 				}
 			}
 		return false;
+	}
+	public static List<Block> getTargetBlocks(Location loc, Gun g) {
+		List<Block> targets = new ArrayList<Block>();
+		BlockIterator bitr = new BlockIterator(loc.add(0, 1, 0), 0d,
+				(int) g.getValue("RANGE"));
+		Block b;
+		while (bitr.hasNext()) {
+			b = bitr.next();
+			if (!b.getType().equals(Material.AIR)) targets.add(b);
+		}
+		return targets;
 	}
 }
