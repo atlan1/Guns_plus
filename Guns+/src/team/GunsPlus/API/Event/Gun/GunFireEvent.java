@@ -52,7 +52,12 @@ public class GunFireEvent extends Event{
     }
     
     public Block getTargetBlock() {
-    	return GunUtils.getTargetBlocks(eyeLoc, gun).get(0);
+    	List<Block> bL = GunUtils.getTargetBlocks(eyeLoc, gun);
+    	Block b = null;
+    	if(!bL.isEmpty()) {
+    		b = bL.get(0);
+    	}
+    	return b;
     }
     
     public Location getLocation() {
