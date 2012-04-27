@@ -29,9 +29,7 @@ public class GunsPlusAPI {
 	}
 	
 	public GunsPlusPlayer getPlayer(Player player) {
-		GunsPlusPlayer p = null;
-		p = PlayerUtils.getPlayerBySpoutPlayer((SpoutPlayer)p);
-		return p;
+		return PlayerUtils.getPlayerBySpoutPlayer((SpoutPlayer) player);
 	}
 	
 	public List<Gun> getAllGuns() {

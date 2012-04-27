@@ -1,4 +1,4 @@
-package team.GunsPlus.API.Event;
+package team.GunsPlus.API.Event.Gun;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

@@ -14,6 +14,7 @@ Enjoy! :)
 	 * 6. Add Area of Effect option (such as targetenity in effects, area that is influnced)
 	 * ---FIX---
 	 * 1. HUD should overlay the zoomtexture 
-	 * 2. The file data.dat has a bunch of empty lines before the actual data   
+	 * 2. The file data.dat has a bunch of empty lines before the actual data  
+     * 3. !!! Need to fix Block Break error with Double to Integer Conversion !!!  # (but not tested yet)
          A '#' behind the todo/fix means they are done.
          A '+' behind a todo/fix means they are in progress of being added. 

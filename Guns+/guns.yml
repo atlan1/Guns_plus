@@ -20,7 +20,7 @@ Sniper:
     recoil: 0
     # this is the url of the texture you want to use for the gun.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniper.png'
-    # this ist the texture which will show up on zoom.
+    # this is the texture which will show up on zoom.
     zoom-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniperScreen.png'
     # The sound which is played on shot.
     shot-sound:
@@ -34,12 +34,12 @@ Sniper:
     # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell.
     ammo: 'SniperAmmo, sulphur'
     # the zoomfactor of the gun; you can specify how to zoom in general.yml
-    zoom-factor: 8
-    # this is the shooted projectile; there are following types: arrow, snowball, egg, fireball, enderpearl
+    zoom-factor:
+    # this is the shooted projectile; there are following types: arrow, snowball, egg, fireball, firecharge, enderpearl
     projectile:
         type: 'NONE'
         speed: 0
-    # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out  
+    # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out
     # missing-chance defines a chance of missing the target in percent. e.g. 50 means the gun misses every second shot. Again the pointer separates between zoomed or not
     # this nodes can be modified to very custom accuracy values. 
     accuracy: 
@@ -54,7 +54,7 @@ Sniper:
     weight: 30
     # specifies if the gun will be shown in the hud or not.
     hud-enabled: true
-    # with this node you can set the available additions for this gun
+    # with this node you can set the available additions for this gun, use NONE for no Addition
     additions: Silencer, ExtraScope
     # this sets wheater you can mount a gun on the tripod or not
     mountable: false
