@@ -133,7 +133,11 @@ public class TripodData extends Shooter implements InventoryHolder {
 					s.resetFireCounter(g);
 				}
 			};
-			reloadTask.startDelayed((int)g.getValue("RELOADTIME"));
+			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
+				reloadTask.startMSTaskDelayed((int) g.getValue("RELOADTIME"));
+			}else{
+				reloadTask.startTickTaskDelayed((int) g.getValue("RELOADTIME"));
+			}
 			setReloading();
 			if(!(g.getResource("RELOADSOUND")==null)){
 				Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("RELOADSOUND"), (int) g.getValue("RELOADSOUNDVOLUME"));
@@ -156,7 +160,11 @@ public class TripodData extends Shooter implements InventoryHolder {
 					sp.resetDelay();
 				}
 			};
-			t.startDelayed((long) g.getValue("SHOTDELAY"));
+			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
+				t.startMSTaskDelayed((int) g.getValue("SHOTDELAY"));
+			}else{
+				t.startTickTaskDelayed((int) g.getValue("SHOTDELAY"));
+			}
 			setDelaying();
 		}else if(isDelaying()){
 			return;

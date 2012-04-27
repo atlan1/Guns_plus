@@ -209,7 +209,12 @@ public class GunsPlusPlayer extends Shooter {
 					s.resetFireCounter(g);
 				}
 			};
-			reloadTask.startDelayed((int) g.getValue("RELOADTIME"));
+			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
+				reloadTask.startMSTaskDelayed((int) g.getValue("RELOADTIME"));
+			}else{
+				reloadTask.startTickTaskDelayed((int) g.getValue("RELOADTIME"));
+			}
+			
 			setReloading();
 			if (!(g.getResource("RELOADSOUND") == null)) {
 				Util.playCustomSound(GunsPlus.plugin, getLocation(),
@@ -228,13 +233,17 @@ public class GunsPlusPlayer extends Shooter {
 			setOnDelayingQueue();
 		}
 		if(isOnDelayingQueue()){
-			Task t = new Task(GunsPlus.plugin, this){
+			Task t = new Task(GunsPlus.plugin ,this){
 				public void run() {
-					Shooter sp = (Shooter) this.getArg(0);
-					sp.resetDelay();
+					Shooter s = (Shooter) this.getArg(0);
+					s.resetDelay();
 				}
 			};
-			t.startDelayed((long) g.getValue("SHOTDELAY"));
+			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
+				t.startMSTaskDelayed((int) g.getValue("SHOTDELAY"));
+			}else{
+				t.startTickTaskDelayed((int) g.getValue("SHOTDELAY"));
+			}
 			setDelaying();
 		}else if(isDelaying()){
 			return;

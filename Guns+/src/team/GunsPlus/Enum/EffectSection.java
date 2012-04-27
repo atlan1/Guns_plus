@@ -1,17 +1,28 @@
 package team.GunsPlus.Enum;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum EffectSection {
 	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED(), TARGETSPHERE(), SHOOTERSPHERE();
 	
-	private List<Object> data;
+	private Map<String, Object> data = new HashMap<String, Object>();
 	
-	public List<Object> getData(){
+	public Map<String, Object> getData(){
 		return data;
 	}
 	
-	public void setData(List<Object> data){
+	public void setData(Map<String, Object>data){
 		this.data = data;
+	}
+	
+	public void addData(String name, Object data){
+		this.data.put(name, data);
+	}
+	
+	public void removeData(String name){
+		if(this.data.containsKey(name)) { 
+			this.data.remove(name);
+		}
 	}
 }

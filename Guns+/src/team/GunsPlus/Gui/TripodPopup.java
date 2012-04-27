@@ -185,7 +185,7 @@ public class TripodPopup extends GenericPopup{
 				}
 			}
 		};
-		update.startRepeating(5);
+		update.startTickTaskRepeating(5);
 	}
 	
 	public void resize(Screen s){
@@ -369,8 +369,8 @@ public class TripodPopup extends GenericPopup{
 	
 	public void close(SpoutPlayer sp){
 		if(sp.getMainScreen().getActivePopup().equals(this)){
-			if(update.isRunning())
-				update.stop();
+			if(update.isTickTaskRunning())
+				update.stopTickTask();
 			sp.getMainScreen().getActivePopup().close();
 		}
 	}

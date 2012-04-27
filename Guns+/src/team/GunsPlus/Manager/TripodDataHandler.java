@@ -37,8 +37,8 @@ public class TripodDataHandler {
 	public static TripodData load(int id){
 		if(stopLoading) return null;
 		try{
-			FileConfiguration db = GunsPlus.dataDB;
-			if(id>getNextId()-1) throw new Exception ("id is too big!");
+			FileConfiguration db = ConfigLoader.dataDB;
+			if(id>getNextId()-1) return null;
 			ConfigurationSection cs = db.getConfigurationSection(id+"");
 			String player = cs.getString("player");
 			UUID world = UUID.fromString(cs.getString("loc.world"));
@@ -79,7 +79,7 @@ public class TripodDataHandler {
 	}
 	
 	public static Set<String> getAllRegisteredPlayers(){
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		Set<String> players = new HashSet<String>();
 		for(int i=0;i<getNextId();i++){
 			players.add(db.getString(i+".player"));
@@ -89,7 +89,7 @@ public class TripodDataHandler {
 	
 	public static Set<Integer> getIdsByWorld(World w){
 		Set<Integer> ids = new HashSet<Integer>();
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		for(int i=0;i<getNextId();i++){
 			if(Bukkit.getWorld(UUID.fromString(db.getString(i+".loc.world"))).equals(w)){
 				ids.add(i);
@@ -100,7 +100,7 @@ public class TripodDataHandler {
 	
 	public static Set<Integer> getIdsByPlayers(String player){
 		Set<Integer> ids = new HashSet<Integer>();
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		for(int i=0;i<getNextId();i++){
 			if(db.getString(i+".player").equals(player)){
 				ids.add(i);
@@ -121,7 +121,7 @@ public class TripodDataHandler {
 	}
 	
 	public static boolean removeId(int id){
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		if(!(id>getNextId()-1))
 			db.set(id+"", null);
 		else return false;
@@ -137,14 +137,14 @@ public class TripodDataHandler {
 	}
 	
 	public static void addId(){
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		db.createSection(""+getNextId());
 		++nextID;
 	}
 	
 	
 	public static int getId(Location l){
-		FileConfiguration db = GunsPlus.dataDB;
+		FileConfiguration db = ConfigLoader.dataDB;
 		int id = -1;
 		for(int i=0;i<getNextId();i++){
 			if(Bukkit.getWorld(UUID.fromString(db.getString(i+".loc.world"))).equals(l.getWorld())&&db.getVector(i+".loc.coords").equals(l.toVector())){
@@ -164,7 +164,7 @@ public class TripodDataHandler {
 	
 	public static boolean save(TripodData td){
 		try{
-			FileConfiguration db = GunsPlus.dataDB;
+			FileConfiguration db = ConfigLoader.dataDB;
 			if(td.getOwner()==null) return false;
 			ConfigurationSection cs = null;
 			if(getId(td.getLocation())!=-1){

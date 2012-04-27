@@ -43,13 +43,14 @@ public class Tripod extends GenericCustomBlock {
 							+ "You reached the maximum", ChatColor.RED
 							+ "amount of Tripods!", new SpoutItemStack(this),
 							2000);
+				//the block won't break if you call breakNaturally right now
 				Task removeBlock = new Task(GunsPlus.plugin, l){
 					public void run(){
 						Location l = (Location)this.getArg(0);
 						l.getBlock().breakNaturally();
 					}
 				};
-				removeBlock.startDelayed(5);
+				removeBlock.startTickTaskDelayed(5);
 			}
 		}
 	}

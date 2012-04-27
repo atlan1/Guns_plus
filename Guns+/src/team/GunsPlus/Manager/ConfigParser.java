@@ -1,12 +1,15 @@
 package team.GunsPlus.Manager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 //import net.morematerials.morematerials.materials.SMCustomItem;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 //import org.getspout.spoutapi.material.CustomBlock;
@@ -169,7 +172,9 @@ public class ConfigParser {
     	if(!ConfigLoader.gunsConfig.isConfigurationSection(path)||ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
     	for(String effectsection: ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false)){
     		EffectSection effsec = EffectSection.valueOf(effectsection.toUpperCase());
+    		setSectionArguments(path+"."+effectsection, effsec);
     		for(String effecttype : ConfigLoader.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
+    			if(effecttype.toUpperCase().equalsIgnoreCase("arguments")) continue;
     			EffectType efftyp = EffectType.valueOf(effecttype.toUpperCase());
     			if(Util.isAllowedInEffectSection(efftyp, effsec)){
     				effects.add(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
@@ -177,6 +182,30 @@ public class ConfigParser {
     		}
     	}
     	return effects;
+    }
+    
+    private static void setSectionArguments(String path ,EffectSection e){
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	ConfigurationSection cs = ConfigLoader.gunsConfig.getConfigurationSection(path+".arguments");
+    	if(cs==null) return;
+    	switch(e) {
+    		case TARGETLOCATION:
+    			if(cs.getInt("radius")!=0)
+    				map.put("RADIUS", (Integer)cs.getInt("radius"));
+    			else return;
+    			break;
+    		case SHOOTERLOCATION:
+    			if(cs.getInt("radius")!=0)
+    				map.put("RADIUS", (Integer)cs.getInt("radius"));
+    			else return;
+    			break;
+    		case FLIGHTPATH:
+    			if(cs.getInt("length")!=0)
+    				map.put("LENGTH", (Integer)cs.getInt("length"));
+    			else return;
+    			break;
+    	}
+    	e.setData(map);
     }
     
     private static Effect buildEffect(EffectType efftyp, EffectSection es, String path){

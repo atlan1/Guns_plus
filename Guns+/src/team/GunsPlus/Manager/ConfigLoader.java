@@ -30,12 +30,56 @@ public class ConfigLoader {
 	public static File additionsFile;
 	public static File ammoFile;
 	public static File recipeFile;
+	public static File dataFile;
 	public static FileConfiguration recipeConfig;
 	public static FileConfiguration ammoConfig;
 	public static FileConfiguration additionsConfig;
 	public static FileConfiguration gunsConfig;
 	public static FileConfiguration generalConfig;
+	public static FileConfiguration dataDB;
 
+	
+	public static void config() {
+		gunsFile = new File(GunsPlus.plugin.getDataFolder(), "guns.yml");
+		ammoFile = new File(GunsPlus.plugin.getDataFolder(), "ammo.yml");
+		recipeFile = new File(GunsPlus.plugin.getDataFolder(), "recipes.yml");
+		generalFile = new File(GunsPlus.plugin.getDataFolder(), "general.yml");
+		additionsFile = new File(GunsPlus.plugin.getDataFolder(), "additions.yml");
+		dataFile = new File(GunsPlus.plugin.getDataFolder(), "data.dat");
+		try {
+			firstRun();
+		} catch (Exception e) {}
+		gunsConfig = new YamlConfiguration();
+		ammoConfig = new YamlConfiguration();
+		recipeConfig = new YamlConfiguration();
+		generalConfig = new YamlConfiguration();
+		additionsConfig = new YamlConfiguration();
+		dataDB = new YamlConfiguration();
+		try {
+			gunsConfig.load(gunsFile);
+			ammoConfig.load(ammoFile);
+			recipeConfig.load(recipeFile);
+			generalConfig.load(generalFile);
+			additionsConfig.load(additionsFile);
+			dataDB.load(dataFile);
+		} catch (Exception e) {}
+	}
+
+	private static void firstRun() {
+		if(FileManager.create(gunsFile))
+			FileManager.copy(GunsPlus.plugin.getResource("guns.yml"), ConfigLoader.gunsFile);
+		if(FileManager.create(ammoFile))
+			FileManager.copy(GunsPlus.plugin.getResource("ammo.yml"), ConfigLoader.ammoFile);
+		if(FileManager.create(recipeFile))
+			FileManager.copy(GunsPlus.plugin.getResource("recipes.yml"), ConfigLoader.recipeFile);
+		if(FileManager.create(generalFile))
+			FileManager.copy(GunsPlus.plugin.getResource("general.yml"), ConfigLoader.generalFile);
+		if(FileManager.create(additionsFile))
+			FileManager.copy(GunsPlus.plugin.getResource("additions.yml"), ConfigLoader.additionsFile);
+		if(FileManager.create(dataFile))
+			FileManager.copy(GunsPlus.plugin.getResource("data.dat"), dataFile);
+	}
+	
 	public static void loadAdditions(){
 		for(Object additionnode:additionsConfig.getKeys(false)){
 			try{
@@ -136,7 +180,7 @@ public class ConfigLoader {
 				}
 				
 			}catch(Exception e){
-				Util.warn( GunsPlus.PRE + "Config Error:" + e.getMessage());
+				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
 			}
 		}
@@ -172,7 +216,7 @@ public class ConfigLoader {
 				Ammo a = new Ammo(GunsPlus.plugin, name, texture, damage);
 				GunsPlus.allAmmo.add(a);
 			} catch (Exception e) {
-				Util.warn( GunsPlus.PRE + "Config Error:" + e.getMessage());
+				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
 			}
 		}
@@ -212,7 +256,7 @@ public class ConfigLoader {
 				team.GunsPlus.Manager.RecipeManager.Type type = team.GunsPlus.Manager.RecipeManager.Type.valueOf(recipeConfig.getString(key+".type").toUpperCase());
 				RecipeManager.addRecipe(type, ingredients, result);
 			}catch (Exception e) {
-				Util.warn( GunsPlus.PRE + "Config Error:" + e.getMessage());
+				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
 			}
 		}
@@ -287,7 +331,6 @@ public class ConfigLoader {
 				if(texture==null)
 						throw new Exception(" Can't find texture url for "+gunnode+"!");
 				
-				//CREATING GUN
 				Gun g = GunManager.buildNewGun(GunsPlus.plugin,name, texture);
 
 				GunManager.editGunValue(g, "WEIGHT", weight);
@@ -329,7 +372,7 @@ public class ConfigLoader {
 				}
 
 			}catch(Exception e){
-				Util.warn( GunsPlus.PRE + "Config Error:" + e.getMessage());
+				Util.warn( "Config Error:" + e.getMessage());
 				Util.debug(e);
 			}
 		}
@@ -353,6 +396,7 @@ public class ConfigLoader {
 			GunsPlus.debug = ConfigLoader.generalConfig.getBoolean("show-debug", false);
 			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("show-notifications", true);
 			GunsPlus.autoreload = ConfigLoader.generalConfig.getBoolean("auto-reload", true);
+			GunsPlus.timeunit = ConfigLoader.generalConfig.getString("time-unit", "tick");
 			
 			GunsPlus.tripodenabled = ConfigLoader.generalConfig.getBoolean("tripod.enabled", true);
 			GunsPlus.tripodTexture = ConfigLoader.generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");
@@ -372,15 +416,14 @@ public class ConfigLoader {
 							try {
 								RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.Type.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
 							} catch (Exception e) {
-								if(GunsPlus.debug)
-									e.printStackTrace();
+								Util.debug(e);
 								Util.warn("Config Error: "+e.getMessage());
 							}
-							this.stop();
+							this.stopTickTask();
 						}
 					}
 				};
-				trecipe.startRepeating(5, false);
+				trecipe.startTickTaskRepeating(5, false);
 			}
 			
 			
@@ -416,7 +459,7 @@ public class ConfigLoader {
 			}
 
 		} catch (Exception e) {
-			Util.warn( GunsPlus.PRE + "Config Error:" + e.getMessage());
+			Util.warn( "Config Error:" + e.getMessage());
 			Util.debug(e);}
 	}
 	

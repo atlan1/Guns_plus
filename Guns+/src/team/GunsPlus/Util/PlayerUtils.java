@@ -137,14 +137,14 @@ public class PlayerUtils {
 				p.teleport(l);
 			}
 		};
-		t1.startRepeating(3, 1, false);
+		t1.startTickTaskRepeating(3, 1, false);
 		Task t2 = new Task(GunsPlus.plugin, t1){
 			public void run(){
 				Task t = (Task)this.getArg(0);
-				t.stop();
+				t.stopTickTask();
 			}
 		};
-		t2.startDelayed(5);
+		t2.startTickTaskDelayed(5);
 		Task t3 = new Task(GunsPlus.plugin, p, recoil){
 			public void run() {
 				SpoutPlayer p = (SpoutPlayer) this.getArg(0);
@@ -153,14 +153,14 @@ public class PlayerUtils {
 				p.teleport(l);
 			}
 		};
-		t3.startRepeating(6, 1, false);
+		t3.startTickTaskRepeating(6, 1, false);
 		Task t4 = new Task(GunsPlus.plugin, t3){
 			public void run(){
 				Task t = (Task)this.getArg(0);
-				t.stop();
+				t.stopTickTask();
 			}
 		};
-		t4.startDelayed(9);
+		t4.startTickTaskDelayed(9);
 	}
 
 	public static void performKnockBack(SpoutPlayer p, float knockback){

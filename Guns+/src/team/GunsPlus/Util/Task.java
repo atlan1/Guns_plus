@@ -1,5 +1,7 @@
 package team.GunsPlus.Util;
 
+import java.util.UUID;
+
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -8,6 +10,7 @@ public class Task implements Runnable {
     private JavaPlugin plugin;
     private Object[] arguments;
     private int taskID = 0;
+    private UUID taskUUID = null;
 
     public static Task create(JavaPlugin plugin, Object... arguments) {
         return new Task(plugin, arguments);
@@ -46,38 +49,53 @@ public class Task implements Runnable {
 
     }
 
-    public boolean isQueued() {
+    public boolean isTickTaskQueued() {
         return this.getServer().getScheduler().isQueued(this.taskID);
     }
-    public boolean isRunning() {
+    public boolean isTickTaskRunning() {
         return this.getServer().getScheduler().isCurrentlyRunning(this.taskID);
     }
-    public void stop() {
+    public void stopTickTask() {
         this.getServer().getScheduler().cancelTask(this.taskID);
     }
-    public void start() {
-        start(false);
+    public void stopMSTask(){
+    	MillisecondTask.stopTask(taskUUID);
     }
-    public void start(boolean Async) {
-        startDelayed(0, Async);
+    public void isMSTaskRunning(){
+    	MillisecondTask.isRunning(taskUUID);
     }
-    public void startDelayed(long tickDelay) {
-        startDelayed(tickDelay, false);
+    public void startMSTask(){
+    	startMSTaskDelayed(0);
     }
-    public void startDelayed(long tickDelay, boolean Async) {
+    public void startMSTaskDelayed(long delay){
+    	MillisecondTask.startTask(this, "delayed", delay);
+    }
+    public void startMSTaskRepeating(long interval){
+    	MillisecondTask.startTask(this, "repeating", interval);
+    }
+    public void startTickTask() {
+        startTickTask(false);
+    }
+    public void startTickTask(boolean Async) {
+        startTickTaskDelayed(0, Async);
+    }
+    public void startTickTaskDelayed(long tickDelay) {
+        startTickTaskDelayed(tickDelay, false);
+    }
+    public void startTickTaskDelayed(long tickDelay, boolean Async) {
         if (Async) {
             this.taskID = this.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, this, tickDelay);
         } else {
             this.taskID = this.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, tickDelay);
         }
     }
-    public void startRepeating(long tickInterval) {
-        startRepeating(tickInterval, false);
+    public void startTickTaskRepeating(long tickInterval) {
+        startTickTaskRepeating(tickInterval, false);
     }
-    public void startRepeating(long tickInterval, boolean Async) {
-        startRepeating(0, tickInterval, Async);
+    public void startTickTaskRepeating(long tickInterval, boolean Async) {
+        startTickTaskRepeating(0, tickInterval, Async);
     }
-    public void startRepeating(long tickDelay, long tickInterval, boolean Async) {
+    public void startTickTaskRepeating(long tickDelay, long tickInterval, boolean Async) {
         if (Async) {
             this.taskID = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this.plugin, this, tickDelay, tickInterval);
         } else {

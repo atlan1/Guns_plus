@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.server.EntityLiving;
@@ -39,6 +40,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.API.Event.GunProjectileEvent;
 import team.GunsPlus.Enum.Effect;
+import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
@@ -333,86 +335,96 @@ public class GunUtils {
 			loc_sp = player.getEyeLocation();
 			for(Effect eff : effects){
 				EffectType et = eff.getEffecttype();
-				switch(eff.getEffectsection()){
+				EffectSection effsec = eff.getEffectsection();
+				switch(effsec){
 					case TARGETLOCATION:
-						switch(et){
-							case EXPLOSION:
-								if(Util.tntIsAllowedInRegion(loc_tar)) loc_tar.getWorld().createExplosion(loc_tar, (Integer) eff.getArgument("SIZE"));
-								break;
-							case LIGHTNING:
-								loc_tar.getWorld().strikeLightning(loc_tar);
-								break;
-							case SMOKE:
-								loc_tar.getWorld().playEffect(loc_tar,org.bukkit.Effect.SMOKE , BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
-								break;
-							case SPAWN:
-								Location l1 = loc_tar;
-								l1.setY(loc_tar.getY()+1);
-								loc_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
-								break;
-							case FIRE:
-								loc_tar.getWorld().playEffect(loc_tar, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
-								break;
-							case PLACE:
-								loc_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
-								BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), loc_tar.toVector(), 0, (int) gun.getValue("RANGE"));
-								Block last = null, b = null;
-								boolean loop=true;
-								while(bi.hasNext()&&loop){
-									last = b;
-									b = bi.next();
-									if(!Util.isTransparent(b)){
-										last.setTypeId((Integer) eff.getArgument("BLOCK"));
-										loop=false;
+						List<Block> affblocks = new ArrayList<Block>();
+						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
+							affblocks = Util.getSphere(loc_tar, (Integer) effsec.getData().get("RADIUS"));
+						}
+						if(affblocks.isEmpty()){
+							affblocks.add(loc_tar.getBlock());
+						}
+						for(Block block : affblocks){
+							Location block_tar = block.getLocation();
+							switch(et){
+								case EXPLOSION:
+									if(Util.tntIsAllowedInRegion(block_tar)) block_tar.getWorld().createExplosion(block_tar, (Integer) eff.getArgument("SIZE"));
+									break;
+								case LIGHTNING:
+									block_tar.getWorld().strikeLightning(block_tar);
+									break;
+								case SMOKE:
+									block_tar.getWorld().playEffect(block_tar,org.bukkit.Effect.SMOKE , BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
+									break;
+								case SPAWN:
+									Location l1 = block_tar;
+									l1.setY(block_tar.getY()+1);
+									block_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+									break;
+								case FIRE:
+									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
+									break;
+								case PLACE:
+									block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
+									BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), block_tar.toVector(), 0, (int) gun.getValue("RANGE"));
+									Block last = null, b = null;
+									boolean loop=true;
+									while(bi.hasNext()&&loop){
+										last = b;
+										b = bi.next();
+										if(!Util.isTransparent(b)){
+											last.setTypeId((Integer) eff.getArgument("BLOCK"));
+											loop=false;
+										}
 									}
+									break;
+								case BREAK:
+									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<(Float) eff.getArgument("POTENCY")){
+										block_tar.getBlock().setTypeId(0);
+									}
+									break;
 								}
-								break;
-							case BREAK:
-								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
-									loc_tar.getBlock().setTypeId(0);
-								}
-								break;
-							}
+						}
 						break;
 					case SHOOTERLOCATION:
-						switch(et){
-							case EXPLOSION:
-								if(Util.tntIsAllowedInRegion(loc_tar)) loc_sp.getWorld().createExplosion(loc_sp, (Integer) eff.getArgument("SIZE"));
-								break;
-							case LIGHTNING:
-								loc_sp.getWorld().strikeLightning(loc_sp);
-								break;
-							case SMOKE:
-								loc_sp.getWorld().playEffect(loc_sp, org.bukkit.Effect.SMOKE,  BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
-								break;
-							case SPAWN:
-								Location l1 = loc_sp;
-								l1.setY(loc_tar.getY()+1);
-								loc_sp.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
-								break;
-							case FIRE:
-								loc_sp.getWorld().playEffect(loc_sp, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
-								break;
-							case PLACE:
-								loc_sp.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
-								BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), loc_tar.toVector(), 0, (int) gun.getValue("RANGE"));
-								Block last = null, b = null;
-								boolean loop=true;
-								while(bi.hasNext()&&loop){
-									last = b;
-									b = bi.next();
-									if(!Util.isTransparent(b)){
-										last.setTypeId((Integer) eff.getArgument("BLOCK"));
-										loop=false;
+						List<Block> affblocks1 = new ArrayList<Block>();
+						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
+							affblocks1 = Util.getSphere(loc_sp, (Integer) effsec.getData().get("RADIUS"));
+						}
+						if(affblocks1.isEmpty()){
+							affblocks1.add(loc_sp.getBlock());
+						}
+						for(Block block : affblocks1){
+							Location block_tar = block.getLocation();
+							switch(et){
+								case EXPLOSION:
+									if(Util.tntIsAllowedInRegion(block_tar)) block_tar.getWorld().createExplosion(block_tar, (Integer) eff.getArgument("SIZE"));
+									break;
+								case LIGHTNING:
+									block_tar.getWorld().strikeLightning(block_tar);
+									break;
+								case SMOKE:
+									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.SMOKE,  BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
+									break;
+								case SPAWN:
+									Location l1 = block_tar;
+									l1.setY(block_tar.getY()+1);
+									block_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
+									break;
+								case FIRE:
+									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
+									break;
+								case PLACE:
+									block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
+									break;
+								case BREAK:
+									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<(Float) eff.getArgument("POTENCY")){
+										loc_tar.getBlock().setTypeId(0);
 									}
+									break;
 								}
-								break;
-							case BREAK:
-								if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<(Integer) eff.getArgument("POTENCY")){
-									loc_tar.getBlock().setTypeId(0);
-								}
-								break;
-							}
+						}
 						break;
 					case TARGETENTITY:
 						if(tar==player) break;
@@ -458,11 +470,23 @@ public class GunUtils {
 					case FLIGHTPATH:
 						BlockIterator bi = new BlockIterator(player, Math.round(gun.getValue("RANGE")));
 						boolean loop = true;
+						int length = 0;
+						int i=0;
+						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
+							 length = (Integer) effsec.getData().get("LENGTH");
+						}else{
+							length = Integer.MAX_VALUE;
+						}
 						switch(et){
 							case FIRE:
 								while(bi.hasNext()){
 									Block b = bi.next();
 									b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
+									if(length>i){
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case EXPLOSION:
@@ -470,8 +494,13 @@ public class GunUtils {
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
 									if(Util.isTransparent(b))
-										if(Util.tntIsAllowedInRegion(loc_tar)) b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
+										if(Util.tntIsAllowedInRegion(b.getLocation())) b.getWorld().createExplosion(b.getLocation(), (Integer) eff.getArgument("SIZE"));
 									else loop=false;
+									if(length>i){
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case LIGHTNING:
@@ -481,12 +510,22 @@ public class GunUtils {
 									if(Util.isTransparent(b))
 									b.getWorld().strikeLightning(b.getLocation());
 									else loop=false;
+									if(length>i){
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case SMOKE:
 								while(bi.hasNext()){
 									Block b = bi.next();
 									b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.SMOKE, BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
+									if(length>i){										
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case SPAWN:
@@ -494,10 +533,15 @@ public class GunUtils {
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
 									Location l1 = b.getLocation();
-									l1.setY(loc_tar.getY()+1);
+									l1.setY(b.getLocation().getY()+1);
 									if(Util.isTransparent(b))
 									b.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
 									else loop=false;
+									if(length>i){
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case PLACE:
@@ -507,16 +551,26 @@ public class GunUtils {
 									if(Util.isTransparent(b))
 									b.setTypeId((Integer)eff.getArgument("BLOCK"));
 									else loop=false;
+									if(length>i){
+										i++;
+									}else{
+										break;
+									}
 								}
 								break;
 							case BREAK:
 								loop = true;
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
-									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Integer)eff.getArgument("POTENCY")){
+									if(MaterialData.getBlock(b.getTypeId()).getHardness()<(Float)eff.getArgument("POTENCY")){
 										b.setTypeId(0);
 									}else{
 										loop=false;
+									}
+									if(length>i){
+										i++;
+									}else{
+										break;
 									}
 								}
 								break;

@@ -1,46 +1,45 @@
 # Here you can configure your very own guns!
 # Look at the examples to see how it works.
-# Nodes, which are marked with REQ, are required to load the gun, nodes with OPT are optional.
 
 Sniper:
-    # this is the damage dealed by the gun: 8 = 4 hearts ### REQ
+    # this is the damage dealed by the gun: 8 = 4 hearts
     damage: 8 
-    # this is the damage dealed by the gun if it is a headshot ### OPT
+    # this is the damage dealed by the gun if it is a headshot
     head-shot-damage: 20
-    # this is the range within that the gun will hit a entity (in blocks)### REQ
+    # this is the range within that the gun will hit an entity (in blocks)
     range: 70
-    # this is the time the player needs to reload the gun (in ticks; 20 ticks = 1 sec)### REQ
+    # this is the time the player needs to reload the gun; NOTE: you should put the value in the time unit you set in general.yml 
     reload-time: 60
-    # this is the time between the shots  -> firerate; in ticks too### REQ
+    # this is the time between the shots  -> firerate; 
     shot-delay: 40
-    # this is the amount of shots from reload to reload -> clipsize### REQ
+    # this is the amount of shots from reload to reload -> clipsize
     shots-between-reload: 6
-    # this is the speed of the knockback of one shot.### REQ
+    # this is the speed of the knockback of one shot.
     knockback: 40
-    # this is the recoil of one shot in degree. Note: this is just a vertical recoil.### OPT
+    # this is the recoil of one shot in degree. Note: this is just a vertical recoil.
     recoil: 0
-    # this is the url of the texture you want to use for the gun. ### REQ
+    # this is the url of the texture you want to use for the gun.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniper.png'
-    # this ist the texture which will show up on zoom ### OPT
+    # this ist the texture which will show up on zoom.
     zoom-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniperScreen.png'
-    # The sound which is played on shot. ### OPT
+    # The sound which is played on shot.
     shot-sound:
         url: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/sniper.ogg'
-        # the max volume is 100
+        # the max volume is 100%
         volume: 100
-    # The sound which is played on reload. ### OPT
+    # The sound which is played on reload.
     reload-sound:
         url: 'http://dl.dropbox.com/u/44243469/GunPack/Sounds/reload.ogg'
         volume: 75
-    # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell. ### OPT
+    # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell.
     ammo: 'SniperAmmo, sulphur'
-    # the zoomfactor of the gun; you can specify how to zoom in general.yml ### OPT
+    # the zoomfactor of the gun; you can specify how to zoom in general.yml
     zoom-factor: 8
-    # this is the shooted projectile; there are following types: arrow, snowball, egg, fireball, enderpearl ### OPT
+    # this is the shooted projectile; there are following types: arrow, snowball, egg, fireball, enderpearl
     projectile:
         type: 'NONE'
         speed: 0
-    # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out   ### OPT
+    # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out  
     # missing-chance defines a chance of missing the target in percent. e.g. 50 means the gun misses every second shot. Again the pointer separates between zoomed or not
     # this nodes can be modified to very custom accuracy values. 
     accuracy: 
@@ -49,7 +48,7 @@ Sniper:
         missing-chance: '60->5'
     # defines the de-/increase of the damage per block (e.g. 1 would be an increase of 1 per 1 block distance to the target, -1 would decrease the damage by one per block)
     damage-change: -0.1
-    # here you put the probability of a critical hit, which means a one-hit-kill. 100 is every shoot, 1 is very rare. ### OPT
+    # here you put the probability of a critical hit, which means a one-hit-kill. 100 is every shoot, 1 is very rare.
     critical: 10
     # this node sets the weight of the gun, this will modify the walk speed of the player that holds the gun
     weight: 30
@@ -63,17 +62,22 @@ Sniper:
     shootable: true
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
-    # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target), ### OPT
+    # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target),
     # Shooter (will affect the shooter of the gun), ShooterLocation (will affect the location, the shooter is standing on)
     # for more information about the effects see the faq on the bukkit thread. -> http://forums.bukkit.org/threads/mech-fun-gunpack-create-your-very-own-guns-spout-1-1-r3.57768/
+    # You can also define certain arguments for some effect sections: radius(all locations)-> the radius around the location; length(flightpath)-> the max length of the flightpath
         targetentity:
             potion:
                 id: 9
                 duration: 20
                 strenght: 1
         targetlocation:
+            arguments:
+                radius: 2 
             smoke:
                 density: 4
         flightpath:
+            arguments:
+                length: 5
             smoke:
                 density: 1

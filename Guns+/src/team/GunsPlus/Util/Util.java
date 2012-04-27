@@ -1,5 +1,6 @@
 package team.GunsPlus.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -424,6 +425,37 @@ public class Util {
 		loc.setY(loc.getY() + p.getEyeHeight() - 0.2D);
 		loc.setZ(loc.getZ() + l * Math.sin(a) + 0.8D * Math.cos(a));
 		return loc;
+	}
+	
+	public static List<Block> getSphere(Location center, double radius) {
+		List<Block> blockList = new ArrayList<Block>();
+	    radius += 0.5;
+	    final double radSquare = Math.pow(2, radius);
+	    final int radCeil = (int) Math.ceil(radius);
+	    final double centerX = center.getX();
+	    final double centerY = center.getY();
+	    final double centerZ = center.getZ();
+	 
+	    for(double x = centerX - radCeil; x <= centerX + radCeil; x++) {
+	        for(double y = centerY - radCeil; y <= centerY + radCeil; y++) {
+	            for(double z = centerZ - radCeil; z <= centerZ + radCeil; z++) {
+	                double distSquare = Math.pow(2, x - centerX) + Math.pow(2,y - centerY) + Math.pow(2,z - centerZ);
+	                if (distSquare > radSquare)
+	                    continue;
+	                Location currPoint = new Location(center.getWorld(), x, y, z);
+	                blockList.add(currPoint.getBlock());
+	            }
+	        }
+	    }
+	    return blockList;
+	}
+	
+	public static long ticksToMilliseconds(long ticks){
+		return ticks*20/1000;
+	}
+	
+	public static long millisecondsToTicks(long ms){
+		return ms*1000/20;
 	}
 
 	public static boolean isBlockAction(Action a) {
