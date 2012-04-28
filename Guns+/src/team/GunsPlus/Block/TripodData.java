@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -41,6 +40,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	private Location gunLoc;
 	private Location location;
 	private Item droppedGun;
+	private TripodAI ai = new TripodAI(this);
 	
 	public TripodData(String name, Location l, Gun g, ArrayList<Target> tars){
 		setOwnername(name);
@@ -65,6 +65,21 @@ public class TripodData extends Shooter implements InventoryHolder {
 		setGun(g);
 		setTargets(tars);
 	}
+	
+	public void destroy(){
+		ai.stopAI();
+		if(isEntered())
+			setEntered(false);
+		if(isWorking())
+			setWorking(false);
+		resetDroppedGun();
+	}
+	
+	public void dropContents(){
+		if(getGun()!=null)
+			location.getWorld().dropItemNaturally(location, new SpoutItemStack(getGun(), 1));
+		for(ItemStack a : getInventory().getContents()) if(a!=null)location.getWorld().dropItemNaturally(location, a);
+	}
 
 	public void update() {
 		if(droppedGun==null&&gun!=null){
@@ -88,34 +103,9 @@ public class TripodData extends Shooter implements InventoryHolder {
 		}else if(owner==null&&Bukkit.getPlayerExact(getOwnername())!=null){
 			setOwner(PlayerUtils.getPlayerByName(getOwnername()));
 		}
-		if(isWorking()){
-			//TODO add support for auto target and fire of tripods
-//			LivingEntity le = checkForTarget((int)gun.getValue("RANGE"), getTargets());
-//			System.out.println(""+le);
-//			if(le != null){
-//				setGunLoc(Util.setLookingAt(getGunLoc(), le.getEyeLocation()));
-//				this.fire(gun, getInventory());
-//			}
-		}
 		if(isWorking()&&isEntered()){
 			setWorking(false);
 		}
-	}
-	
-	public LivingEntity checkForTarget(int r, List<Target> t){
-		List<Entity> near = getDroppedGun().getNearbyEntities(r, r, r);
-		LivingEntity le = null;
-		if(getDroppedGun()==null)return le;
-		for(Target tar : t){
-			tar.getRealEntity();
-			for(Entity e : near){
-				if(e.getType().equals(tar.getRealEntity())&&e instanceof LivingEntity){
-					le = (LivingEntity) e;
-					return le;
-				}
-			}
-		}
-		return le;
 	}
 	
 	@Override
@@ -176,16 +166,33 @@ public class TripodData extends Shooter implements InventoryHolder {
 		Inventory inv = getInventory();
 		if(!GunUtils.isMountable(g))
 			return;
-		if(!GunUtils.checkInvForAmmo(inv, g.getAmmo()))return;
-		if(isReloading())return;
-		else if(isDelaying()) return;
-		else if(isOutOfAmmo(g)) return;
+		if(!GunUtils.checkInvForAmmo(inv, g.getAmmo())){
+			return;
+		}
+		if(isReloading()){
+			return;
+		}
+		else if(isDelaying()){
+			return;
+		}
+		else if(isOutOfAmmo(g)){
+			return;
+		}
 		else{
 			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
 			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(getLocation(), gun, false));
+			if(targets_damage.isEmpty()){
+				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, getLocation().getDirection().toLocation(getLocation().getWorld()),
+						(Projectile) g.getObject("PROJECTILE"));
+			}
 			for(LivingEntity tar : targets_damage.keySet()){
+				if (tar.equals(getOwner().getPlayer())) {
+					continue;
+				}
+				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
 				int damage = Math.abs(targets_damage.get(tar));
-				GunUtils.shootProjectile(getLocation(), tar.getLocation(), (Projectile) g.getObject("PROJECTILE"));
 				if(Util.getRandomInteger(0, 100)<=g.getValue("CRITICAL")){
 					damage = tar.getHealth()+1000;
 				}
@@ -235,10 +242,6 @@ public class TripodData extends Shooter implements InventoryHolder {
 			owner.getPlayer().getInventory().setContents(owner_inv.getContents());
 		}
 		this.entered = entered;
-	}
-
-	public void addTarget(Target t){
-		this.targets.add(t);
 	}
 
 	public Inventory getOwnerInv() {
@@ -328,10 +331,22 @@ public class TripodData extends Shooter implements InventoryHolder {
 	}
 
 	public void setWorking(boolean working) {
+		if(working)
+			ai.startAI();
+		else
+			ai.stopAI();
 		this.working = working;
 	}
 
 	public boolean isEntered() {
 		return entered;
+	}
+
+	public TripodAI getAI() {
+		return ai;
+	}
+	
+	public void setAI(TripodAI a){
+		ai = a;
 	}
 }

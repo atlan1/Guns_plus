@@ -32,7 +32,7 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
-
+	
 	public static Block getBlockInSight(Location l, int blockIndex, int maxradius){
 		BlockIterator bi = new BlockIterator(l.getWorld(), l.toVector(), l.getDirection(), 0d, maxradius);
 		Block b = null;
@@ -185,7 +185,7 @@ public class Util {
 
 	public static boolean isTransparent(Block block) {
 		Material m = block.getType();
-		if (GunsPlus.transparentMaterials.contains(m)) {
+		if (GunsPlus.transparentMaterials.contains(m)||isTripod(block)) {
 			return true;
 		}
 		return false;

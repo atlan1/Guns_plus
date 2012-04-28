@@ -165,7 +165,7 @@ public class GunUtils {
 		Location l, el;
 		while (bitr.hasNext()) {
 			b = bitr.next();
-			Location blockcenter = b.getLocation().add(0.5f, -0.5f, 0.5f);
+			Location blockcenter = Util.getMiddle(b.getLocation(), -0.5f);
 			Set<LivingEntity> entities = new HashSet<LivingEntity>();
 			if (!Util.isTransparent(b))
 				break;
@@ -176,7 +176,7 @@ public class GunUtils {
 				}
 			}
 			for (LivingEntity e : entities) {
-				l = e.getLocation();
+				l = Util.getMiddle(e.getLocation(), -0.5f);
 				el = e.getEyeLocation();
 				double changedamage = (int) Math.ceil((float) g
 						.getValue("CHANGEDAMAGE")
@@ -185,11 +185,11 @@ public class GunUtils {
 						.toVector().distance(blockcenter.toVector())) {
 					targets.put(
 							e,
-							(int) ((int) g.getValue("HEADSHOTDAMAGE") + changedamage)
+							(int) ((int) g.getValue("HEADSHOTDAMAGE") + changedamage<0?0:(int) g.getValue("HEADSHOTDAMAGE") + changedamage)
 									* -1);
 				} else {
 					targets.put(e,
-							(int) ((int) g.getValue("DAMAGE") + changedamage));
+							(int) ((int) g.getValue("DAMAGE")<0?0:(int) g.getValue("DAMAGE") + changedamage));
 				}
 			}
 		}

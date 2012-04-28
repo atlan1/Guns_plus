@@ -183,7 +183,7 @@ public class GunsPlusListener implements Listener {
 				}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
-					if(td.getOwner().equals(gp)&&td.getGun()!=null){
+					if(td.getOwnername().equals(gp.getPlayer().getName())&&td.getGun()!=null){
 						if(!td.isAutomatic()&&!td.isEntered()){
 							td.setEntered(true);
 						}else if(!td.isAutomatic()&&td.isEntered()){
@@ -262,8 +262,12 @@ public class GunsPlusListener implements Listener {
 	public void onItemDrop(PlayerDropItemEvent e){
 		Player p = e.getPlayer();
 		ItemStack i = e.getItemDrop().getItemStack();
+		
 		if(PlayerUtils.hasSpoutcraft(p)){
 			SpoutPlayer sp = (SpoutPlayer)p;
+			if(GunUtils.isGun(i)){
+				sp.setWalkingMultiplier(1.0);
+			}
 			if(Util.enteredTripod(sp)){
 				e.setCancelled(true);
 				sp.setItemInHand(i);
@@ -305,14 +309,8 @@ public class GunsPlusListener implements Listener {
 			if(Util.isTripod(b)){
 				Location l = b.getLocation();
 				TripodData td = Util.loadTripodData(l);
-				td.resetDroppedGun();
-				if(td.isEntered())
-					td.setEntered(false);
-				if(td.isWorking())
-					td.setWorking(false);
-				if(td.getGun()!=null)
-					l.getWorld().dropItemNaturally(l, new SpoutItemStack(td.getGun(), 1));
-				for(ItemStack a : td.getInventory().getContents()) if(a!=null)l.getWorld().dropItemNaturally(l, a);
+				td.destroy();
+				td.dropContents();
 				TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));                                                                                                    
 				GunsPlus.allTripodBlocks.remove(td);
 			}
@@ -324,14 +322,8 @@ public class GunsPlusListener implements Listener {
 		if(!Util.isTripod(e.getBlock())) return;
 		Location l = e.getBlock().getLocation();
 		TripodData td = Util.loadTripodData(l);
-		td.resetDroppedGun();
-		if(td.isEntered())
-			td.setEntered(false);
-		if(td.isWorking())
-			td.setWorking(false);
-		if(td.getGun()!=null)
-			l.getWorld().dropItemNaturally(l, new SpoutItemStack(td.getGun(), 1));
-		for(ItemStack a : td.getInventory().getContents()) if(a!=null)l.getWorld().dropItemNaturally(l, a);
+		td.destroy();
+		td.dropContents();
 		TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));                                                                                                    
 		GunsPlus.allTripodBlocks.remove(td);
 	}
@@ -415,7 +407,7 @@ public class GunsPlusListener implements Listener {
 			}
 			for(TripodData td : GunsPlus.allTripodBlocks){
 				if(td!=null){
-					if(td.getOwner().equals(gp)){
+					if(td.getOwnername().equals(gp.getPlayer().getName())){
 						TripodDataHandler.save(td);
 					}
 				}

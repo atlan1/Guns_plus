@@ -6,7 +6,6 @@ import org.bukkit.event.HandlerList;
 public class MillisecondEvent extends Event{
 
 	private static final HandlerList handlers = new HandlerList();
-	private long milli;
 	
     public HandlerList getHandlers() {
         return handlers;
@@ -15,13 +14,4 @@ public class MillisecondEvent extends Event{
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    
-    public MillisecondEvent(long currmilli){
-    	milli = currmilli;
-    }
-    
-    public long getCurrentMillisecond(){
-    	return milli;
-    }
-
 }

@@ -138,8 +138,8 @@ public class GunsPlusPlayer extends Shooter {
 					continue;
 				}
 				int damage = targets_damage.get(tar);
-				GunUtils.shootProjectile(getLocation(), tar.getLocation(),
-						(Projectile) g.getObject("PROJECTILE"));
+				Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
 				if (damage < 0)
 					PlayerUtils.sendNotification(getPlayer(), "Headshot!",
 							"with a " + GunUtils.getGunNameWITHOUTAdditions(g),

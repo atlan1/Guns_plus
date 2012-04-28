@@ -1,7 +1,10 @@
 package team.GunsPlus.Util;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,24 +15,27 @@ import team.GunsPlus.API.Event.MillisecondEvent;
 
 public class MillisecondTask implements Listener{
 
-	private static Map<UUID, Task> tasklist = new HashMap<UUID, Task>();
+	private static Map<UUID, Task> tasklist = Collections.synchronizedMap(new HashMap<UUID, Task>());
 	
 	@EventHandler
 	public void onMilli(MillisecondEvent e){
-		for(UUID id : new HashSet<UUID>(tasklist.keySet())){
+		HashSet<UUID> ids = new HashSet<UUID>(tasklist.keySet());
+		for(int i=0;i<ids.size();i++){
+			UUID id = new ArrayList<UUID>(ids).get(i);
 			Task t = tasklist.get(id);
 			switch(t.getType()){
 				case DELAYED:
-					if(e.getCurrentMillisecond()-t.getStartTime()>t.getTimeDiff()){
+					if(System.currentTimeMillis()-t.getStartTime()>t.getTimeDiff()){
 						t.getTask().run();
 						tasklist.remove(id);
 					}
 					break;
 				case REPEATING:
-					if(e.getCurrentMillisecond()-t.getStartTime()>t.getTimeDiff()){
+					if(System.currentTimeMillis()-t.getStartTime()>=t.getTimeDiff()){
 						t.getTask().run();
+						t.setStartTime(System.currentTimeMillis());
 					}
-					t.setStartTime(System.currentTimeMillis());
+					
 					break;
 			}
 		}
@@ -50,10 +56,15 @@ public class MillisecondTask implements Listener{
 	}
 	
 	public static boolean isRunning(UUID id){
-		if(tasklist.containsKey(id))
+		if(tasklist.containsKey(id)){
 			return true;
-		else
+		}else{
 			return false;
+		}
+	}
+	
+	public static List<Task> getRunningTasks(){
+		return new ArrayList<Task>(tasklist.values());
 	}
 	
 	static enum TaskType{

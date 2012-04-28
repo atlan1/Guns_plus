@@ -61,8 +61,8 @@ public class Task implements Runnable {
     public void stopMSTask(){
     	MillisecondTask.stopTask(taskUUID);
     }
-    public void isMSTaskRunning(){
-    	MillisecondTask.isRunning(taskUUID);
+    public boolean isMSTaskRunning(){
+    	return MillisecondTask.isRunning(taskUUID);
     }
     public void startMSTask(){
     	startMSTaskDelayed(0);

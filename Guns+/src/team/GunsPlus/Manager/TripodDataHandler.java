@@ -19,6 +19,7 @@ import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
+import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class TripodDataHandler {
@@ -63,7 +64,14 @@ public class TripodDataHandler {
 				}
 			}
 			td.setAutomatic(auto);
-			td.setWorking(working);
+			Task t = new Task(GunsPlus.plugin, td, working){
+				public void run(){
+					TripodData td = (TripodData) this.getArg(0);
+					boolean working = (Boolean) this.getArg(1);
+					td.setWorking(working);}
+			};
+			t.startTickTaskDelayed(40);
+			
 			GunsPlus.allTripodBlocks.add(td);
 			return td;
 		}catch(Exception e){

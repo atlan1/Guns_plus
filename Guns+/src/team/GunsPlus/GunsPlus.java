@@ -77,7 +77,7 @@ public class GunsPlus extends JavaPlugin {
 	public void onDisable() {
 		if(tripodenabled = true) {
 			for(TripodData td : allTripodBlocks) {
-				td.resetDroppedGun();
+				td.destroy();
 			}
 			TripodDataHandler.saveAll();
 		}

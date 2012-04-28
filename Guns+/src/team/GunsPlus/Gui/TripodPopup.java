@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.getspout.spoutapi.gui.Color;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericComboBox;
 import org.getspout.spoutapi.gui.GenericLabel;
@@ -46,7 +45,7 @@ public class TripodPopup extends GenericPopup{
 	private GenericButton tok = new GenericButton("OK ?");
 	private GenericButton del = new GenericButton("delete");
 	private GenericButton edit = new GenericButton("edit");
-	private GenericButton add = new GenericButton("+");
+	private GenericButton add = new GenericButton("add");
 	private GenericLabel working = new GenericLabel("WORKING");
 	private GenericLabel entered = new GenericLabel("ENTERED");
 	
@@ -61,15 +60,15 @@ public class TripodPopup extends GenericPopup{
 		addId("TITLE", title.getId());
 		
 		working.setAnchor(WidgetAnchor.SCALE);
-		working.setX(200).setY(160).setWidth(70).setHeight(50);
+		working.setX(200).setY(140).setWidth(70).setHeight(50);
 		working.setVisible(false);
-		entered.setTextColor(new Color(4));
+		working.setTooltip("Punch the tripod to stop it working.");
 		addId("WORKING", working.getId());
 		
 		entered.setAnchor(WidgetAnchor.SCALE);
-		entered.setX(200).setY(160).setWidth(70).setHeight(50);
+		entered.setX(200).setY(140).setWidth(70).setHeight(50);
 		entered.setVisible(false);
-		entered.setTextColor(new Color(4));
+		entered.setTooltip("Punch the tripod to exit.");
 		addId("ENTERED", entered.getId());
 		
 		targets.setAlign(WidgetAnchor.SCALE);
@@ -82,10 +81,12 @@ public class TripodPopup extends GenericPopup{
 		
 		auto.setAnchor(WidgetAnchor.SCALE);
 		auto.setX(20).setY(60).setWidth(30).setHeight(15);
+		auto.setTooltip("If you select this, you can start the tripod working by punching it.");
 		addId("AUTO", auto.getId());
 		
 		manu.setAnchor(WidgetAnchor.SCALE);
 		manu.setX(20).setY(80).setWidth(30).setHeight(15);
+		manu.setTooltip("If you select this, you can enter the tripod by punching it.");
 		addId("MANU", manu.getId());
 		
 		auto.setGroup(1);
@@ -93,23 +94,28 @@ public class TripodPopup extends GenericPopup{
 		
 		apply.setAnchor(WidgetAnchor.SCALE);
 		apply.setX(350).setY(100).setWidth(30).setHeight(15);
+		apply.setTooltip("Press to confirm and save changes.");
 		addId("APPLY", apply.getId());
 		
 		add.setAnchor(WidgetAnchor.SCALE);
-		add.setX(390).setY(55).setWidth(10).setHeight(10);
+		add.setX(390).setY(55).setWidth(40).setHeight(15);
+		add.setTooltip("Add a target to the list.");
 		addId("ADD", add.getId());
 		
 		del.setAnchor(WidgetAnchor.SCALE);
 		del.setX(390).setY(70).setWidth(40).setHeight(14);
+		del.setTooltip("Delete the currently selected target.");
 		addId("DEL", del.getId());
 		
 		edit.setAnchor(WidgetAnchor.SCALE);
 		edit.setX(390).setY(90).setWidth(40).setHeight(14);
+		edit.setTooltip("Edit the currently selected target.");
 		addId("EDIT", edit.getId());
 		
 		list.setAnchor(WidgetAnchor.SCALE);
 		list.setX(300).setY(55).setWidth(80).setHeight(80);
 		list.setVisible(false).setDirty(true);
+		list.setTooltip("The tripod will fire at all targets in this list.");
 		addId("LIST", list.getId());
 		
 		combo_type.setAnchor(WidgetAnchor.SCALE).setX(300).setY(65).setWidth(70).setHeight(15);
@@ -120,6 +126,7 @@ public class TripodPopup extends GenericPopup{
 		nfield.setAnchor(WidgetAnchor.SCALE).setX(300).setY(80).setWidth(70).setHeight(15);
 		nfield.setText("Name");
 		nfield.setVisible(false);
+		nfield.setTooltip("Type the name of the player here.");
 		addId("NAMEFIELD", nfield.getId());
 		
 		combo_name.setAnchor(WidgetAnchor.SCALE).setX(300).setY(80).setWidth(70).setHeight(15);
@@ -129,7 +136,8 @@ public class TripodPopup extends GenericPopup{
 		
 		tok.setAnchor(WidgetAnchor.SCALE);
 		tok.setX(300).setY(95).setWidth(70).setHeight(15);
-		tok.setVisible(false);
+		tok.setVisible(false);	
+		tok.setTooltip("Ok ?");
 		addId("OK", tok.getId());
 		
 		this.attachWidgets(plugin, title, auto, manu, apply, add, targets, list,  nfield ,tok,del,edit, combo_type, combo_name, general,  working, entered);
@@ -228,13 +236,12 @@ public class TripodPopup extends GenericPopup{
 	}
 	
 	public void applyData(){
+		ArrayList<Target> tars = new ArrayList<Target>();
 		for(ListWidgetItem i : list.getItems()){
 			Target t = parseTarget(i.getTitle(), i.getText(), i.getText());
-			if(t!=null){
-				if(!data.getTargets().contains(t))
-					data.addTarget(t);
-			}
+			tars.add(t);
 		}
+		data.setTargets(tars);
 		if(auto.isSelected()){
 			data.setAutomatic(true);
 		}else{
