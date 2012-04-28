@@ -725,7 +725,7 @@ public class GunUtils {
 	}
 	public static List<Block> getTargetBlocks(Location loc, Gun g) {
 		List<Block> targets = new ArrayList<Block>();
-		BlockIterator bitr = new BlockIterator(loc.add(0, 1, 0), 0d,
+		BlockIterator bitr = new BlockIterator(loc.add(0, 0, 0), 0d,
 				(int) g.getValue("RANGE"));
 		Block b;
 		while (bitr.hasNext()) {
