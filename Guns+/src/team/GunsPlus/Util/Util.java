@@ -476,6 +476,6 @@ public class Util {
 			} else
 				return true;
 		} else
-			return false;
+			return true;
 	}
 }
