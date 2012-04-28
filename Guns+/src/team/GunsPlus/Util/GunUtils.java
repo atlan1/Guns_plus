@@ -28,6 +28,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -41,7 +42,6 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 
 import team.GunsPlus.API.Event.*;
-import team.GunsPlus.API.Event.Gun.*;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -91,26 +91,26 @@ public class GunUtils {
 		if (pro.equals(Projectile.ARROW)) {
 			Arrow a = (Arrow) Util.launchProjectile(Arrow.class, from, to,
 					speed);
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(a));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(a));
 		} else if (pro.equals(Projectile.FIREBALL)) {
 			Fireball fb = (Fireball) Util.launchProjectile(Fireball.class,
 					from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(fb));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(fb));
 		} else if (pro.equals(Projectile.SNOWBALL)) {
 			Snowball sb = (Snowball) Util.launchProjectile(Snowball.class,
 					from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(sb));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(sb));
 		} else if (pro.equals(Projectile.EGG)) {
 			Egg egg = (Egg) Util.launchProjectile(Egg.class, from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(egg));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(egg));
 		} else if (pro.equals(Projectile.ENDERPEARL)) {
 			EnderPearl ep = (EnderPearl) Util.launchProjectile(
 					EnderPearl.class, from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(ep));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(ep));
 		} else if(pro.equals(Projectile.FIRECHARGE)) {
 			SmallFireball sfb = (SmallFireball) Util.launchProjectile(
 					SmallFireball.class, from, to, speed); 
-			Bukkit.getServer().getPluginManager().callEvent(new GunProjectileEvent(sfb));
+			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(sfb));
 		}
 	}
 
