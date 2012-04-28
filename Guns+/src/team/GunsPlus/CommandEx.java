@@ -29,7 +29,7 @@ public class CommandEx implements CommandExecutor{
 				sender.sendMessage(GunsPlusListener.credit);
 				return true;
 			} else if(cmd.equalsIgnoreCase("reload")) {
-				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.reload")) {
+				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.reload")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					plugin.reload();
@@ -40,9 +40,13 @@ public class CommandEx implements CommandExecutor{
 				sender.sendMessage(help);
 				return true;
 			} else if(cmd.equalsIgnoreCase("list")) {
-				sender.sendMessage(ChatColor.BLUE + "---Guns----");
-				for(CustomItem c : plugin.allGuns) {
-					sender.sendMessage(ChatColor.GRAY + "- " + c.getName());
+				if(!((Player) sender).hasPermission("gunsplus.command.list")) {
+					sender.sendMessage(ChatColor.RED + "Permission Denied");
+				} else {
+					sender.sendMessage(ChatColor.BLUE + "---Guns----");
+					for(CustomItem c : plugin.allGuns) {
+						sender.sendMessage(ChatColor.GRAY + "- " + c.getName());
+					}
 				}
 				return true;
 			}

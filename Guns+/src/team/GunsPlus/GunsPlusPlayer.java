@@ -72,6 +72,7 @@ public class GunsPlusPlayer extends Shooter {
 	}
 	
 	public void zoom(Gun g) {
+		if(!player.hasPermission("gunsplus.zoom." + g.getName().toLowerCase().replace(" ", "_")) || !player.hasPermission("gunsplus.zoom.*")) return;
 		if (Util.enteredTripod(getPlayer()) && GunsPlus.forcezoom)
 			return;
 		if (!g.getObjects().containsKey("ZOOMTEXTURE")) {
@@ -103,6 +104,7 @@ public class GunsPlusPlayer extends Shooter {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void fire(Gun g) {
+		if(!player.hasPermission("gunsplus.fire." + g.getName().toLowerCase().replace(" ", "_")) || !player.hasPermission("gunsplus.fire.*")) return;
 		Inventory inv = getPlayer().getInventory();
 		if(!GunUtils.isShootable(g)&&!GunUtils.isMountable(g)){
 			PlayerUtils.sendNotification(getPlayer(), "This gun is ready for", "the scrap heap!", new ItemStack(Material.IRON_INGOT), 2000);
@@ -191,6 +193,7 @@ public class GunsPlusPlayer extends Shooter {
 
 	@Override
 	public void reload(Gun g) {
+		if(!player.hasPermission("gunsplus.reload." + g.getName().toLowerCase().replace(" ", "_")) || !player.hasPermission("gunsplus.reload.*")) return;
 		if (getFireCounter(g) == 0)
 			return;
 		PlayerUtils.sendNotification(getPlayer(),
