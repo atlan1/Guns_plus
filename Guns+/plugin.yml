@@ -15,7 +15,7 @@ permissions:
     gunsplus.*:
         description: Give all permissions
         children:
-        	gunsplus.hud: true
+            gunsplus.hud: true
             gunsplus.command.reload: true
             gunsplus.command.list: true
             gunsplus.fire.all: true
@@ -38,4 +38,7 @@ permissions:
         default: false
     gunsplus.reload.all:
         description: Give permission to reload all guns.
+        default: false
+    gunsplus.craft.all:
+        description: Gives permission to crafting all guns.
         default: false

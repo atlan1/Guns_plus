@@ -71,7 +71,7 @@ public class VersionChecker implements Listener{
 			String[] pubdates = (getElementValue(element,"pubDate")).split(" ");
 			pubdate = pubdates[0] + " " + pubdates[1] + " " + pubdates[2] + " " + pubdates[3];
 			version = title.replace("Guns+","").replaceAll("\\[", "").replaceAll("\\]", "").replace(" ", "");
-			thisversion = plugin.getDescription().getVersion();
+			thisversion = plugin.getDescription().getVersion().replace("-DEV", "");
 			Bukkit.getPluginManager().registerEvents(this, plugin);
 			check();
 		} catch (Exception e) {
@@ -99,8 +99,11 @@ public class VersionChecker implements Listener{
 				a = Double.parseDouble(version.split("\\.")[0] + "." + version.split("\\.")[1]);
 			}
 			double b;
-			if(thisversion.contains("-DEV")) b = Double.parseDouble(thisversion.replace("-DEV", ""));
-			else b = Double.parseDouble(thisversion);
+			try {
+				b = Double.parseDouble(thisversion);
+			} catch (Exception e) {
+				b = Double.parseDouble(thisversion.split("\\.")[0] + "." + thisversion.split("\\.")[1]);
+			}
 			if(b >= a) {
 				return true;
 			} else {
