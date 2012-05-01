@@ -1,6 +1,6 @@
 name: GunsPlus
 main: team.GunsPlus.GunsPlus
-version: 1.2
+version: 1.2.2
 depend: [Spout]
 soft-depend: [LWC, FurnaceAPI, WorldGuard, MoreMaterials]
 authors: [Atlan1, SirTyler]
@@ -15,8 +15,12 @@ permissions:
     gunsplus.*:
         description: Give all permissions
         children:
-            gunsplus.hud: true
-            gunsplus.reload: true
+        	gunsplus.hud: true
+            gunsplus.command.reload: true
+            gunsplus.command.list: true
+            gunsplus.fire.all: true
+            gunsplus.zoom.all: true
+            gunsplus.reload.all: true
     gunsplus.hud:
         description: Give permission for showing the hud.
         default: true
@@ -26,12 +30,12 @@ permissions:
     gunsplus.command.list:
         description: Give permission for the list command.
         default: true
-    gunsplus.fire.*:
+    gunsplus.fire.all:
         description: Give permission to fire all guns.
-        default: true
-    gunsplus.zoom.*:
+        default: false
+    gunsplus.zoom.all:
         description: Give permission to zoom all guns.
-        default: true
-    gunsplus.reload.*:
+        default: false
+    gunsplus.reload.all:
         description: Give permission to reload all guns.
-        default: true
+        default: false
