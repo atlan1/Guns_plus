@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -33,6 +34,7 @@ import org.getspout.spoutapi.gui.Button;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.keyboard.Keyboard;
+import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Block.TripodData;
@@ -425,6 +427,18 @@ public class GunsPlusListener implements Listener {
 		Player p =  event.getPlayer();
 		if(GunsPlus.notifications) {
 			creditsDelayed(p);
+		}
+	}
+	
+	@EventHandler
+	public void onCraft(CraftItemEvent event) {
+		org.getspout.spoutapi.material.Material is = new SpoutItemStack(event.getRecipe().getResult()).getMaterial();
+		if(Util.isGunsPlusMaterial(is.getName())) {
+			if(!event.getWhoClicked().hasPermission("gunsplus.craft.all")) {
+				Object g = Util.getGunsPlusMaterial(is.getName());
+				if(!event.getWhoClicked().hasPermission("gunsplus.craft." + ((CustomItem) g).getName().toLowerCase().replace(" ", "_")))
+					event.setResult(Result.DENY);
+			}
 		}
 	}
 	
