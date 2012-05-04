@@ -1,6 +1,7 @@
 package team.GunsPlus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,8 +23,6 @@ import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.ConfigLoader;
 import team.GunsPlus.Manager.TripodDataHandler;
-import team.GunsPlus.Util.MillisecondTask;
-import team.GunsPlus.Util.OnMillisecond;
 import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 import team.GunsPlus.Util.VersionChecker;
@@ -31,7 +30,6 @@ import team.GunsPlus.Util.VersionChecker;
 public class GunsPlus extends JavaPlugin {
 	public static String PRE = "[Guns+]";
 	
-	//Plugins
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
@@ -49,7 +47,6 @@ public class GunsPlus extends JavaPlugin {
 	public static boolean notifications = true;
 	public static boolean autoreload = true;
 	public static boolean hudenabled = false;
-	public static String timeunit = "tick";
 	public static int hudX = 20;
 	public static int hudY = 20;
 	public static String hudBackground = null;
@@ -67,7 +64,7 @@ public class GunsPlus extends JavaPlugin {
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
-	public static List<TripodData> allTripodBlocks = new ArrayList<TripodData>();
+	public static List<TripodData> allTripodBlocks = Collections.synchronizedList(new ArrayList<TripodData>());
 	public static Tripod tripod;
 
 
@@ -94,7 +91,6 @@ public class GunsPlus extends JavaPlugin {
 		hook();
 		init();
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new MillisecondTask(), this);
 		getCommand("guns+").setExecutor(new CommandEx(this));
 		api = new GunsPlusAPI(this);
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
@@ -102,8 +98,9 @@ public class GunsPlus extends JavaPlugin {
 
 	private void init() {
 		ConfigLoader.loadGeneral();
-		if(tripodenabled)
+		if(tripodenabled){
 			tripod = new Tripod(this, tripodTexture);
+		}
 		ConfigLoader.loadAdditions();
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
@@ -115,8 +112,6 @@ public class GunsPlus extends JavaPlugin {
 		Util.printCustomIDs();
 		if(hudenabled)
 			updateHUD();
-		Thread t = new Thread(new OnMillisecond());
-		t.start();
 	}
 	
 	private void initTripod(){
@@ -160,7 +155,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		update.startTickTaskRepeating(5, false);
+		update.startTaskRepeating(5, false);
 	}
 	
 	
@@ -174,7 +169,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		update.startTickTaskRepeating(5, false);
+		update.startTaskRepeating(5, false);
 		Task save = new Task(this){
 			public void run(){
 				try {
@@ -185,7 +180,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		save.startTickTaskRepeating(200, false);
+		save.startTaskRepeating(200, false);
 	}
 
 	private void resetFields() {

@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 import team.GunsPlus.GunsPlus;
@@ -40,6 +41,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	private Location gunLoc;
 	private Location location;
 	private Item droppedGun;
+//	private Item chair;
 	private TripodAI ai = new TripodAI(this);
 	
 	public TripodData(String name, Location l, Gun g, ArrayList<Target> tars){
@@ -70,9 +72,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 		ai.stopAI();
 		if(isEntered())
 			setEntered(false);
-		if(isWorking())
-			setWorking(false);
-		resetDroppedGun();
+		removeDroppedGun();
 	}
 	
 	public void dropContents(){
@@ -83,19 +83,20 @@ public class TripodData extends Shooter implements InventoryHolder {
 
 	public void update() {
 		if(droppedGun==null&&gun!=null){
-			spawnGun();
+			dropGun();
 		}
 		if(droppedGun!=null){
 			if(!droppedGun.getLocation().equals(getGunLoc())){
 				droppedGun.teleport(getGunLoc());
 			}
 			if(droppedGun.isDead()){
-				spawnGun();
+				dropGun();
 			}
 		}
 		if(owner!=null){
-			if(isEntered()&&!owner.getPlayer().getLocation().toVector().equals(getOwnerLocation().toVector())){
-				Location l = getOwnerLocation().clone();
+			Location ownerlocation = Util.getMiddle(getLocation(), 0.0f);
+			if(isEntered()&&!owner.getPlayer().getLocation().toVector().equals(ownerlocation.toVector())){
+				Location l = ownerlocation.clone();
 				l.setYaw(getOwner().getPlayer().getLocation().getYaw());
 				l.setPitch(getOwner().getPlayer().getLocation().getPitch());
 				getOwner().getPlayer().teleport(l);
@@ -103,8 +104,14 @@ public class TripodData extends Shooter implements InventoryHolder {
 		}else if(owner==null&&Bukkit.getPlayerExact(getOwnername())!=null){
 			setOwner(PlayerUtils.getPlayerByName(getOwnername()));
 		}
+		
 		if(isWorking()&&isEntered()){
 			setWorking(false);
+		}
+		
+		SpoutBlock sb = (SpoutBlock) getLocation().getBlock();
+		if(sb.getCustomBlock()!=null&&!sb.getCustomBlock().equals(GunsPlus.tripod)){
+			sb.setCustomBlock(GunsPlus.tripod);
 		}
 	}
 	
@@ -123,11 +130,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 					s.resetFireCounter(g);
 				}
 			};
-			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
-				reloadTask.startMSTaskDelayed((int) g.getValue("RELOADTIME"));
-			}else{
-				reloadTask.startTickTaskDelayed((int) g.getValue("RELOADTIME"));
-			}
+			reloadTask.startTaskDelayed((int) g.getValue("RELOADTIME"));
 			setReloading();
 			if(!(g.getResource("RELOADSOUND")==null)){
 				Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("RELOADSOUND"), (int) g.getValue("RELOADSOUNDVOLUME"));
@@ -150,11 +153,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 					sp.resetDelay();
 				}
 			};
-			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
-				t.startMSTaskDelayed((int) g.getValue("SHOTDELAY"));
-			}else{
-				t.startTickTaskDelayed((int) g.getValue("SHOTDELAY"));
-			}
+			t.startTaskDelayed((int) g.getValue("SHOTDELAY"));
 			setDelaying();
 		}else if(isDelaying()){
 			return;
@@ -164,8 +163,9 @@ public class TripodData extends Shooter implements InventoryHolder {
 	@Override
 	public void fire(Gun g){
 		Inventory inv = getInventory();
-		if(!GunUtils.isMountable(g))
+		if(!GunUtils.isMountable(g)){
 			return;
+		}
 		if(!GunUtils.checkInvForAmmo(inv, g.getAmmo())){
 			return;
 		}
@@ -224,12 +224,6 @@ public class TripodData extends Shooter implements InventoryHolder {
 	public Inventory getInventory() {
 		return inventory;
 	}
-	
-	public Location getOwnerLocation(){
-		return Util.getMiddle(getLocation(), 0.0f);
-	}
-
-	
 
 	public void setEntered(boolean entered) {
 		if(entered==true){
@@ -238,59 +232,81 @@ public class TripodData extends Shooter implements InventoryHolder {
 			owner.getPlayer().setItemInHand(new SpoutItemStack(getGun(), 1));
 			if(GunsPlus.forcezoom)
 				owner.zoom(gun);
+//			dropChair();
+//			enterChair(owner.getPlayer());
 		}else{
 			owner.getPlayer().getInventory().setContents(owner_inv.getContents());
+//			chair.eject();
+//			removeChair();
 		}
 		this.entered = entered;
 	}
+//	
+//	private void dropChair(){
+//		Location location = getLocation().add(0.5, 0.2, 0.5);
+//		chair = location.getWorld().dropItemNaturally(location, new ItemStack(Material.GHAST_TEAR));
+//		chair.setPickupDelay(Integer.MAX_VALUE);
+//		chair.teleport(location);
+//		chair.setVelocity(new Vector(0, 0, 0));
+//	}
+//	
+//	private void removeChair(){
+//		if(chair!=null)
+//			chair.remove();
+//	}
+//	
+//	private void enterChair(SpoutPlayer sp){
+//		if(chair!=null){
+//			chair.setPassenger(sp);
+//		}
+//	}
 
-	public Inventory getOwnerInv() {
+	public Inventory getOwnerInventory() {
 		return owner_inv;
 	}
 
-	public void setOwnerInv(Inventory owner_inv) {
+	public void setOwnerInventory(Inventory owner_inv) {
 		this.owner_inv = owner_inv;
 	}
 
-	public void spawnGun(){
+	public void dropGun(){
 		if(gun!=null){
 			droppedGun = getLocation().getWorld().dropItemNaturally(getLocation(), new SpoutItemStack(gun));
 			droppedGun.setPickupDelay(Integer.MAX_VALUE);
 		}
 	}
 	
-	public void resetDroppedGun() {
+	public void removeDroppedGun() {
 		if(droppedGun!=null){
 			droppedGun.remove();
-			droppedGun=null;
 		}
 	}
+	
 	public Item getDroppedGun() {
 		return droppedGun;
 	}
 
-	public void setDroppedGun(Item droppedGun) {
-		this.droppedGun = droppedGun;
-	}
 	public Gun getGun() {
 		return gun;
 	}
+	
 	public void setGun(Gun g) {
 		this.gun = g;
 	}
-	public void resetGun(){
-		this.gun = null;
-	}
+	
 	public boolean isAutomatic() {
 		return automatic;
 	}
+	
 	public void setAutomatic(boolean automatic) {
 		this.automatic = automatic;
 	}
+	
 	public GunsPlusPlayer getOwner() {
 		return owner;
 	}
-	public void setOwner(GunsPlusPlayer owner) {
+	
+	private void setOwner(GunsPlusPlayer owner) {
 		this.owner = owner;
 	}
 	
@@ -298,7 +314,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 		return gunLoc;
 	}
 
-	public void setGunLoc(Location gunLoc) {
+	private void setGunLoc(Location gunLoc) {
 		this.gunLoc = gunLoc;
 	}
 

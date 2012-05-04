@@ -240,7 +240,7 @@ public class ConfigParser {
 		    		e.addArgument("ENTITY", ConfigLoader.gunsConfig.getString(path+".entity"));
 		    		break;
 		    	case PLACE:
-		    		e.addArgument("BLOCK", ConfigLoader.gunsConfig.getInt(path+".block"));
+		    		e.addArgument("BLOCK", ConfigLoader.gunsConfig.getString(path+".block"));
 		    		break;
 		    	case BREAK:
 		    		e.addArgument("POTENCY", ConfigLoader.gunsConfig.getDouble(path+".potency"));

@@ -12,6 +12,7 @@ import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.PlayerUtils;
+import team.GunsPlus.Util.Util;
 
 public class HUD {
 
@@ -47,7 +48,11 @@ public class HUD {
 			SpoutItemStack i = new SpoutItemStack(g);
 			item.setTypeId(i.getTypeId()).setData(i.getDurability());
 			int count = PlayerUtils.getFireCounter(sp, g);
-			int total = GunUtils.getAmmoCount(sp, g.getAmmo());
+			int total =  0;
+			if(Util.enteredTripod(sp))
+				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), g.getAmmo());
+			else
+				total = GunUtils.getAmmoCount(sp.getInventory(), g.getAmmo());
 			int mag = (int) g.getValue("SHOTSBETWEENRELOAD");
 			if (count < 0)
 				count = 0;

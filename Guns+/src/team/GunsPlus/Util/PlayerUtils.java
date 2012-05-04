@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.GunsPlus;
@@ -137,14 +138,14 @@ public class PlayerUtils {
 				p.teleport(l);
 			}
 		};
-		t1.startTickTaskRepeating(3, 1, false);
+		t1.startTaskRepeating(3, 1, false);
 		Task t2 = new Task(GunsPlus.plugin, t1){
 			public void run(){
 				Task t = (Task)this.getArg(0);
-				t.stopTickTask();
+				t.stopTask();
 			}
 		};
-		t2.startTickTaskDelayed(5);
+		t2.startTaskDelayed(5);
 		Task t3 = new Task(GunsPlus.plugin, p, recoil){
 			public void run() {
 				SpoutPlayer p = (SpoutPlayer) this.getArg(0);
@@ -153,14 +154,14 @@ public class PlayerUtils {
 				p.teleport(l);
 			}
 		};
-		t3.startTickTaskRepeating(6, 1, false);
+		t3.startTaskRepeating(6, 1, false);
 		Task t4 = new Task(GunsPlus.plugin, t3){
 			public void run(){
 				Task t = (Task)this.getArg(0);
-				t.stopTickTask();
+				t.stopTask();
 			}
 		};
-		t4.startTickTaskDelayed(9);
+		t4.startTaskDelayed(9);
 	}
 
 	public static void performKnockBack(SpoutPlayer p, float knockback){
@@ -178,7 +179,7 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasSpoutcraft(Player p) {
-		SpoutPlayer sp = (SpoutPlayer) p;
+		SpoutPlayer sp = SpoutManager.getPlayer(p);
 		if (sp.isSpoutCraftEnabled()) {
 			return true;
 		}

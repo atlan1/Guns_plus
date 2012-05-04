@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +14,7 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
@@ -65,6 +67,7 @@ public class Util {
 			Location from, Location to, float speed) {
 		Projectile e = from.getWorld().spawn(from, c);
 		e.setVelocity(to.toVector().multiply(speed));
+		Bukkit.getPluginManager().callEvent(new ProjectileLaunchEvent(e));
 		return e;
 	}
 
@@ -194,7 +197,8 @@ public class Util {
 	public static List<Entity> getNearbyEntities(Location loc, double radiusX,
 			double radiusY, double radiusZ) {
 		Entity e = loc.getWorld().spawn(loc, ExperienceOrb.class);
-		List<Entity> entities = e.getNearbyEntities(radiusX, radiusY, radiusZ);
+		@SuppressWarnings("unchecked")
+		List<Entity> entities = (List<Entity>) ((ArrayList<Entity>) e.getNearbyEntities(radiusX, radiusY, radiusZ)).clone();
 		e.remove();
 		return entities;
 	}
@@ -448,14 +452,6 @@ public class Util {
 	        }
 	    }
 	    return blockList;
-	}
-	
-	public static long ticksToMilliseconds(long ticks){
-		return ticks*20/1000;
-	}
-	
-	public static long millisecondsToTicks(long ms){
-		return ms*1000/20;
 	}
 
 	public static boolean isBlockAction(Action a) {

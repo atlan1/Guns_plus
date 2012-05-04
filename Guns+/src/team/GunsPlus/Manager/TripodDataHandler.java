@@ -70,7 +70,7 @@ public class TripodDataHandler {
 					boolean working = (Boolean) this.getArg(1);
 					td.setWorking(working);}
 			};
-			t.startTickTaskDelayed(40);
+			t.startTaskDelayed(40);
 			
 			GunsPlus.allTripodBlocks.add(td);
 			return td;

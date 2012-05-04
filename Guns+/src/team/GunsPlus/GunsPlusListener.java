@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -131,6 +132,7 @@ public class GunsPlusListener implements Listener {
 				}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock());
+					e.setUseInteractedBlock(Result.DENY);
 					if(td.getOwner()!=null&&td.getOwner().equals(gp)){
 						if(td.getGun()==null&&sp.isSneaking()&&GunUtils.holdsGun(sp)){
 							Gun tg = GunUtils.getGunInHand(sp);
@@ -139,7 +141,7 @@ public class GunsPlusListener implements Listener {
 								GunUtils.removeGunInHand(sp);
 							}else{
 								if(GunsPlus.notifications)
-									sp.sendNotification("You can't mount a", GunUtils.getGunNameWITHOUTAdditions(tg), new SpoutItemStack(tg), 2000);
+									sp.sendNotification("You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
 							}
 						}else if(td.getGun()!=null&&sp.isSneaking()){
 							TripodPopup tpp = new TripodPopup(plugin, td);
@@ -287,7 +289,7 @@ public class GunsPlusListener implements Listener {
 			e.setCancelled(true);
 			i.remove();
 			TripodData td = Util.getTripodDataOfEntered(sp);
-			td.getOwnerInv().setItem(td.getOwnerInv().firstEmpty(), itemstack);
+			td.getOwnerInventory().setItem(td.getOwnerInventory().firstEmpty(), itemstack);
 		}
 		//make sure that the guns will not be stacked on pickup
 		if(GunUtils.isGun(itemstack) && GunUtils.checkInvForGun(sp.getInventory(), GunUtils.getGun(itemstack))){
@@ -309,10 +311,11 @@ public class GunsPlusListener implements Listener {
 			if(Util.isTripod(b)){
 				Location l = b.getLocation();
 				TripodData td = Util.loadTripodData(l);
+				
 				td.destroy();
 				td.dropContents();
-				TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));                                                                                                    
-				GunsPlus.allTripodBlocks.remove(td);
+				TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation())); 
+				GunsPlus.allTripodBlocks.remove(td);                                                                                                   
 			}
 		}
 	}
@@ -322,10 +325,10 @@ public class GunsPlusListener implements Listener {
 		if(!Util.isTripod(e.getBlock())) return;
 		Location l = e.getBlock().getLocation();
 		TripodData td = Util.loadTripodData(l);
+		GunsPlus.allTripodBlocks.remove(td);
 		td.destroy();
 		td.dropContents();
 		TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));                                                                                                    
-		GunsPlus.allTripodBlocks.remove(td);
 	}
 	
 	@EventHandler
@@ -419,22 +422,22 @@ public class GunsPlusListener implements Listener {
 	
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		SpoutPlayer sp = (SpoutPlayer) event.getPlayer();
+		Player p =  event.getPlayer();
 		if(GunsPlus.notifications) {
-			creditsDelayed(sp);
+			creditsDelayed(p);
 		}
 	}
 	
-	public void credits(SpoutPlayer sp) {
+	public void credits(Player p) {
 		credit = ("This server is running " + ChatColor.GOLD + "Guns+" + ChatColor.DARK_GREEN + " By:" + plugin.getDescription().getAuthors());
-		if(sp.isSpoutCraftEnabled()) sp.sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
-		else sp.sendMessage(credit);
+		if(PlayerUtils.hasSpoutcraft(p)) ((SpoutPlayer)p).sendNotification(ChatColor.GRAY + "Guns+", ChatColor.DARK_GREEN + "By " + plugin.getDescription().getAuthors(), Material.SULPHUR);
+		else p.sendMessage(credit);
 	}
 	
-	private void creditsDelayed(final SpoutPlayer sp) {
+	private void creditsDelayed(final Player p) {
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
 			public void run() {
-				credits(sp);
+				credits(p);
 			}
 		}, 100L);
 	}

@@ -27,8 +27,8 @@ public class TripodAI{
 		activity = new Task(GunsPlus.plugin){
 			public void run() {
 				if(td.getDroppedGun()==null) return;
-				if(counter ==  5){
-					lastTarget = getNearestTarget((int) td.getGun().getValue("RANGE"), td.getTargets());
+				if(counter >=  5){
+					lastTarget = getNearestTarget();
 					counter = 0;
 				}
 				if(lastTarget!=null){
@@ -38,12 +38,13 @@ public class TripodAI{
 				counter++;
 			}
 		};
-		activity.startMSTaskRepeating(5);
+		activity.startTaskRepeating(1);
 	}
 	
 	public void stopAI(){
-		if(activity!=null)
-			activity.stopMSTask();
+		if(activity!=null){
+			activity.stopTask();
+		}
 	}
 	
 	public void fire(){
@@ -54,11 +55,12 @@ public class TripodAI{
 			td.setLocation(Util.setLookingAt(td.getLocation(), lastTarget.getEyeLocation()));
 	}
 	
-	private LivingEntity getNearestTarget(int r, List<Target> t){
-		List<Entity> near = td.getDroppedGun().getNearbyEntities(r, r, r);
+	private LivingEntity getNearestTarget(){
+		int r = (int) td.getGun().getValue("RANGE");
+		List<Entity> near = new ArrayList<Entity>(Util.getNearbyEntities(td.getLocation(), r, r, r));  
 		List<LivingEntity> les = new ArrayList<LivingEntity>();
 		LivingEntity le = null;
-		for(Target tar : t){
+		for(Target tar : td.getTargets()){
 			for(Entity e : near){
 				if(e.getType().equals(tar.getRealEntity())&&e instanceof LivingEntity){
 					if(e.getType().equals(EntityType.PLAYER)){

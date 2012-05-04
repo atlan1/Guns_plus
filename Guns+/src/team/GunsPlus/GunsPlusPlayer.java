@@ -144,13 +144,13 @@ public class GunsPlusPlayer extends Shooter {
 				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
 				if (damage < 0)
 					PlayerUtils.sendNotification(getPlayer(), "Headshot!",
-							"with a " + GunUtils.getGunNameWITHOUTAdditions(g),
+							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.ARROW), 2000);
 				targets_damage.put(tar, Math.abs(damage));
 				damage = targets_damage.get(tar);
 				if (Util.getRandomInteger(0, 100) <= g.getValue("CRITICAL")) {
 					PlayerUtils.sendNotification(getPlayer(), "Critical!",
-							"with a " + GunUtils.getGunNameWITHOUTAdditions(g),
+							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.DIAMOND_SWORD), 2000);
 					damage = tar.getHealth() + 1000;
 				}
@@ -197,7 +197,7 @@ public class GunsPlusPlayer extends Shooter {
 		if (getFireCounter(g) == 0)
 			return;
 		PlayerUtils.sendNotification(getPlayer(),
-				GunUtils.getGunNameWITHOUTAdditions(g), "Reloading...",
+				GunUtils.getRawGunName(g), "Reloading...",
 				new ItemStack(Material.WATCH), 2000);
 		Bukkit.getPluginManager().callEvent(new GunReloadEvent(this.getPlayer(),g));
 		if (isReloadResetted()) {
@@ -212,12 +212,7 @@ public class GunsPlusPlayer extends Shooter {
 					s.resetFireCounter(g);
 				}
 			};
-			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
-				reloadTask.startMSTaskDelayed((int) g.getValue("RELOADTIME"));
-			}else{
-				reloadTask.startTickTaskDelayed((int) g.getValue("RELOADTIME"));
-			}
-			
+			reloadTask.startTaskDelayed((int) g.getValue("RELOADTIME"));
 			setReloading();
 			if (!(g.getResource("RELOADSOUND") == null)) {
 				Util.playCustomSound(GunsPlus.plugin, getLocation(),
@@ -242,11 +237,7 @@ public class GunsPlusPlayer extends Shooter {
 					s.resetDelay();
 				}
 			};
-			if(GunsPlus.timeunit.equalsIgnoreCase("ms")){
-				t.startMSTaskDelayed((int) g.getValue("SHOTDELAY"));
-			}else{
-				t.startTickTaskDelayed((int) g.getValue("SHOTDELAY"));
-			}
+			t.startTaskDelayed((int) g.getValue("SHOTDELAY"));
 			setDelaying();
 		}else if(isDelaying()){
 			return;

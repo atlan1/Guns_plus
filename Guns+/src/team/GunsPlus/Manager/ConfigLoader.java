@@ -367,7 +367,7 @@ public class ConfigLoader {
 					List<ItemStack> listIngred = new ArrayList<ItemStack>();
 						listIngred.add(new SpoutItemStack(a));
 						listIngred.add(new SpoutItemStack(g));
-					Gun addgun = GunManager.buildNewAdditionGun(GunsPlus.plugin, GunUtils.getGunNameWithAdditions(g, a), texture, a, g);
+					Gun addgun = GunManager.buildNewAdditionGun(GunsPlus.plugin, GunUtils.getFullGunName(g, a), texture, a, g);
 					RecipeManager.addShapelessRecipe(listIngred, new SpoutItemStack(addgun));
 				}
 
@@ -396,7 +396,6 @@ public class ConfigLoader {
 			GunsPlus.debug = ConfigLoader.generalConfig.getBoolean("show-debug", false);
 			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("show-notifications", true);
 			GunsPlus.autoreload = ConfigLoader.generalConfig.getBoolean("auto-reload", true);
-			GunsPlus.timeunit = ConfigLoader.generalConfig.getString("time-unit", "tick");
 			
 			GunsPlus.tripodenabled = ConfigLoader.generalConfig.getBoolean("tripod.enabled", true);
 			GunsPlus.tripodTexture = ConfigLoader.generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");
@@ -419,11 +418,11 @@ public class ConfigLoader {
 								Util.debug(e);
 								Util.warn("Config Error: "+e.getMessage());
 							}
-							this.stopTickTask();
+							this.stopTask();
 						}
 					}
 				};
-				trecipe.startTickTaskRepeating(5, false);
+				trecipe.startTaskRepeating(5, false);
 			}
 			
 			

@@ -22,9 +22,6 @@ send-notifications: true
 # Should the plugin auto reload an empty gun or not
 auto-reload: true
 
-# Define what time unit you wanna use for ALL time values! Available: tick, ms
-time-unit: tick
-
 # These are the keys/buttons for zooming/fireing/reloading the gun
 # Available are: 'right', 'left', 'left+shift', 'right+shift', all characters and numbers on your keyboard
 # In order to use a Letter Key, use the @symbol before the Letter. And for Numbers use #

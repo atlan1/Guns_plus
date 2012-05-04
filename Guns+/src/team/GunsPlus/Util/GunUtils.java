@@ -28,7 +28,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -51,6 +50,7 @@ import team.GunsPlus.GunsPlusPlayer;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Manager.ConfigParser;
 
 public class GunUtils {
 
@@ -61,14 +61,14 @@ public class GunUtils {
 		return null;
 	}
 
-	public static String getGunNameWithAdditions(Gun g, Addition... adds) {
+	public static String getFullGunName(Gun g, Addition... adds) {
 		String name = g.getName();
 		for (Addition a : adds)
 			name += "+" + a.getName();
 		return name;
 	}
 
-	public static String getGunNameWITHOUTAdditions(Gun g) {
+	public static String getRawGunName(Gun g) {
 		String name = g.getName();
 		return name.split("\\+")[0];
 	}
@@ -85,32 +85,20 @@ public class GunUtils {
 		return false;
 	}
 
-	public static void shootProjectile(Location from, Location to,
-			Projectile pro) {
+	public static void shootProjectile(Location from, Location to, Projectile pro) {
 		float speed = (float) pro.getSpeed();
 		if (pro.equals(Projectile.ARROW)) {
-			Arrow a = (Arrow) Util.launchProjectile(Arrow.class, from, to,
-					speed);
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(a));
+			Util.launchProjectile(Arrow.class, from, to, speed);
 		} else if (pro.equals(Projectile.FIREBALL)) {
-			Fireball fb = (Fireball) Util.launchProjectile(Fireball.class,
-					from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(fb));
+			Util.launchProjectile(Fireball.class, from, to, speed);
 		} else if (pro.equals(Projectile.SNOWBALL)) {
-			Snowball sb = (Snowball) Util.launchProjectile(Snowball.class,
-					from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(sb));
+			Util.launchProjectile(Snowball.class, from, to, speed);
 		} else if (pro.equals(Projectile.EGG)) {
-			Egg egg = (Egg) Util.launchProjectile(Egg.class, from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(egg));
+			Util.launchProjectile(Egg.class, from, to, speed);
 		} else if (pro.equals(Projectile.ENDERPEARL)) {
-			EnderPearl ep = (EnderPearl) Util.launchProjectile(
-					EnderPearl.class, from, to, speed);
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(ep));
+			Util.launchProjectile(EnderPearl.class, from, to, speed);
 		} else if(pro.equals(Projectile.FIRECHARGE)) {
-			SmallFireball sfb = (SmallFireball) Util.launchProjectile(
-					SmallFireball.class, from, to, speed); 
-			Bukkit.getServer().getPluginManager().callEvent(new ProjectileLaunchEvent(sfb));
+			Util.launchProjectile(SmallFireball.class, from, to, speed); 
 		}
 	}
 
@@ -169,8 +157,8 @@ public class GunUtils {
 			Set<LivingEntity> entities = new HashSet<LivingEntity>();
 			if (!Util.isTransparent(b))
 				break;
-			for (Entity e : Util.getNearbyEntities(b.getLocation(), 0.4, 0.4,
-					0.4)) {
+			for (Entity e : new ArrayList<Entity>(Util.getNearbyEntities(b.getLocation(), 0.4, 0.4,
+					0.4))) {
 				if (e instanceof LivingEntity) {
 					entities.add((LivingEntity) e);
 				}
@@ -306,12 +294,11 @@ public class GunUtils {
 		return false;
 	}
 
-	public static int getAmmoCount(SpoutPlayer p, ArrayList<ItemStack> ammo) {
+	public static int getAmmoCount(Inventory inv, ArrayList<ItemStack> ammo) {
 		HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
 		int counter = 0;
 		if (ammo == null)
 			return counter;
-		Inventory inv = p.getInventory();
 		for (ItemStack theStack : ammo) {
 			invAll = inv.all(theStack.getTypeId());
 			for (int j = 0; j < inv.getSize(); j++) {
@@ -374,24 +361,23 @@ public class GunUtils {
 									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 									break;
 								case PLACE:
-									block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
 									BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), block_tar.toVector(), 0, (int) gun.getValue("RANGE"));
 									Block last = null, b = null;
 									boolean loop=true;
 									while(bi.hasNext()&&loop){
 										last = b;
 										b = bi.next();
-										if(!Util.isTransparent(b)){
-											last.setTypeId((Integer) eff.getArgument("BLOCK"));
+										if(!Util.isTransparent(b)&&!Util.isTripod(b)){
+											last.setTypeId(ConfigParser.parseItem((String) eff.getArgument("BLOCK")).getTypeId());
 											loop=false;
 											Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, last));
 										}
 									}
 									break;
 								case BREAK:
-									if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()){
-										loc_tar.getBlock().setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
+									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(block_tar.getBlock())){
+										block_tar.getBlock().setTypeId(0);
+										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(block_tar.getBlock(), player));
 									}
 									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 									break;
@@ -432,13 +418,15 @@ public class GunUtils {
 									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 									break;
 								case PLACE:
-									block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, block_tar.getBlock()));
+									if(!Util.isTripod(block_tar.getBlock())){
+										block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
+										Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, block_tar.getBlock()));
+									}
 									break;
 								case BREAK:
-									if(MaterialData.getBlock(loc_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()){
-										loc_tar.getBlock().setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
+									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(block_tar.getBlock())){
+										block_tar.getBlock().setTypeId(0);
+										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(block_tar.getBlock(), player));
 									}
 									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
 									break;
@@ -580,8 +568,8 @@ public class GunUtils {
 								loop = true;
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
-									if(Util.isTransparent(b)) {
-										b.setTypeId(Integer.valueOf(eff.getArgument("BLOCK").toString()).intValue());
+									if(Util.isTransparent(b)&&!Util.isTripod(b)) {
+										b.setTypeId(ConfigParser.parseItem((String) eff.getArgument("BLOCK")).getTypeId());
 										Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, b));
 									} else loop=false;
 									if(length>i){
@@ -596,7 +584,7 @@ public class GunUtils {
 								loop = true;
 								while(bi.hasNext()&&loop){
 									Block b = bi.next();
-									if(MaterialData.getBlock(b.getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()){
+									if(MaterialData.getBlock(b.getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(b)){
 										b.setTypeId(0);
 										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
 									}else{
