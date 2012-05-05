@@ -115,16 +115,19 @@ public class Util {
 		return isTripod(b.getLocation());
 	}
 
-	public static boolean canSee(Location observer, Location observed, int range) {
-		BlockIterator bitr = new BlockIterator(
-				setLookingAt(observer, observed), 0, range);
+	public static boolean canSee(final Location observer, final Location observed, int range) {
+		Location o = observer.clone();
+		Location w = observed.clone();
+		if(o.toVector().distance(w.toVector())>range) return false;
+		BlockIterator bitr = new BlockIterator(setLookingAt(o, w), 0, range);
 		while (bitr.hasNext()) {
 			Block b = bitr.next();
+			if(b.equals(w.getBlock())) return true;
 			if (!Util.isTransparent(b)) {
-				return false;
+				break;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public static Location getMiddle(Location l, float YShift) {

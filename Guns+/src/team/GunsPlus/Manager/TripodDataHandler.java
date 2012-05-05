@@ -10,9 +10,11 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.getspout.spoutapi.block.SpoutBlock;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
@@ -73,6 +75,9 @@ public class TripodDataHandler {
 			t.startTaskDelayed(40);
 			
 			GunsPlus.allTripodBlocks.add(td);
+			Block b = td.getLocation().getBlock();
+			SpoutBlock sb = (SpoutBlock) b;
+			sb.setCustomBlock(GunsPlus.tripod);
 			return td;
 		}catch(Exception e){
 			Util.debug(e);

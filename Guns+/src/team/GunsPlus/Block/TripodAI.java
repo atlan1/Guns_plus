@@ -32,8 +32,10 @@ public class TripodAI{
 					counter = 0;
 				}
 				if(lastTarget!=null){
-					aim();
-					fire();
+					if(Util.canSee(td.getLocation(), lastTarget.getEyeLocation(), (int) td.getGun().getValue("RANGE"))){
+						aim();
+						fire();
+					}
 				}
 				counter++;
 			}
