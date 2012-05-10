@@ -4,15 +4,14 @@ The properties of the items can be set in the configuration files.
 Enjoy! :)
 
 ***TO-DO***
-	 * ---NEW---
-	 * 1. Better fire rate...perhaps with a milisecond timer instead of ticks # 
-	 * 2. Enable the auto target and shoot system of the tripod block +    
-	 * 3. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be buy/sellable)
-	 * 4. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
-	 * 5. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
-	 * 6. Add Area of Effect option (such as targetenity in effects, area that is influnced) #
+	 * ---NEW---    
+	 * 1. Hook into certain plugins: Citizens(request that npcs can held guns an use them), Chestshop(guns should be buy/sellable)
+	 * 2. Make magazines as ammo, which contains a specific amount of bullets to safe inventory space
+	 * 3. Add "Number of Bullets" option (fireing takes config amount of ammo each shot)
+	 * 4. Add Area of Effect option (such as targetenity in effects, area that is influnced) # but perhaps also add configurable
+         *    amount for each axis.
 	 * ---FIX---
 	 * 1. HUD should overlay the zoomtexture 
-	 * 2. The file data.dat has a bunch of empty lines before the actual data
+	 * 2. The file data.dat has a bunch of empty lines before the actual data, perhaps add sql support for storing the data
          A '#' behind the todo/fix means they are done.
          A '+' behind a todo/fix means they are in progress of being added. 
