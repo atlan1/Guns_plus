@@ -8,15 +8,15 @@ Sniper:
     head-shot-damage: 20
     # this is the range within that the gun will hit an entity (in blocks)
     range: 70
-    # this is the time the player needs to reload the gun; NOTE: you should put the value in the time unit you set in general.yml 
+    # this is the time the player needs to reload the gun in ticks
     reload-time: 60
-    # this is the time between the shots  -> firerate; 
+    # the delay between two shots in ticks -> firerate
     shot-delay: 40
     # this is the amount of shots from reload to reload -> clipsize
     shots-between-reload: 6
     # this is the speed of the knockback of one shot.
     knockback: 40
-    # this is the recoil of one shot in degree. Note: this is just a vertical recoil.
+    # this is the recoil of one shot in degree. Note: this is just a vertical recoil and will stop the players movement.
     recoil: 0
     # this is the url of the texture you want to use for the gun.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniper.png'
@@ -34,8 +34,8 @@ Sniper:
     # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell.
     ammo: 'SniperAmmo, sulphur'
     # the zoomfactor of the gun; you can specify how to zoom in general.yml
-    zoom-factor:
-    # this is the shooted projectile; there are following types: arrow, snowball, egg, fireball, firecharge, enderpearl
+    zoom-factor: 9
+    # this is the shooted projectile; there are following types: ARROW, SNOWBALL, EGG, FIREBALL, FIRECHARGE, ENDERPEARL, NONE
     projectile:
         type: 'NONE'
         speed: 0
