@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -91,7 +92,7 @@ public class GunsPlusListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 		Action a = e.getAction();
-		if (GunsPlus.lwc != null)
+		if (GunsPlus.lwc != null)//do we need this here?
 			GunsPlus.lwc.wrapPlayer(p);
 		if (!PlayerUtils.hasSpoutcraft(p))return;
 		SpoutPlayer sp = (SpoutPlayer) p;
@@ -101,37 +102,37 @@ public class GunsPlusListener implements Listener {
 		if (GunUtils.holdsGun(sp))
 			g = GunUtils.getGunInHand(sp);
 		switch (a) {
-			case RIGHT_CLICK_AIR:
-				if(g!=null){
-					if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-						gp.zoom(g);
-					if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-						gp.reload(g);
-					if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-						gp.fire(g);
-					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-						gp.zoom(g);
-					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-						gp.reload(g);
-					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-						gp.fire(g);
-				}
-				break;
-			case RIGHT_CLICK_BLOCK:
-				if(g!=null){
-					if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-						gp.zoom(g);
-					if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-						gp.reload(g);
-					if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-						gp.fire(g);
-					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-						gp.zoom(g);
-					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-						gp.reload(g);
-					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-						gp.fire(g);
-				}
+		case RIGHT_CLICK_AIR:
+			if(g!=null){
+				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
+					gp.zoom(g);
+				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
+					gp.reload(g);
+				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
+					gp.fire(g);
+				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
+					gp.zoom(g);
+				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
+					gp.reload(g);
+				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
+					gp.fire(g);
+			}
+			break;
+		case RIGHT_CLICK_BLOCK:
+			if(g!=null){
+				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
+					gp.zoom(g);
+				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
+					gp.reload(g);
+				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
+					gp.fire(g);
+				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
+					gp.zoom(g);
+				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
+					gp.reload(g);
+				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
+					gp.fire(g);
+			}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock());
 					e.setUseInteractedBlock(Result.DENY);
@@ -151,40 +152,40 @@ public class GunsPlusListener implements Listener {
 						}else if(td.getGun()!=null){
 							sp.openInventory(td.getInventory());
 						}
-				}
-				}
-				break;
-			case LEFT_CLICK_AIR:
-				if(g!=null){
-					if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-						gp.zoom(g);
-					if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-						gp.reload(g);
-					if (GunsPlus.fireKey.equals(KeyType.LEFT))
-						gp.fire(g);
-					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-						gp.zoom(g);
-					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-						gp.reload(g);
-					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-						gp.fire(g);
+					}
 				}
 				break;
-			case LEFT_CLICK_BLOCK:
-				if(g!=null){
-					if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-						gp.zoom(g);
-					if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-						gp.reload(g);
-					if (GunsPlus.fireKey.equals(KeyType.LEFT))
-						gp.fire(g);
-					if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-						gp.zoom(g);
-					if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-						gp.reload(g);
-					if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-						gp.fire(g);
-				}
+		case LEFT_CLICK_AIR:
+			if(g!=null){
+				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
+					gp.zoom(g);
+				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
+					gp.reload(g);
+				if (GunsPlus.fireKey.equals(KeyType.LEFT))
+					gp.fire(g);
+				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
+					gp.zoom(g);
+				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
+					gp.reload(g);
+				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
+					gp.fire(g);
+			}
+			break;
+		case LEFT_CLICK_BLOCK:
+			if(g!=null){
+				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
+					gp.zoom(g);
+				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
+					gp.reload(g);
+				if (GunsPlus.fireKey.equals(KeyType.LEFT))
+					gp.fire(g);
+				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
+					gp.zoom(g);
+				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
+					gp.reload(g);
+				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
+					gp.fire(g);
+			}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
 					if(td.getOwnername().equals(gp.getPlayer().getName())&&td.getGun()!=null){
@@ -226,6 +227,13 @@ public class GunsPlusListener implements Listener {
 		if (GunUtils.isGun(nextItem)) {
 			Gun g = GunUtils.getGun(nextItem);
 			sp.setWalkingMultiplier(1 - (g.getValue("WEIGHT")/100));
+		}
+	}
+	
+	@EventHandler(ignoreCancelled=true)
+	public void onInventoryOpen(InventoryOpenEvent e){
+		if(Util.enteredTripod((SpoutPlayer)e.getPlayer())&&e.getInventory().equals(e.getPlayer().getInventory())){
+			e.setCancelled(true);
 		}
 	}
 	

@@ -5,19 +5,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 //import net.morematerials.morematerials.materials.SMCustomItem;
-
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 //import org.getspout.spoutapi.material.CustomBlock;
-
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
+//import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
@@ -119,7 +117,7 @@ public class ConfigParser {
         return Material.getMaterial(item.toUpperCase());
     }
     
-    public static KeyType parseKeyType(String string){
+    public static KeyType parseKeyType(String string) throws Exception{
     	KeyType key = null;
     	if (string.startsWith("@")) {
 			if (string.endsWith("_"))
@@ -166,6 +164,17 @@ public class ConfigParser {
 		}
     	return key;
     }
+    
+//    public static FireBehavior parseFireBehavoir(String node) throws Exception{
+//    	int count = ConfigLoader.gunsConfig.getInt(node+".burst.shot-count", 1);
+//    	int delay = ConfigLoader.gunsConfig.getInt(node+"burst.shot-delay", 0);
+//    	if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("single")){
+//    		return FireBehavior.SINGLE(count, delay);
+//    	}else if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("automatic")){
+//    		return FireBehavior.AUTOMATIC(count, delay);
+//    	}
+//    	throw new Exception("Could not parse fire behavoir of a gun.");
+//    }
     
     public static List<Effect> parseEffects(String path){
     	List<Effect> effects = new ArrayList<Effect>();

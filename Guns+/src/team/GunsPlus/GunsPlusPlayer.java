@@ -1,8 +1,6 @@
 package team.GunsPlus;
 
 import java.util.HashMap;
-import java.util.HashSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,11 +12,11 @@ import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
-
 import team.GunsPlus.API.Event.Gun.GunFireEvent;
 import team.GunsPlus.API.Event.Gun.GunReloadEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomInEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomOutEvent;
+import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
@@ -133,41 +131,53 @@ public class GunsPlusPlayer extends Shooter {
 		else if (isOutOfAmmo(g))
 			return;
 		else {
-			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
-			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(
-					GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
-			if(targets_damage.isEmpty()){
-				Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
-						(Projectile) g.getObject("PROJECTILE"));
-			}
-			for (LivingEntity tar : targets_damage.keySet()) {
-				if (tar.equals(getPlayer())) {
-					continue;
-				}
-				int damage = targets_damage.get(tar);
-				Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
-				if (damage < 0)
-					PlayerUtils.sendNotification(getPlayer(), "Headshot!",
-							"with a " + GunUtils.getRawGunName(g),
-							new ItemStack(Material.ARROW), 2000);
-				targets_damage.put(tar, Math.abs(damage));
-				damage = targets_damage.get(tar);
-				if (Util.getRandomInteger(0, 100) <= g.getValue("CRITICAL")) {
-					PlayerUtils.sendNotification(getPlayer(), "Critical!",
-							"with a " + GunUtils.getRawGunName(g),
-							new ItemStack(Material.DIAMOND_SWORD), 2000);
-					damage = tar.getHealth() + 1000;
-				}
-				if (usedAmmo != null) {
-					damage += usedAmmo.getDamage();
-				}
-				tar.damage(damage, getPlayer());
-			}
+//			FireBehavior f = (FireBehavior) g.getObject("FIREBEHAVIOR");
+//			int counter = f.getBurst().getShots();
+//			Task fireTask = new Task(GunsPlus.plugin, inv, g, counter){
+//				public void run(){
+//					Inventory inv = (Inventory) this.getArg(0);
+//					Gun g = (Gun) this.getArg(1);
+//					int counter = this.getIntArg(2); 
+					Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
+					HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(
+							GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
+					if(targets_damage.isEmpty()){
+						Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
+						GunUtils.shootProjectile(from, getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
+								(Projectile) g.getObject("PROJECTILE"));
+					}
+					for (LivingEntity tar : targets_damage.keySet()) {
+						if (tar.equals(getPlayer())) {
+							continue;
+						}
+						int damage = targets_damage.get(tar);
+						Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
+						GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
+						if (damage < 0)
+							PlayerUtils.sendNotification(getPlayer(), "Headshot!",
+									"with a " + GunUtils.getRawGunName(g),
+									new ItemStack(Material.ARROW), 2000);
+						targets_damage.put(tar, Math.abs(damage));
+						damage = targets_damage.get(tar);
+						if (Util.getRandomInteger(0, 100) <= g.getValue("CRITICAL")) {
+							PlayerUtils.sendNotification(getPlayer(), "Critical!",
+									"with a " + GunUtils.getRawGunName(g),
+									new ItemStack(Material.DIAMOND_SWORD), 2000);
+							damage = tar.getHealth() + 1000;
+						}
+						if (usedAmmo != null) {
+							damage += usedAmmo.getDamage();
+						}
+						tar.damage(damage, getPlayer());
+					}
+//					counter--;
+//					if(counter<=0) this.stopTask();
+//				}
+//			};
+//			fireTask.startTaskRepeating(f.getBurst().getDelay(), false);
+//			
+//			while(fireTask.isTaskRunning()){}
 			
-			GunUtils.performEffects(new HashSet<LivingEntity>(targets_damage.keySet()),player, g);
-
 			GunUtils.removeAmmo(inv, g.getAmmo());
 			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer(),g));
 			getPlayer().updateInventory();

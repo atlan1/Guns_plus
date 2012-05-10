@@ -14,6 +14,7 @@ import org.getspout.spoutapi.material.CustomItem;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Effect;
+//import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Item.Addition;
@@ -253,7 +254,7 @@ public class ConfigLoader {
 					result = new SpoutItemStack(cb, amount);
 				}
 				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
-				team.GunsPlus.Manager.RecipeManager.Type type = team.GunsPlus.Manager.RecipeManager.Type.valueOf(recipeConfig.getString(key+".type").toUpperCase());
+				team.GunsPlus.Manager.RecipeManager.RecipeType type = team.GunsPlus.Manager.RecipeManager.RecipeType.valueOf(recipeConfig.getString(key+".type").toUpperCase());
 				RecipeManager.addRecipe(type, ingredients, result);
 			}catch (Exception e) {
 				Util.warn("Config Error:" + e.getMessage());
@@ -302,6 +303,7 @@ public class ConfigLoader {
 				String reloadSound = gunsConfig.getString(gunnode+".reload-sound.url");
 				String zoomTexture = gunsConfig.getString(gunnode+".zoom-texture");
 				String texture = gunsConfig.getString(gunnode+".texture");
+//				FireBehavior fb = ConfigParser.parseFireBehavoir(gunnode+".fire-behavior");
 				
 				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type"));
 				projectile.setSpeed(gunsConfig.getDouble(gunnode+".projectile.speed", 1.0));
@@ -360,6 +362,7 @@ public class ConfigLoader {
 				GunManager.editObject(g, "HUDENABLED", hudenabled);
 				GunManager.editObject(g, "MOUNTABLE", mountable);
 				GunManager.editObject(g, "SHOOTABLE", shootable);
+//				GunManager.editObject(g, "FIREBEHAVIOR", fb);
 				GunManager.editEffects(g, effects);
 				
 				//registering shapeless recipes for additions + building an extra gun for each addition
@@ -368,7 +371,7 @@ public class ConfigLoader {
 						listIngred.add(new SpoutItemStack(a));
 						listIngred.add(new SpoutItemStack(g));
 					Gun addgun = GunManager.buildNewAdditionGun(GunsPlus.plugin, GunUtils.getFullGunName(g, a), texture, a, g);
-					RecipeManager.addShapelessRecipe(listIngred, new SpoutItemStack(addgun));
+					RecipeManager.addRecipe("shapeless", listIngred, new SpoutItemStack(addgun));
 				}
 
 			}catch(Exception e){
@@ -413,7 +416,7 @@ public class ConfigLoader {
 							SpoutItemStack result = new SpoutItemStack(GunsPlus.tripod, ConfigLoader.generalConfig.getInt("tripod.recipe.amount", 1));
 							List<ItemStack> ingred = ConfigParser.parseItems(ConfigLoader.generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
 							try {
-								RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.Type.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
+								RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.RecipeType.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
 							} catch (Exception e) {
 								Util.debug(e);
 								Util.warn("Config Error: "+e.getMessage());
@@ -439,15 +442,15 @@ public class ConfigLoader {
 			String z = ConfigLoader.generalConfig.getString("zoom", "right");
 			GunsPlus.zoomKey = ConfigParser.parseKeyType(z);
 			if(GunsPlus.zoomKey==null) throw new Exception(" Could not parse zoom key!");
-			
+
 			String f = ConfigLoader.generalConfig.getString("fire", "left");
 			GunsPlus.fireKey = ConfigParser.parseKeyType(f);
 			if(GunsPlus.fireKey==null) throw new Exception(" Could not parse fire key!");
-			
+
 			String r = ConfigLoader.generalConfig.getString("reload", "@r");
 			GunsPlus.reloadKey = ConfigParser.parseKeyType(r);
 			if(GunsPlus.reloadKey==null) throw new Exception(" Could not parse reload key!");
-			
+
 			if (GunsPlus.zoomKey.getData().equalsIgnoreCase(GunsPlus.fireKey.getData()) || GunsPlus.fireKey.getData().equalsIgnoreCase(GunsPlus.reloadKey.getData())
 					|| GunsPlus.reloadKey.getData().equalsIgnoreCase(GunsPlus.zoomKey.getData())) {
 				String message = ("Zoom:" + GunsPlus.zoomKey.getData() + " Fire:" + GunsPlus.fireKey.getData() + " Reload:" + GunsPlus.reloadKey.getData());

@@ -20,7 +20,7 @@ public enum KeyType {
 		this.data = input;
 	}
 
-	public static KeyType getType(String input) {
+	public static KeyType getType(String input) throws Exception {
 		KeyType got = null;
 		if (input.equalsIgnoreCase("right")) {
 			got = RIGHT;
@@ -32,11 +32,11 @@ public enum KeyType {
 		} else if (input.equalsIgnoreCase("right_shift")
 				|| input.equalsIgnoreCase("rightshift")) {
 			got = RIGHTSHIFT;
-		} else if (input.matches("[a-zA-Z]")) {
+		} else if (input.matches("[a-zA-Z]")&&input.length()==1) {
 			got = LETTER(input);
-		} else if (input.matches("[0-9]")) {
+		} else if (input.matches("[0-9]")&&input.length()==1) {
 			got = NUMBER(input);
-		}
+		} else throw new Exception(" Could not load a key from this input: "+input); 
 		return got;
 	}
 

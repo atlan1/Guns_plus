@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -58,6 +59,9 @@ public class GunsPlus extends JavaPlugin {
 	public static KeyType zoomKey = KeyType.RIGHT;
 	public static KeyType fireKey = KeyType.LEFT;
 	public static KeyType reloadKey = KeyType.LETTER("R");
+	public static BindingExecutionDelegate fireBinding;
+	public static BindingExecutionDelegate zoomBinding;
+	public static BindingExecutionDelegate reloadBinding;
 
 	//ITEM AND BLOCK LISTS
 	public static List<Gun> allGuns = new ArrayList<Gun>();
@@ -90,6 +94,10 @@ public class GunsPlus extends JavaPlugin {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		hook();
 		init();
+//		We have to wait for spout to implement mouse button bindings
+//		fireBinding = new FireBinding(this, GunsPlus.fireKey);
+//		reloadBinding = new ReloadBinding(this, GunsPlus.reloadKey);
+//		zoomBinding = new ZoomBinding(this, GunsPlus.zoomKey);
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		getCommand("guns+").setExecutor(new CommandEx(this));
 		api = new GunsPlusAPI(this);
