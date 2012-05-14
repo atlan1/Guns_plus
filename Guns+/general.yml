@@ -45,8 +45,8 @@ hud:
 tripod:
     # enabled/disabled
     enabled: true
-    # the texture to use for the block (actually you can almost only customize the color of the tripod by that)
-    texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png'
+    # the texture to use for the block 
+    texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/tripodSprite.png'
     # thats the maximum amount of tripods allowed per player, put a negative value for infinite
     max-count-per-player: 5
     # sets wheater to force the player to zoom in on enter or not

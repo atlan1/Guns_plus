@@ -50,7 +50,7 @@ public class Tripod extends GenericCustomBlock {
 						l.getBlock().breakNaturally();
 					}
 				};
-				removeBlock.startTaskDelayed(5);
+				removeBlock.startTaskDelayed(2);
 			}
 		}
 	}

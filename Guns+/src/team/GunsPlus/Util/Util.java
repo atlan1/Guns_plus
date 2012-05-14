@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
@@ -34,6 +35,19 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
+
+	public static boolean containsCustomItems(List<ItemStack> items){
+		for(ItemStack i : items){
+			if(isCustomItem(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isCustomItem(ItemStack item){
+		return new SpoutItemStack(item).isCustomItem();
+	}
 	
 	public static Block getBlockInSight(Location l, int blockIndex, int maxradius){
 		BlockIterator bi = new BlockIterator(l.getWorld(), l.toVector(), l.getDirection(), 0d, maxradius);

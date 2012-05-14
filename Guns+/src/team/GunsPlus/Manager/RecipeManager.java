@@ -28,7 +28,7 @@ public class RecipeManager {
 	public static void addRecipe(RecipeType type, List<ItemStack> ingredients, ItemStack result) throws Exception{
 		if(type.equals(RecipeType.SHAPED)&&ingredients.size()!=9) throw new Exception( "Number of ingredients in a shaped recipe must be 9!");
 		if(type.equals(RecipeType.FURNACE)&&(ingredients.size()==0||ingredients.get(0)==null)) throw new Exception( "You need at least one ingredient for a furnace recipe!");
-		boolean useSpout = containsCustomItems(ingredients);
+		boolean useSpout = Util.containsCustomItems(ingredients)||Util.isCustomItem(result);
 		switch(type){
 			case SHAPED:
 				addShapedRecipe(ingredients, result, useSpout);
@@ -43,7 +43,7 @@ public class RecipeManager {
 		try{
 			addRecipe(RecipeType.valueOf(type.toUpperCase()), ingredients, result);
 		}catch(Exception e){
-			Util.warn(" The recipe type of a recipe is invalid!");
+			Util.warn(" The recipe type "+type+" is invalid!");
 			Util.debug(e);
 		}
 	}
@@ -111,14 +111,5 @@ public class RecipeManager {
 			FurnaceRecipe x = new FurnaceRecipe(new ItemStack(result), new ItemStack(input).getType() );
 			Bukkit.addRecipe(x);
 		}
-	}
-	
-	private static boolean containsCustomItems(List<ItemStack> items){
-		for(ItemStack i : items){
-			if(new SpoutItemStack(i).isCustomItem()){
-				return true;
-			}
-		}
-		return false;
 	}
 }
