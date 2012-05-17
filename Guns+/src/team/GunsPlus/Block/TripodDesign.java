@@ -1,7 +1,6 @@
 package team.GunsPlus.Block;
 
 
-import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.block.design.GenericBlockDesign;
 import org.getspout.spoutapi.block.design.Quad;
 import org.getspout.spoutapi.block.design.SubTexture;
@@ -12,20 +11,19 @@ import team.GunsPlus.GunsPlus;
 public class TripodDesign extends GenericBlockDesign {
 
 	
-	public TripodDesign(GunsPlus plugin, String texture){
-			SpoutManager.getFileManager().addToCache(plugin, texture);
-			setBoundingBox(0, 0, 0, 1, 1, 1);
+	public TripodDesign(GunsPlus plugin, String texURL){
+			Texture tex = new Texture(plugin, texURL, 256, 16, 16);
+			texture = tex;
+			setBoundingBox(0, 0, 0, 1, 0.9f, 1);
 			setRenderPass(0);
-			Texture tex = new Texture(plugin, texture, 256, 16, 16);
-			setTexture(plugin, tex);
 			setQuadNumber(36);
-			//TODO: Textures not working correctly
-			SubTexture  face1Tex = new SubTexture(tex, 1, 1, 16);
-			SubTexture  face2Tex = new SubTexture(tex, 2, 1, 16);
-			SubTexture  face3Tex = new SubTexture(tex, 3, 1, 16);
-			SubTexture  surTopTex = new SubTexture(tex, 4, 1, 16);
-			SubTexture  surBotTex = new SubTexture(tex, 5, 1, 16);
-			SubTexture  surSideTex = new SubTexture(tex, 6, 1, 16);
+			setTexture(plugin, texture.getTexture());
+			SubTexture  face1Tex = texture.getSubTexture(0);
+			SubTexture  face2Tex = texture.getSubTexture(1);
+			SubTexture  face3Tex = texture.getSubTexture(2);
+			SubTexture  surTopTex = texture.getSubTexture(3);
+			SubTexture  surBotTex = texture.getSubTexture(4);
+			SubTexture  surSideTex = texture.getSubTexture(5);
 			
 			//struts
 			
