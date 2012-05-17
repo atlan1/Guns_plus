@@ -232,8 +232,13 @@ public class TripodData extends Shooter implements InventoryHolder {
 			owner.getPlayer().setItemInHand(new SpoutItemStack(getGun(), 1));
 			if(GunsPlus.forcezoom)
 				owner.zoom(gun);
-//			dropChair();
-//			enterChair(owner.getPlayer());
+//			 if (owner.getPlayer().getVehicle() != null){
+//		        owner.getPlayer().getVehicle().eject();
+//		     }
+//			 if (!(getLocation().getBlock().getRelative(BlockFace.DOWN).getTypeId() == 0)&&!getLocation().getBlock().isLiquid()){
+//		    	  dropChair();
+//				  enterChair(owner.getPlayer());
+//		     }
 		}else{
 			owner.getPlayer().getInventory().setContents(owner_inv.getContents());
 //			chair.eject();
@@ -241,10 +246,10 @@ public class TripodData extends Shooter implements InventoryHolder {
 		}
 		this.entered = entered;
 	}
-//	
+	
 //	private void dropChair(){
-//		Location location = getLocation().add(0.5, 0.2, 0.5);
-//		chair = location.getWorld().dropItemNaturally(location, new ItemStack(Material.GHAST_TEAR));
+//		Location location = getLocation().add(0.5, -0.5, 0.5);
+//		chair = location.getWorld().dropItemNaturally(location, new ItemStack(Material.CLAY_BALL));
 //		chair.setPickupDelay(Integer.MAX_VALUE);
 //		chair.teleport(location);
 //		chair.setVelocity(new Vector(0, 0, 0));
