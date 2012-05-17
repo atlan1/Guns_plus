@@ -35,7 +35,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	private boolean automatic = false;
 	private boolean working = false;
 	private boolean entered = false;
-	private List<Target> targets = new ArrayList<Target>();
+	private List<Target> targets = new Vector<Target>();
 	private String ownername;
 	private GunsPlusPlayer owner;
 	private Location gunLoc;
@@ -328,7 +328,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 		return targets;
 	}
 
-	public void setTargets(ArrayList<Target> targets) {
+	public void setTargets(List<Target> targets) {
 		this.targets = targets;
 	}
 	
