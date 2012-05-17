@@ -1,6 +1,8 @@
 package team.GunsPlus;
 
 import java.util.HashMap;
+import java.util.HashSet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,12 +23,13 @@ import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
+import team.GunsPlus.Util.LivingShooter;
 import team.GunsPlus.Util.PlayerUtils;
 import team.GunsPlus.Util.Shooter;
 import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
-public class GunsPlusPlayer extends Shooter {
+public class GunsPlusPlayer extends LivingShooter {
 
 	private SpoutPlayer player;
 	private HUD hud;
@@ -38,6 +41,10 @@ public class GunsPlusPlayer extends Shooter {
 		hud = h;
 		for (Gun g : GunsPlus.allGuns)
 			this.resetFireCounter(g);
+	}
+	
+	public LivingEntity getLivingEntity(){
+		return getPlayer();
 	}
 
 	public boolean isZooming() {
@@ -169,6 +176,7 @@ public class GunsPlusPlayer extends Shooter {
 						}
 						tar.damage(damage, getPlayer());
 					}
+					GunUtils.performEffects(this, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
 //					counter--;
 //					if(counter<=0) this.stopTask();
 //				}
@@ -177,6 +185,7 @@ public class GunsPlusPlayer extends Shooter {
 //			
 //			while(fireTask.isTaskRunning()){}
 			
+					
 			GunUtils.removeAmmo(inv, g.getAmmo());
 			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer(),g));
 			getPlayer().updateInventory();
