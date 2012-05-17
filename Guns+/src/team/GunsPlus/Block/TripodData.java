@@ -2,7 +2,9 @@ package team.GunsPlus.Block;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Vector;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -83,16 +85,20 @@ public class TripodData extends Shooter implements InventoryHolder {
 
 	public void update() {
 		if(droppedGun==null&&gun!=null){
-			dropGun();
+			if(!isEntered())
+				dropGun();
 		}
-		if(droppedGun!=null){
+		if(droppedGun!=null&&!isEntered()){
 			if(!droppedGun.getLocation().equals(getGunLoc())){
 				droppedGun.teleport(getGunLoc());
 			}
 			if(droppedGun.isDead()){
 				dropGun();
 			}
+		}else if(droppedGun!=null&&isEntered()){
+			droppedGun.remove();
 		}
+		
 		if(owner!=null){
 			Location ownerlocation = Util.getMiddle(getLocation(), 0.0f);
 			if(isEntered()&&!owner.getPlayer().getLocation().toVector().equals(ownerlocation.toVector())){
