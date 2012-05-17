@@ -1,11 +1,11 @@
 package team.GunsPlus.API.Event;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Util.Shooter;
 
 /**
  * Guns+ Event called whenever a Gun uses an Effect
@@ -14,12 +14,12 @@ import team.GunsPlus.Item.Gun;
  */
 public class GunEffectEvent extends Event{
     private static final HandlerList handlers = new HandlerList();
-    private Player player = null;
+    private Shooter shooter = null;
     private Gun gun = null;
     private Effect eff = null;
     
-    public GunEffectEvent(Player p, Gun g, Effect e) {
-    	player = p;
+    public GunEffectEvent(Shooter s, Gun g, Effect e) {
+    	shooter = s;
     	gun = g;
     	eff = e;
     }
@@ -41,11 +41,11 @@ public class GunEffectEvent extends Event{
     }
     
     /**
-     * Get Player associated with Event
-     * @return Player that triggered Event
+     * Get Shooter associated with Event
+     * @return Shooter that triggered Event
      */
-    public Player getPlayer() {
-    	return player;
+    public Shooter getShooter() {
+    	return shooter;
     }
     
     /**
