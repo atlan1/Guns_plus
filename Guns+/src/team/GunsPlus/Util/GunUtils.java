@@ -16,41 +16,31 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
-import org.bukkit.util.Vector;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.material.MaterialData;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 
 import team.GunsPlus.API.Event.*;
 import team.GunsPlus.Enum.Effect;
-import team.GunsPlus.Enum.EffectSection;
-import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
-import team.GunsPlus.Manager.ConfigParser;
 
 public class GunUtils {
 
@@ -313,294 +303,46 @@ public class GunUtils {
 		}
 		return counter;
 	}
-
-
-
-	public static void performEffects(HashSet<LivingEntity> targets, SpoutPlayer player, Gun gun){
+	
+	public static void performEffects(Shooter shooter, Location shooterLoc, HashSet<LivingEntity> targets, Gun gun){
+		LivingEntity shooterEntity = null;
+		if(shooter instanceof LivingShooter){
+			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
+		}
 		ArrayList<Effect> effects = gun.getEffects();
-		Location loc_tar, loc_sp;
-		if(targets.isEmpty()) targets.add(player);
-		for(LivingEntity tar : targets){
-			loc_tar = (tar==player)?player.getTargetBlock(null, (int) gun.getValue("RANGE")).getLocation():tar.getEyeLocation();
-			loc_sp = player.getEyeLocation();
-			for(Effect eff : effects){
-				EffectType et = eff.getEffecttype();
-				EffectSection effsec = eff.getEffectsection();
-				switch(effsec){
-					case TARGETLOCATION:
-						List<Block> affblocks = new ArrayList<Block>();
-						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
-							affblocks = Util.getSphere(loc_tar, (Integer) effsec.getData().get("RADIUS"));
-						}
-						if(affblocks.isEmpty()){
-							affblocks.add(loc_tar.getBlock());
-						}
-						for(Block block : affblocks){
-							Location block_tar = block.getLocation();
-							switch(et){
-								case EXPLOSION:
-									if(Util.tntIsAllowedInRegion(block_tar)) block_tar.getWorld().createExplosion(block_tar, (Integer) eff.getArgument("SIZE"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case LIGHTNING:
-									block_tar.getWorld().strikeLightning(block_tar);
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case SMOKE:
-									block_tar.getWorld().playEffect(block_tar,org.bukkit.Effect.SMOKE , BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case SPAWN:
-									Location l1 = block_tar;
-									l1.setY(block_tar.getY()+1);
-									block_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case FIRE:
-									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case PLACE:
-									BlockIterator bi = new BlockIterator(player.getWorld(), loc_sp.toVector(), block_tar.toVector(), 0, (int) gun.getValue("RANGE"));
-									Block last = null, b = null;
-									boolean loop=true;
-									while(bi.hasNext()&&loop){
-										last = b;
-										b = bi.next();
-										if(!Util.isTransparent(b)&&!Util.isTripod(b)){
-											last.setTypeId(ConfigParser.parseItem((String) eff.getArgument("BLOCK")).getTypeId());
-											loop=false;
-											Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, last));
-										}
-									}
-									break;
-								case BREAK:
-									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(block_tar.getBlock())){
-										block_tar.getBlock().setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(block_tar.getBlock(), player));
-									}
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								}
-						}
+		for(Effect e : effects){
+			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
+			for(LivingEntity le : targets){
+				switch(e.getEffecttype()){
+					case BREAK:
+						EffectUtils.breakEffect(e, shooterLoc, le.getLocation());
 						break;
-					case SHOOTERLOCATION:
-						List<Block> affblocks1 = new ArrayList<Block>();
-						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
-							affblocks1 = Util.getSphere(loc_sp, (Integer) effsec.getData().get("RADIUS"));
-						}
-						if(affblocks1.isEmpty()){
-							affblocks1.add(loc_sp.getBlock());
-						}
-						for(Block block : affblocks1){
-							Location block_tar = block.getLocation();
-							switch(et){
-								case EXPLOSION:
-									if(Util.tntIsAllowedInRegion(block_tar)) block_tar.getWorld().createExplosion(block_tar, (Integer) eff.getArgument("SIZE"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case LIGHTNING:
-									block_tar.getWorld().strikeLightning(block_tar);
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case SMOKE:
-									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.SMOKE,  BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case SPAWN:
-									Location l1 = block_tar;
-									l1.setY(block_tar.getY()+1);
-									block_tar.getWorld().spawnCreature(l1, EntityType.valueOf((String) eff.getArgument("ENTITY")));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case FIRE:
-									block_tar.getWorld().playEffect(block_tar, org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer) eff.getArgument("STRENGTH"));
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								case PLACE:
-									if(!Util.isTripod(block_tar.getBlock())){
-										block_tar.getBlock().setTypeId((Integer) eff.getArgument("BLOCK"));
-										Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, block_tar.getBlock()));
-									}
-									break;
-								case BREAK:
-									if(MaterialData.getBlock(block_tar.getBlock().getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(block_tar.getBlock())){
-										block_tar.getBlock().setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(block_tar.getBlock(), player));
-									}
-									Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-									break;
-								}
-						}
+					case PLACE:
+						EffectUtils.placeEffect(e, shooterLoc, le.getLocation());
 						break;
-					case TARGETENTITY:
-						if(tar==player) break;
-						switch(et){
-							case FIRE:
-								tar.setFireTicks(Integer.valueOf(eff.getArgument("DURATION").toString()).intValue());
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case PUSH:
-								Vector v1 = loc_sp.getDirection();
-								v1.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue());
-								tar.setVelocity(v1);
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case DRAW:
-								Vector v2 = loc_sp.getDirection();
-								v2.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue()*-1);
-								tar.setVelocity(v2);
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case POTION:
-								tar.addPotionEffect(new PotionEffect(PotionEffectType.getById(Integer.valueOf(eff.getArgument("ID").toString()).intValue()), Integer.valueOf(eff.getArgument("DURATION").toString()).intValue(), Integer.valueOf(eff.getArgument("STRENGTH").toString()).intValue()));
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							}
+					case POTION:
+						EffectUtils.potionEffect(e, shooterEntity,  le);
 						break;
-					case SHOOTER:
-						switch(et){
-							case FIRE:
-								player.setFireTicks(Integer.valueOf(eff.getArgument("DURATION").toString()).intValue());
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case PUSH:
-								Vector v1 = loc_sp.getDirection();
-								v1.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue());
-								player.setVelocity(v1);
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case DRAW:
-								Vector v2 = loc_sp.getDirection();
-								v2.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue()*-1);
-								player.setVelocity(v2);
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case POTION:
-								player.addPotionEffect(new PotionEffect(PotionEffectType.getById(Integer.valueOf(eff.getArgument("ID").toString()).intValue()), Integer.valueOf(eff.getArgument("DURATION").toString()).intValue(), Integer.valueOf(eff.getArgument("STRENGTH").toString()).intValue()));
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-						}
+					case SMOKE:
+						EffectUtils.smokeEffect(e, shooterLoc, le.getLocation());
 						break;
-					case FLIGHTPATH:
-						BlockIterator bi = new BlockIterator(player, Math.round(gun.getValue("RANGE")));
-						boolean loop = true;
-						int length = 0;
-						int i=0;
-						if(effsec.getData()!=null&&!effsec.getData().isEmpty()){
-							 length = (Integer) effsec.getData().get("LENGTH");
-						}else{
-							length = Integer.MAX_VALUE;
-						}
-						switch(et){
-							case FIRE:
-								while(bi.hasNext()){
-									Block b = bi.next();
-									b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.MOBSPAWNER_FLAMES, null, Integer.valueOf(eff.getArgument("STRENGTH").toString()).intValue());
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case EXPLOSION:
-								loop = true;
-								while(bi.hasNext()&&loop){
-									Block b = bi.next();
-									if(Util.isTransparent(b))
-										if(Util.tntIsAllowedInRegion(loc_tar)) b.getWorld().createExplosion(b.getLocation(), Integer.valueOf(eff.getArgument("SIZE").toString()).intValue());
-									else loop=false;
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case LIGHTNING:
-								loop=true;
-								while(bi.hasNext()&&loop){
-									Block b = bi.next();
-									if(Util.isTransparent(b))
-									b.getWorld().strikeLightning(b.getLocation());
-									else loop=false;
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case SMOKE:
-								while(bi.hasNext()){
-									Block b = bi.next();
-									b.getWorld().playEffect(b.getLocation(), org.bukkit.Effect.SMOKE, BlockFace.UP, Integer.valueOf(eff.getArgument("DENSITY").toString()).intValue());
-									if(length>i){										
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case SPAWN:
-								loop=true;
-								while(bi.hasNext()&&loop){
-									Block b = bi.next();
-									Location l1 = b.getLocation();
-									l1.setY(b.getLocation().getY()+1);
-									if(Util.isTransparent(b))
-									b.getWorld().spawnCreature(l1, EntityType.valueOf(eff.getArgument("ENTITY").toString()));
-									else loop=false;
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case PLACE:
-								loop = true;
-								while(bi.hasNext()&&loop){
-									Block b = bi.next();
-									if(Util.isTransparent(b)&&!Util.isTripod(b)) {
-										b.setTypeId(ConfigParser.parseItem((String) eff.getArgument("BLOCK")).getTypeId());
-										Bukkit.getServer().getPluginManager().callEvent(new GunBlockPlaceEvent(player, gun, b));
-									} else loop=false;
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-							case BREAK:
-								loop = true;
-								while(bi.hasNext()&&loop){
-									Block b = bi.next();
-									if(MaterialData.getBlock(b.getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(b)){
-										b.setTypeId(0);
-										Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(loc_tar.getBlock(), player));
-									}else{
-										loop=false;
-									}
-									if(length>i){
-										i++;
-									}else{
-										break;
-									}
-								}
-								Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(player, gun, eff));
-								break;
-						}
+					case FIRE:
+						EffectUtils.fireEffect(e,shooterEntity, le);
 						break;
-					case UNDEFINED:
+					case SPAWN:
+						EffectUtils.spawnEffect(e, shooterLoc, le.getLocation());
+						break;
+					case LIGHTNING:
+						EffectUtils.lightningEffect(e, shooterLoc, le.getLocation());
+						break;
+					case EXPLOSION:
+						EffectUtils.explosionEffect(e, shooterLoc, le.getLocation());
+						break;
+					case PUSH:
+						EffectUtils.pushEffect(e, le, shooterEntity, shooterLoc.getDirection());
+						break;
+					case DRAW:
+						EffectUtils.drawEffect(e,le,shooterEntity, shooterLoc.getDirection());
 						break;
 				}
 			}

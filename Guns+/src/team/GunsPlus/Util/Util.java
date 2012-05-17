@@ -35,7 +35,7 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
-
+	
 	public static boolean containsCustomItems(List<ItemStack> items){
 		for(ItemStack i : items){
 			if(isCustomItem(i)){
