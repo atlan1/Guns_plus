@@ -113,7 +113,7 @@ public class GunsPlus extends JavaPlugin {
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
 		ConfigLoader.loadRecipes();
-		if(tripodenabled == true) {
+		if(tripodenabled) {
 			initTripod();
 			updateTripods();
 		}

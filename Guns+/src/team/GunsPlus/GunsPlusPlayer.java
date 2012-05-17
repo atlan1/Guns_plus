@@ -165,7 +165,7 @@ public class GunsPlusPlayer extends LivingShooter {
 									new ItemStack(Material.ARROW), 2000);
 						targets_damage.put(tar, Math.abs(damage));
 						damage = targets_damage.get(tar);
-						if (Util.getRandomInteger(0, 100) <= g.getValue("CRITICAL")) {
+						if (Util.getRandomInteger(1, 100) <= g.getValue("CRITICAL")) {
 							PlayerUtils.sendNotification(getPlayer(), "Critical!",
 									"with a " + GunUtils.getRawGunName(g),
 									new ItemStack(Material.DIAMOND_SWORD), 2000);
