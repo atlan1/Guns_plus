@@ -17,7 +17,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -230,18 +229,15 @@ public class GunsPlusListener implements Listener {
 		}
 	}
 	
-	@EventHandler(ignoreCancelled=true)
-	public void onInventoryOpen(InventoryOpenEvent e){
-		if(Util.enteredTripod((SpoutPlayer)e.getPlayer())&&e.getInventory().equals(e.getPlayer().getInventory())){
-			e.setCancelled(true);
-		}
-	}
-	
 	//make guns unstackable
 	@EventHandler(ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event) {
             ItemStack clicked = event.getCurrentItem();
             ItemStack cursor = event.getCursor();
+            Player p = (Player) event.getView().getPlayer();
+            if(Util.enteredTripod((SpoutPlayer)p)){
+            	event.setCancelled(true);
+            }
             if (clicked != null && GunUtils.isGun(clicked)) {
                     if (cursor != null && GunUtils.isGun(cursor) && event.isLeftClick() && !event.isShiftClick() && clicked.getDurability() == cursor.getDurability()) {
                     		event.setCancelled(true);
@@ -321,7 +317,9 @@ public class GunsPlusListener implements Listener {
 			if(Util.isTripod(b)){
 				Location l = b.getLocation();
 				TripodData td = Util.loadTripodData(l);
-				
+				if(td.isEntered()){
+					td.setEntered(false);
+				}
 				td.destroy();
 				td.dropContents();
 				TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation())); 
@@ -335,10 +333,13 @@ public class GunsPlusListener implements Listener {
 		if(!Util.isTripod(e.getBlock())) return;
 		Location l = e.getBlock().getLocation();
 		TripodData td = Util.loadTripodData(l);
-		GunsPlus.allTripodBlocks.remove(td);
+		if(td.isEntered()){
+			td.setEntered(false);
+		}
 		td.destroy();
 		td.dropContents();
-		TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));                                                                                                    
+		TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));   
+		GunsPlus.allTripodBlocks.remove(td); 
 	}
 	
 	@EventHandler
