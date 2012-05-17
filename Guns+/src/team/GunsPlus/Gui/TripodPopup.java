@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Vector;
 
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericComboBox;
@@ -158,6 +159,7 @@ public class TripodPopup extends GenericPopup{
 		setComboNameAnimal();
 		
 		for(Target t : data.getTargets()){
+//			System.out.print("Load: "+t.toString()+";"+t.getEntity().toString());
 			list.addItem(new ListWidgetItem(t.toString(), t.equals(Target.PLAYER)?((Player)t.getEntity()).getName():t.getEntity().toString()));
 		}
 		update = new Task(GunsPlus.plugin){
@@ -236,10 +238,14 @@ public class TripodPopup extends GenericPopup{
 	}
 	
 	public void applyData(){
-		ArrayList<Target> tars = new ArrayList<Target>();
+		List<Target> tars = new Vector<Target>();
 		for(ListWidgetItem i : list.getItems()){
 			Target t = parseTarget(i.getTitle(), i.getText(), i.getText());
+//			TODO: Weird bug that resets same target types to the first
+//			System.out.print("NormalSave: "+t.toString()+";"+t.getEntity().toString());
 			tars.add(t);
+//			for(Target b:tars)
+//				System.out.print("WrongSave: "+b.toString()+";"+b.getEntity().toString());
 		}
 		data.setTargets(tars);
 		if(auto.isSelected()){
