@@ -13,6 +13,7 @@ import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
+import com.narrowtux.showcase.Showcase;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.GunsPlus.API.GunsPlusAPI;
@@ -34,6 +35,7 @@ public class GunsPlus extends JavaPlugin {
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
+	public static Showcase showcase;
 	public static boolean useFurnaceAPI = false;
 	
 	private static GunsPlusAPI api;
@@ -134,6 +136,7 @@ public class GunsPlus extends JavaPlugin {
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
+		Plugin show = getServer().getPluginManager().getPlugin("Showcase");
 		if(spout != null) {
 		    log.log(Level.INFO, PRE+" Plugged into Spout!");
 		}else{
@@ -152,6 +155,10 @@ public class GunsPlus extends JavaPlugin {
 		if(worldguard != null) {
 			wg = (WorldGuardPlugin) worldguard;
 			log.log(Level.INFO, PRE+" Plugged into WorldGuard!");
+		}
+		if(show != null) {
+			showcase = (Showcase) show;
+			log.log(Level.INFO, PRE+" Plugged into Showcase!");
 		}
 	}
 	
