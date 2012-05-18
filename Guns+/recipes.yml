@@ -2,7 +2,7 @@
 # Look at the examples to see how it works.
 
 Sniper:
-    # the type can only be shaped or shapeless
+    # the type can be shaped, shapeless or furnace
     type: 'shaped'
     # this is the amount of snipers in the output 
     amount: 1
