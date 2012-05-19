@@ -71,7 +71,7 @@ public class ConfigParser {
 					custom = new SpoutItemStack(a);
 				}
 			}
-			if(GunsPlus.tripod.getName().equals(item)){
+			if(GunsPlus.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
 				custom = new SpoutItemStack(GunsPlus.tripod);
 			}
         }

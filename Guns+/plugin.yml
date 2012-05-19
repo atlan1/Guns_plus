@@ -1,6 +1,6 @@
 name: GunsPlus
 main: team.GunsPlus.GunsPlus
-version: 1.2.2
+version: 1.2.4
 depend: [Spout]
 soft-depend: [LWC, FurnaceAPI, WorldGuard, Showcase]
 authors: [Atlan1, SirTyler]
