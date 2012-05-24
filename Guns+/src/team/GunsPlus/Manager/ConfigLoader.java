@@ -94,6 +94,7 @@ public class ConfigLoader {
 				int critical =  additionsConfig.getInt(additionnode+".critical");
 				int range =  additionsConfig.getInt(additionnode+".range");
 				int damage =  additionsConfig.getInt(additionnode+".damage");
+				int melee = additionsConfig.getInt(additionnode+".melee-damage");
 				int reloadTime =   additionsConfig.getInt(additionnode+".reload-time");
 				int shotDelay=  additionsConfig.getInt(additionnode+".shot-delay");
 				int shotsBetweenReload =  additionsConfig.getInt(additionnode+".shots-between-reload");
@@ -136,6 +137,8 @@ public class ConfigLoader {
 					AdditionManager.editNumberValue(a, "CHANGEDAMAGE", changedamage);
 				if(damage!=0)
 					AdditionManager.editNumberValue(a, "DAMAGE", (float) damage);
+				if(melee!=0)
+					AdditionManager.editNumberValue(a, "MELEE", (float) melee);
 				if(headShotDamage!=0)
 					AdditionManager.editNumberValue(a, "HEADSHOTDAMAGE", (float) headShotDamage);
 				if(zoomfactor!=0)
@@ -288,6 +291,7 @@ public class ConfigLoader {
 				int critical =  gunsConfig.getInt((String) gunnode+".critical", 0);
 				int range =  gunsConfig.getInt((String) gunnode+".range", 0);
 				int damage =  gunsConfig.getInt((String) gunnode+".damage", 0);
+				int melee = gunsConfig.getInt((String) gunnode+".melee-damage", 0);
 				int reloadTime =   gunsConfig.getInt((String) gunnode+".reload-time", 0);
 				int shotDelay=  gunsConfig.getInt((String) gunnode+".shot-delay", 0);
 				int shotsBetweenReload =  gunsConfig.getInt((String) gunnode+".shots-between-reload", 0);
@@ -299,6 +303,7 @@ public class ConfigLoader {
 				int headShotDamage =  gunsConfig.getInt((String) gunnode+".head-shot-damage", 0);
 				int shotsoundvolume = gunsConfig.getInt(gunnode+".shot-sound.volume", 50);
 				int reloadsoundvolume = gunsConfig.getInt(gunnode+".reload-sound.volume", 50);
+				
 				String shotSound = gunsConfig.getString(gunnode+".shot-sound.url");
 				String reloadSound = gunsConfig.getString(gunnode+".reload-sound.url");
 				String zoomTexture = gunsConfig.getString(gunnode+".zoom-texture");
@@ -338,6 +343,7 @@ public class ConfigLoader {
 				GunManager.editGunValue(g, "WEIGHT", weight);
 				GunManager.editGunValue(g, "CHANGEDAMAGE", changedamage);
 				GunManager.editGunValue(g, "DAMAGE", damage);
+				GunManager.editGunValue(g, "MELEE", melee);
 				GunManager.editGunValue(g, "HEADSHOTDAMAGE", headShotDamage);
 				GunManager.editGunValue(g, "ZOOMFACTOR", zoomfactor);
 				GunManager.editGunValue(g, "CRITICAL", critical);

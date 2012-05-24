@@ -14,5 +14,6 @@ Silencer:
 ExtraScope:
     add-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/ExtraScope.png'
     zoom-factor: 3
-    
-    
+Bayonet:
+    add-texture: 'http://dl.dropbox.com/u/1420065/Guns/Bayonet.png'
+	melee-damage: 4
