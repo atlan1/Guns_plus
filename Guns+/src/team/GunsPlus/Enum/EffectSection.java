@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EffectSection {
-	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED(), TARGETSPHERE(), SHOOTERSPHERE();
+	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED();
 	
 	private Map<String, Object> data = new HashMap<String, Object>();
 	
