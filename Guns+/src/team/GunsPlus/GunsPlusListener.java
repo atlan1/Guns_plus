@@ -90,14 +90,13 @@ public class GunsPlusListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
-
 		Player p = e.getPlayer();
 		Action a = e.getAction();
 		if (GunsPlus.lwc != null)//do we need this here?
 			GunsPlus.lwc.wrapPlayer(p);
 		if (!PlayerUtils.hasSpoutcraft(p))return;
 		SpoutPlayer sp;
-		if(GunsPlus.mrb.isEnabled()) {
+		if(GunsPlus.mrb != null) {
 			sp = (SpoutPlayer) Bukkit.getPlayer(p.getName());
 		} else {
 		 sp = (SpoutPlayer) p;
