@@ -58,9 +58,9 @@ public class GunsPlus extends JavaPlugin {
 	public static int tripodinvsize = 9;
 	public static boolean tripodenabled = true;
 	public static boolean forcezoom = true;
-	public static KeyType zoomKey = KeyType.RIGHT;
-	public static KeyType fireKey = KeyType.LEFT;
-	public static KeyType reloadKey = KeyType.LETTER("R");
+	public static KeyType zoomKey = new KeyType("right", true);
+	public static KeyType fireKey = new KeyType("left", false);
+	public static KeyType reloadKey = new KeyType("R", false);
 	public static BindingExecutionDelegate fireBinding;
 	public static BindingExecutionDelegate zoomBinding;
 	public static BindingExecutionDelegate reloadBinding;
@@ -96,10 +96,9 @@ public class GunsPlus extends JavaPlugin {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		hook();
 		init();
-//		We have to wait for spout to implement mouse button bindings
-//		fireBinding = new FireBinding(this, GunsPlus.fireKey);
-//		reloadBinding = new ReloadBinding(this, GunsPlus.reloadKey);
-//		zoomBinding = new ZoomBinding(this, GunsPlus.zoomKey);
+		fireBinding = new FireBinding(this, GunsPlus.fireKey);
+		reloadBinding = new ReloadBinding(this, GunsPlus.reloadKey);
+		zoomBinding = new ZoomBinding(this, GunsPlus.zoomKey);
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		getCommand("guns+").setExecutor(new CommandEx(this));
 		api = new GunsPlusAPI(this);
@@ -173,7 +172,6 @@ public class GunsPlus extends JavaPlugin {
 		update.startTaskRepeating(5, false);
 	}
 	
-	
 	private void updateTripods(){
 		if(tripodenabled == false) return;
 		Task update = new Task(this){
@@ -184,7 +182,7 @@ public class GunsPlus extends JavaPlugin {
 				}
 			}
 		};
-		update.startTaskRepeating(5, false);
+		update.startTaskRepeating(10, false);
 		Task save = new Task(this){
 			public void run(){
 				try {

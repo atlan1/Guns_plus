@@ -16,12 +16,11 @@ public class ReloadBinding implements BindingExecutionDelegate{
 	
 	public ReloadBinding(GunsPlus p, KeyType kt){
 		plugin = p;
-//		SpoutManager.getKeyBindingManager().registerBinding("Reload", kt.getKey(), "If pressed guns will reload.", this, plugin);
+		SpoutManager.getKeyBindingManager().registerBinding("Reload", kt.getKey(), "If pressed guns will reload.", this, plugin);
 	}
 	
 	@Override
 	public void keyPressed(KeyBindingEvent ev) {
-		System.out.print("triggered");
 		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)){
 			SpoutPlayer sp = ev.getPlayer();
 			if(GunUtils.holdsGun(sp)){

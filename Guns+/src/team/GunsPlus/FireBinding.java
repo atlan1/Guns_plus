@@ -8,7 +8,6 @@ import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 import org.getspout.spoutapi.player.SpoutPlayer;
-
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Gun;
@@ -23,7 +22,7 @@ public class FireBinding implements BindingExecutionDelegate{
 	
 	public FireBinding(GunsPlus p, KeyType kt){
 		plugin = p;
-//		SpoutManager.getKeyBindingManager().registerBinding("Fire", kt.getKey(), "If pressed guns will fire.", this, plugin);
+		SpoutManager.getKeyBindingManager().registerBinding("Fire", kt.getKey(), "If pressed guns will fire.", this, plugin);
 	}
 	
 	@Override
@@ -44,8 +43,8 @@ public class FireBinding implements BindingExecutionDelegate{
 							PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
 						}
 					};
-					task.startTaskRepeating(0, false);
-					
+					task.startTaskRepeating((long) g.getValue("SHOTDELAY"), false);
+					autoFire.put(sp, task);
 				}
 			}
 		}
@@ -58,6 +57,7 @@ public class FireBinding implements BindingExecutionDelegate{
 			if(GunUtils.holdsGun(sp)){
 				if(autoFire.containsKey(sp)){
 					autoFire.get(sp).stopTask();
+					autoFire.remove(sp);
 				}
 			}
 		}

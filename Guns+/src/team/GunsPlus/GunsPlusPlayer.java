@@ -18,6 +18,7 @@ import team.GunsPlus.API.Event.Gun.GunFireEvent;
 import team.GunsPlus.API.Event.Gun.GunReloadEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomInEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomOutEvent;
+import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Item.Ammo;
@@ -35,12 +36,13 @@ public class GunsPlusPlayer extends LivingShooter {
 	private HUD hud;
 	private GenericTexture zoomtexture;
 	private boolean zooming = false;
+	private int counter = 0;
 
 	public GunsPlusPlayer(SpoutPlayer sp, HUD h) {
 		player = sp;
 		hud = h;
 		for (Gun g : GunsPlus.allGuns)
-			this.resetFireCounter(g);
+		this.resetFireCounter(g);
 	}
 	
 	public LivingEntity getLivingEntity(){
@@ -111,42 +113,58 @@ public class GunsPlusPlayer extends LivingShooter {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void fire(Gun g) {
+		if(isFireing()) return;
+		setFireing(true);
 		if(!player.hasPermission("gunsplus.fire.all")) {
-			if(!player.hasPermission("gunsplus.fire." + g.getName().toLowerCase().replace(" ", "_"))) 
+			if(!player.hasPermission("gunsplus.fire." + g.getName().toLowerCase().replace(" ", "_"))){ 
+				setFireing(false);
 				return;
+			}
 		}
 		Inventory inv = getPlayer().getInventory();
 		if(!GunUtils.isShootable(g)&&!GunUtils.isMountable(g)){
 			PlayerUtils.sendNotification(getPlayer(), "This gun is ready for", "the scrap heap!", new ItemStack(Material.IRON_INGOT), 2000);
+			setFireing(false);
 			return;
 		}else if(GunUtils.isShootable(g)&&!GunUtils.isMountable(g)&&Util.enteredTripod(getPlayer())){
 			PlayerUtils.sendNotification(getPlayer(), "Use this gun ", "only outside a tripod!", new SpoutItemStack(GunsPlus.tripod), 2000);
+			setFireing(false);
 			return;
 		}else if(!GunUtils.isShootable(g)&&GunUtils.isMountable(g)&&!Util.enteredTripod(getPlayer())){
 			PlayerUtils.sendNotification(getPlayer(), "Enter a tripod to", "use this heavy gun!", new SpoutItemStack(g), 2000);
+			setFireing(false);
 			return;
 		}
 		if(Util.enteredTripod(getPlayer()))
 			inv = Util.getTripodDataOfEntered(getPlayer()).getInventory();
-		if (!GunUtils.checkInvForAmmo(inv, g.getAmmo()))
+		if (!GunUtils.checkInvForAmmo(inv, g.getAmmo())){
+			setFireing(false);
 			return;
-		if (isReloading())
+		}
+		if (isReloading()){
+			setFireing(false);
 			return;
-		else if (isDelaying())
+		}
+		else if (isDelaying()){
+			setFireing(false);
 			return;
-		else if (isOutOfAmmo(g))
+		}
+		else if (isOutOfAmmo(g)){
+			setFireing(false);
 			return;
+		}
 		else {
-//			FireBehavior f = (FireBehavior) g.getObject("FIREBEHAVIOR");
-//			int counter = f.getBurst().getShots();
-//			Task fireTask = new Task(GunsPlus.plugin, inv, g, counter){
-//				public void run(){
-//					Inventory inv = (Inventory) this.getArg(0);
-//					Gun g = (Gun) this.getArg(1);
-//					int counter = this.getIntArg(2); 
-					Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
-					HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(
-							GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
+			FireBehavior f = (FireBehavior) g.getObject("FIREBEHAVIOR");
+			counter = f.getBurst().getShots();
+			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
+			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
+			Task fireTask = new Task(GunsPlus.plugin, g,  this, usedAmmo, targets_damage){
+				public void run(){
+					Gun g = (Gun) this.getArg(0);
+					GunsPlusPlayer gpp = (GunsPlusPlayer) this.getArg(1);
+					@SuppressWarnings("unchecked")
+					HashMap<LivingEntity, Integer> targets_damage = (HashMap<LivingEntity, Integer>)this.getArg(3);
+					Ammo usedAmmo = (Ammo) this.getArg(2);
 					if(targets_damage.isEmpty()){
 						Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
 						GunUtils.shootProjectile(from, getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
@@ -176,43 +194,61 @@ public class GunsPlusPlayer extends LivingShooter {
 						}
 						tar.damage(damage, getPlayer());
 					}
-					GunUtils.performEffects(this, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
-//					counter--;
-//					if(counter<=0) this.stopTask();
-//				}
-//			};
-//			fireTask.startTaskRepeating(f.getBurst().getDelay(), false);
-//			
-//			while(fireTask.isTaskRunning()){}
-			
 					
-			GunUtils.removeAmmo(inv, g.getAmmo());
-			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(this.getPlayer(),g));
-			getPlayer().updateInventory();
-			setFireCounter(g, getFireCounter(g) + 1);
-
-			if (!(g.getResource("SHOTSOUND") == null)) {
-				if (g.getValue("SHOTDELAY") < 5
-						&& Util.getRandomInteger(0, 100) < 35) {
-					Util.playCustomSound(GunsPlus.plugin, getLocation(),
-							g.getResource("SHOTSOUND"),
-							(int) g.getValue("SHOTSOUNDVOLUME"));
-				} else {
-					Util.playCustomSound(GunsPlus.plugin, getLocation(),
-							g.getResource("SHOTSOUND"),
-							(int) g.getValue("SHOTSOUNDVOLUME"));
+					GunUtils.performEffects(gpp, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
+		
+					if (!(g.getResource("SHOTSOUND") == null)) {
+						if (g.getValue("SHOTDELAY") < 5
+								&& Util.getRandomInteger(0, 100) < 35) {
+							Util.playCustomSound(GunsPlus.plugin, getLocation(),
+									g.getResource("SHOTSOUND"),
+									(int) g.getValue("SHOTSOUNDVOLUME"));
+						} else {
+							Util.playCustomSound(GunsPlus.plugin, getLocation(),
+									g.getResource("SHOTSOUND"),
+									(int) g.getValue("SHOTSOUNDVOLUME"));
+						}
+		
+					}
+					--counter;
+					if(counter<=0) {
+						this.stopTask();
+					}
 				}
-
-			}
-
-			recoil(g);
-
-			if (GunsPlus.autoreload
-					&& getFireCounter(g) >= g.getValue("SHOTSBETWEENRELOAD"))
-				reload(g);
-			if ((int) g.getValue("SHOTDELAY") > 0)
-				delay(g);
+			};
+			
+			if(f.getBurst().getShots()==1) 
+				fireTask.run();
+			else if(f.getBurst().getShots()>=2)
+				fireTask.startTaskRepeating(f.getBurst().getDelay(), false);
+			
+			Task other = new Task(GunsPlus.plugin, this, inv, g, fireTask){
+				public void run(){
+					Task fire = (Task) this.getArg(3);
+					if(!fire.isTaskRunning()){
+						Inventory inv = (Inventory) this.getArg(1);
+						Gun g = (Gun) this.getArg(2);
+						GunsPlusPlayer gpp = (GunsPlusPlayer) this.getArg(0);
+						
+						GunUtils.removeAmmo(inv, g.getAmmo());
+						Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(getPlayer(),g));
+						getPlayer().updateInventory();
+						
+						setFireCounter(g, getFireCounter(g) + 1);
+						recoil(g);
+						
+						if (GunsPlus.autoreload && getFireCounter(g) >= g.getValue("SHOTSBETWEENRELOAD"))
+								reload(g);
+						if ((int) g.getValue("SHOTDELAY") > 0)
+							delay(g);
+						gpp.setFireing(false);
+						this.stopTask();
+					}
+				}
+			};
+			other.startTaskRepeating(f.getBurst().getDelay(), false);
 		}
+		
 	}
 
 	@Override

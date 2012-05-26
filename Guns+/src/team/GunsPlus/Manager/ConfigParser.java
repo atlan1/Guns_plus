@@ -15,6 +15,7 @@ import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.FireBehavior;
 //import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Addition;
@@ -118,63 +119,28 @@ public class ConfigParser {
     }
     
     public static KeyType parseKeyType(String string) throws Exception{
-    	KeyType key = null;
-    	if (string.startsWith("@")) {
-			if (string.endsWith("_"))
-				key = KeyType.HOLDLETTER(string.replace("@", ""));
-			else
-				key = KeyType.LETTER(string.replace("@", ""));
-		} else if (string.startsWith("#")) {
-			if (string.endsWith("_"))
-				key = KeyType.HOLDNUMBER(string.replace("#", ""));
-			else
-				key = KeyType.NUMBER(string.replace("#", ""));
-		} else {
-			if (string.endsWith("_")) {
-				switch (KeyType.getType(string)) {
-				case RIGHT:
-					key = KeyType.HOLDRIGHT;
-					break;
-				case LEFT:
-					key = KeyType.HOLDLEFT;
-					break;
-				case RIGHTSHIFT:
-					key = KeyType.HOLDRIGHTSHIFT;
-					break;
-				case LEFTSHIFT:
-					key = KeyType.HOLDLEFTSHIFT;
-					break;
-				}
-			} else {
-				switch (KeyType.getType(string)) {
-				case RIGHT:
-					key = KeyType.RIGHT;
-					break;
-				case LEFT:
-					key = KeyType.LEFT;
-					break;
-				case RIGHTSHIFT:
-					key = KeyType.RIGHTSHIFT;
-					break;
-				case LEFTSHIFT:
-					key = KeyType.LEFTSHIFT;
-					break;
-				}
-			}
-		}
-    	return key;
+    	boolean hold = false;
+    	String keyname = "";
+    	if(string.endsWith("_")){
+    		hold = true;
+    		string = string.replace("_", "");
+    	}
+    	if(string.matches("[0-9a-zA-Z]*")){
+    		keyname = string;
+    	}else throw new Exception(" Key contains invalid characters: "+ string);
+    	return new KeyType(keyname, hold);
     }
     
-//    public static FireBehavior parseFireBehavoir(String node) throws Exception{
-//    	int count = ConfigLoader.gunsConfig.getInt(node+".burst.shot-count", 1);
-//    	int delay = ConfigLoader.gunsConfig.getInt(node+"burst.shot-delay", 0);
-//    	if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("single")){
-//    		return FireBehavior.SINGLE(count, delay);
-//    	}else if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("automatic")){
-//    		return FireBehavior.AUTOMATIC(count, delay);
-//    	}
-//    	throw new Exception("Could not parse fire behavoir of a gun.");
-//    }
+    public static FireBehavior parseFireBehavoir(String node) throws Exception{
+    	int count = ConfigLoader.gunsConfig.getInt(node+".burst.shot-count", 1);
+    	int delay = ConfigLoader.gunsConfig.getInt(node+"burst.shot-delay", 0);
+    	if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("single")){
+    		return FireBehavior.SINGLE(count, delay);
+    	}else if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("automatic")){
+    		return FireBehavior.AUTOMATIC(count, delay);
+    	}
+    	throw new Exception("Could not parse fire behavoir of a gun.");
+    }
     
     public static List<Effect> parseEffects(String path){
     	List<Effect> effects = new ArrayList<Effect>();
