@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import me.lyneira.MachinaRedstoneBridge.MachinaRedstoneBridge;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
@@ -35,6 +38,7 @@ public class GunsPlus extends JavaPlugin {
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
+	public static MachinaRedstoneBridge mrb;
 	public static Showcase showcase;
 	public static boolean useFurnaceAPI = false;
 	
@@ -135,6 +139,7 @@ public class GunsPlus extends JavaPlugin {
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
+		Plugin machina = getServer().getPluginManager().getPlugin("MachinaRedstoneBridge");
 		Plugin show = getServer().getPluginManager().getPlugin("Showcase");
 		if(spout != null) {
 		    log.log(Level.INFO, PRE+" Plugged into Spout!");
@@ -154,6 +159,10 @@ public class GunsPlus extends JavaPlugin {
 		if(worldguard != null) {
 			wg = (WorldGuardPlugin) worldguard;
 			log.log(Level.INFO, PRE+" Plugged into WorldGuard!");
+		}
+		if(machina != null) {
+			mrb = (MachinaRedstoneBridge) machina;
+			log.log(Level.INFO, PRE+" Plugged into MachinaRedstoneBridge!");
 		}
 		if(show != null) {
 			showcase = (Showcase) show;

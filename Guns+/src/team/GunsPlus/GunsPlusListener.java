@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -89,7 +90,12 @@ public class GunsPlusListener implements Listener {
 		if (GunsPlus.lwc != null)//do we need this here?
 			GunsPlus.lwc.wrapPlayer(p);
 		if (!PlayerUtils.hasSpoutcraft(p))return;
-		SpoutPlayer sp = (SpoutPlayer) p;
+		SpoutPlayer sp;
+		if(GunsPlus.mrb != null) {
+			sp = (SpoutPlayer) Bukkit.getPlayer(p.getName());
+		} else {
+		 sp = (SpoutPlayer) p;
+		}
 		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
 		if(gp==null) return;
 //		Gun g = null;
@@ -402,5 +408,19 @@ public class GunsPlusListener implements Listener {
 				credits(p);
 			}
 		}, 100L);
+	}
+	
+	@EventHandler
+	public void onDamage(EntityDamageByEntityEvent event) {
+		if(event.getDamager() instanceof Player) {
+			Player attacker = (Player) event.getDamager();
+			org.getspout.spoutapi.material.Material is = new SpoutItemStack(attacker.getItemInHand()).getMaterial();
+			if(Util.isGunsPlusMaterial(is.getName())) {
+				Object g = Util.getGunsPlusMaterial(is.getName());
+				if(g instanceof Gun) {
+					event.setDamage((int) ((Gun) g).getValue("MELEE"));
+				}
+			}
+		}
 	}
 }

@@ -92,17 +92,17 @@ public class VersionChecker implements Listener{
 		if(version.equalsIgnoreCase(thisversion)){
 			return true;
 		} else {
-			double a = 0;
+			int a = 0;
 			try {
-				a = Double.parseDouble(version);
+				a = Integer.parseInt(version);
 			} catch (Exception e) {
-				a = Double.parseDouble(version.split("\\.")[0] + "." + version.split("\\.")[1]);
+				a = Integer.parseInt(version.replace(".", ""));
 			}
-			double b;
+			int b;
 			try {
-				b = Double.parseDouble(thisversion);
+				b = Integer.parseInt(thisversion);
 			} catch (Exception e) {
-				b = Double.parseDouble(thisversion.split("\\.")[0] + "." + thisversion.split("\\.")[1]);
+				b = Integer.parseInt(thisversion.replace(".",""));
 			}
 			if(b >= a) {
 				return true;

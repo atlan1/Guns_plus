@@ -2,9 +2,11 @@
 # Look at the examples to see how it works.
 
 Sniper:
-    # this is the damage dealed by the gun: 8 = 4 hearts
+    # this is the damage dealt by the gun: 8 = 4 hearts
     damage: 8 
-    # this is the damage dealed by the gun if it is a headshot
+    # this is the damage dealt by the gun when used in hand-to-hand combat
+    melee-damage: 1
+    # this is the damage dealt by the gun if it is a headshot
     head-shot-damage: 20
     # this is the range within that the gun will hit an entity (in blocks)
     range: 70
