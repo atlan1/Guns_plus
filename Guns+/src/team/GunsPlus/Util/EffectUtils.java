@@ -2,7 +2,6 @@ package team.GunsPlus.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,7 +12,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.material.MaterialData;
-
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Manager.ConfigParser;

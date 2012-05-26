@@ -6,6 +6,7 @@ import team.GunsPlus.Item.Gun;
 
 public abstract class Shooter{
 	
+	private boolean fireing = false;
 	private Boolean reloading = null;
 	private Boolean delaying = null;
 	private Map<Gun, Integer> fireCounter = new HashMap<Gun, Integer>();
@@ -56,6 +57,14 @@ public abstract class Shooter{
 	
 	public void setOnDelayingQueue() {
 		this.delaying = false;
+	}
+	
+	public boolean isFireing() {
+		return fireing;
+	}
+	
+	public void setFireing(boolean f) {
+		fireing = f;
 	}
 
 	public int  getFireCounter(Gun g) {
