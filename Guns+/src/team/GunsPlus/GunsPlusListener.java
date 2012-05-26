@@ -52,6 +52,7 @@ public class GunsPlusListener implements Listener {
 
 	public GunsPlus plugin;
 	public static String credit;
+	private boolean meleeUse = false;
 
 	public GunsPlusListener(GunsPlus instance) {
 		plugin = instance;
@@ -174,6 +175,7 @@ public class GunsPlusListener implements Listener {
 					gp.reload(g);
 				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
 					gp.fire(g);
+				if (meleeUse == false) meleeUse = true;
 			}
 			break;
 		case LEFT_CLICK_BLOCK:
@@ -479,7 +481,7 @@ public class GunsPlusListener implements Listener {
 	
 	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent event) {
-		if(event.getDamager() instanceof Player) {
+		if(event.getDamager() instanceof Player & meleeUse == true) {
 			Player attacker = (Player) event.getDamager();
 			org.getspout.spoutapi.material.Material is = new SpoutItemStack(attacker.getItemInHand()).getMaterial();
 			if(Util.isGunsPlusMaterial(is.getName())) {
