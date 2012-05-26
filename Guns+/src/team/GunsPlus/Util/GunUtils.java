@@ -313,6 +313,7 @@ public class GunUtils {
 		for(Effect e : effects){
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
 			for(LivingEntity le : targets){
+				if(shooterEntity!=null&&shooterEntity.equals(le)) continue;
 				switch(e.getEffecttype()){
 					case BREAK:
 						EffectUtils.breakEffect(e, shooterLoc, le.getLocation());

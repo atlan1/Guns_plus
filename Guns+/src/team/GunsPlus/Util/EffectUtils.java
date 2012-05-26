@@ -224,7 +224,7 @@ public class EffectUtils {
 	}
 	
 	private static void move(Vector dir, LivingEntity l, Effect eff){
-		int factor = 0;
+		int factor = 1;
 		if(eff.getEffecttype().equals(EffectType.DRAW))
 			factor = -1;
 		dir.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue()*factor);
