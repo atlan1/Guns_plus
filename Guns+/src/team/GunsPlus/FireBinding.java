@@ -3,6 +3,7 @@ package team.GunsPlus;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
@@ -16,7 +17,6 @@ import team.GunsPlus.Util.Task;
 
 public class FireBinding implements BindingExecutionDelegate{
 
-	@SuppressWarnings("unused")
 	private GunsPlus plugin;
 	private Map<SpoutPlayer, Task> autoFire = new HashMap<SpoutPlayer, Task>();
 	

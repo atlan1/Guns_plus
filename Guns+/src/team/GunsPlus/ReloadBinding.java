@@ -1,5 +1,6 @@
 package team.GunsPlus;
 
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
@@ -11,7 +12,6 @@ import team.GunsPlus.Util.PlayerUtils;
 
 public class ReloadBinding implements BindingExecutionDelegate{
 
-	@SuppressWarnings("unused")
 	private GunsPlus plugin;
 	
 	public ReloadBinding(GunsPlus p, KeyType kt){

@@ -1,5 +1,6 @@
 package team.GunsPlus;
 
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
@@ -11,9 +12,7 @@ import team.GunsPlus.Util.PlayerUtils;
 
 public class ZoomBinding implements BindingExecutionDelegate{
 
-	@SuppressWarnings("unused")
 	private GunsPlus plugin;
-	@SuppressWarnings("unused")
 	private KeyType keytype;
 	
 	public ZoomBinding(GunsPlus p, KeyType kt){
