@@ -166,25 +166,25 @@ public class GunsPlusPlayer extends LivingShooter {
 					HashMap<LivingEntity, Integer> targets_damage = (HashMap<LivingEntity, Integer>)this.getArg(3);
 					Ammo usedAmmo = (Ammo) this.getArg(2);
 					if(targets_damage.isEmpty()){
-						Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
-						GunUtils.shootProjectile(from, getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
+						Location from = Util.getBlockInSight(gpp.getPlayer().getEyeLocation(), 2, 5).getLocation();
+						GunUtils.shootProjectile(from, gpp.getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
 								(Projectile) g.getObject("PROJECTILE"));
 					}
 					for (LivingEntity tar : targets_damage.keySet()) {
-						if (tar.equals(getPlayer())) {
+						if (tar.equals(gpp.getPlayer())) {
 							continue;
 						}
 						int damage = targets_damage.get(tar);
-						Location from = Util.getBlockInSight(getPlayer().getEyeLocation(), 2, 5).getLocation();
+						Location from = Util.getBlockInSight(gpp.getPlayer().getEyeLocation(), 2, 5).getLocation();
 						GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
 						if (damage < 0)
-							PlayerUtils.sendNotification(getPlayer(), "Headshot!",
+							PlayerUtils.sendNotification(gpp.getPlayer(), "Headshot!",
 									"with a " + GunUtils.getRawGunName(g),
 									new ItemStack(Material.ARROW), 2000);
 						targets_damage.put(tar, Math.abs(damage));
 						damage = targets_damage.get(tar);
 						if (Util.getRandomInteger(1, 100) <= g.getValue("CRITICAL")) {
-							PlayerUtils.sendNotification(getPlayer(), "Critical!",
+							PlayerUtils.sendNotification(gpp.getPlayer(), "Critical!",
 									"with a " + GunUtils.getRawGunName(g),
 									new ItemStack(Material.DIAMOND_SWORD), 2000);
 							damage = tar.getHealth() + 1000;
@@ -192,7 +192,7 @@ public class GunsPlusPlayer extends LivingShooter {
 						if (usedAmmo != null) {
 							damage += usedAmmo.getDamage();
 						}
-						tar.damage(damage, getPlayer());
+						tar.damage(damage, tar);
 					}
 					
 					GunUtils.performEffects(gpp, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
@@ -217,10 +217,8 @@ public class GunsPlusPlayer extends LivingShooter {
 				}
 			};
 			
-			if(f.getBurst().getShots()==1) 
-				fireTask.run();
-			else if(f.getBurst().getShots()>=2)
-				fireTask.startTaskRepeating(f.getBurst().getDelay(), false);
+
+			fireTask.startTaskRepeating(f.getBurst().getDelay(), false);
 			
 			Task other = new Task(GunsPlus.plugin, this, inv, g, fireTask){
 				public void run(){
