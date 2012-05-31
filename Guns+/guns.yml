@@ -57,7 +57,7 @@ Sniper:
     # specifies if the gun will be shown in the hud or not.
     hud-enabled: true
     # with this node you can set the available additions for this gun, use NONE for no Addition
-    additions: Silencer, ExtraScope
+    additions: Silencer, ExtraScope, Bayonet
     # this sets wheater you can mount a gun on the tripod or not
     mountable: false
     # if you put false in here you can't shoot with this gun at all, but you can configure it like mountable true and shootable false so that you can only use it if mounted
