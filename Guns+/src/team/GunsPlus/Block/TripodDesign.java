@@ -13,11 +13,10 @@ public class TripodDesign extends GenericBlockDesign {
 	
 	public TripodDesign(GunsPlus plugin, String texURL){
 			Texture tex = new Texture(plugin, texURL, 256, 16, 16);
-			texture = tex;
-			setBoundingBox(0, 0, 0, 1, 0.9f, 1);
+			setBoundingBox(0, 0, 0, 1, 1, 1);
 			setRenderPass(0);
 			setQuadNumber(36);
-			setTexture(plugin, texture.getTexture());
+			setTexture(plugin, tex);
 			SubTexture  face1Tex = texture.getSubTexture(0);
 			SubTexture  face2Tex = texture.getSubTexture(1);
 			SubTexture  face3Tex = texture.getSubTexture(2);

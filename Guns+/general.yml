@@ -45,7 +45,12 @@ tripod:
     # enabled/disabled
     enabled: true
     # the texture to use for the block 
+    # this texture is 256x16. Similar to the terrain.png of vanilla you have different subtextures sized 16x16.
+    # the first 3 subtextures are for the tripod legs, the 4th is for the top of the little surface,
+    # the 5th for the sides of the surface the 6th for the bottom. The rest is unused currently.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/tripodSprite.png'
+    # The hardness of the block. Some examples: obsidian: 50, cobblestone: 2, dirt: 0.5
+    hardness: 2.0
     # thats the maximum amount of tripods allowed per player, put a negative value for infinite
     max-count-per-player: 5
     # sets wheater to force the player to zoom in on enter or not
