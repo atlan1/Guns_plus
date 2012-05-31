@@ -13,6 +13,7 @@ import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
 
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.Effect;
 //import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.FireBehavior;
@@ -407,16 +408,17 @@ public class ConfigLoader {
 			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("show-notifications", true);
 			GunsPlus.autoreload = ConfigLoader.generalConfig.getBoolean("auto-reload", true);
 			
-			GunsPlus.tripodenabled = ConfigLoader.generalConfig.getBoolean("tripod.enabled", true);
-			GunsPlus.tripodTexture = ConfigLoader.generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");
-			GunsPlus.maxtripodcount = ConfigLoader.generalConfig.getInt("tripod.max-count-per-player", -1);
-			GunsPlus.forcezoom = ConfigLoader.generalConfig.getBoolean("tripod.force-zoom",  true);
-			GunsPlus.tripodinvsize = ConfigLoader.generalConfig.getInt("tripod.inventory-size", 9);
-			if(!((GunsPlus.tripodinvsize%9)==0)){
+			Tripod.tripodenabled = ConfigLoader.generalConfig.getBoolean("tripod.enabled", true);
+			Tripod.tripodTexture = ConfigLoader.generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");
+			Tripod.maxtripodcount = ConfigLoader.generalConfig.getInt("tripod.max-count-per-player", -1);
+			Tripod.forcezoom = ConfigLoader.generalConfig.getBoolean("tripod.force-zoom",  true);
+			Tripod.tripodinvsize = ConfigLoader.generalConfig.getInt("tripod.inventory-size", 9);
+			Tripod.hardness = (float) ConfigLoader.generalConfig.getDouble("tripod.hardness", 2.0);
+			if(!((Tripod.tripodinvsize%9)==0)){
 				Util.warn("Tripod inventory size has to be a multiple of 9!");
-				GunsPlus.tripodinvsize = 9;
+				Tripod.tripodinvsize = 9;
 			}
-			if(GunsPlus.tripodenabled == true){
+			if(Tripod.tripodenabled == true){
 				Task trecipe = new Task(GunsPlus.plugin){
 					public void run(){
 						if(GunsPlus.tripod!=null){
@@ -454,7 +456,7 @@ public class ConfigLoader {
 			GunsPlus.fireKey = ConfigParser.parseKeyType(f);
 			if(GunsPlus.fireKey==null) throw new Exception(" Could not parse fire key!");
 			
-			String r = ConfigLoader.generalConfig.getString("reload", "@r");
+			String r = ConfigLoader.generalConfig.getString("reload", "R");
 			GunsPlus.reloadKey = ConfigParser.parseKeyType(r);
 			if(GunsPlus.reloadKey==null) throw new Exception(" Could not parse reload key!");
 			

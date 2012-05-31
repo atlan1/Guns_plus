@@ -18,6 +18,7 @@ import team.GunsPlus.API.Event.Gun.GunFireEvent;
 import team.GunsPlus.API.Event.Gun.GunReloadEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomInEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomOutEvent;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Gui.HUD;
@@ -82,7 +83,7 @@ public class GunsPlusPlayer extends LivingShooter {
 			if(!player.hasPermission("gunsplus.zoom." + g.getName().toLowerCase().replace(" ", "_")))
 				return;
 		}
-		if (Util.enteredTripod(getPlayer()) && GunsPlus.forcezoom)
+		if (Util.enteredTripod(getPlayer()) && Tripod.forcezoom)
 			return;
 		if (!g.getObjects().containsKey("ZOOMTEXTURE")) {
 			GenericTexture zoomtex = new GenericTexture((String) g

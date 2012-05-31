@@ -26,6 +26,7 @@ import org.getspout.spoutapi.sound.SoundManager;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -261,7 +262,7 @@ public class Util {
 						+ new SpoutItemStack(add).getDurability());
 			}
 		}
-		if(GunsPlus.tripodenabled){
+		if(Tripod.tripodenabled){
 			info(" ------------ loaded the tripod block --------------");
 			info(" ID: "+new SpoutItemStack(GunsPlus.tripod).getTypeId()+":"+new SpoutItemStack(GunsPlus.tripod).getDurability());
 		}

@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 //import org.getspout.spoutapi.material.CustomBlock;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -72,7 +73,7 @@ public class ConfigParser {
 					custom = new SpoutItemStack(a);
 				}
 			}
-			if(GunsPlus.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
+			if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
 				custom = new SpoutItemStack(GunsPlus.tripod);
 			}
         }
