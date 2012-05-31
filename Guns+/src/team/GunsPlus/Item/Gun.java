@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.SpoutBlock;
-import org.getspout.spoutapi.material.item.GenericCustomItem;
+import org.getspout.spoutapi.material.item.GenericCustomTool;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.griefcraft.util.ProtectionFinder;
@@ -18,7 +18,7 @@ import com.griefcraft.util.matchers.DoubleChestMatcher;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Effect;
 
-public class Gun extends GenericCustomItem {
+public class Gun extends GenericCustomTool {
 
 	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
 	private HashMap<String, Float> values = new HashMap<String, Float>();
