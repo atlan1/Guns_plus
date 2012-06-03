@@ -62,9 +62,10 @@ public class EffectUtils {
 		return targetBlocks;
 	}
 	
-	private static List<Block> getFlightPath(Location from, Location to){
+	private static List<Block> getFlightPath(Effect e, Location direction, int maxrange){
 		List<Block> blockList = new ArrayList<Block>();
-		BlockIterator bitr = new BlockIterator(from.getWorld(), from.toVector(), to.toVector(), 0d, (int) Math.ceil(from.toVector().distance(to.toVector())));
+		Integer range = (Integer) e.getEffectsection().getData().get("LENGTH");
+		BlockIterator bitr = new BlockIterator(direction, 0d, range==null||range<0?maxrange:range);
 		while(bitr.hasNext()){
 			Block b = bitr.next();
 			if(Util.isTransparent(b)&&!Util.isTripod(b)){
@@ -74,13 +75,13 @@ public class EffectUtils {
 		return blockList;
 	}
 
-	public static void breakEffect(Effect e, Location shooter, Location location) {
+	public static void breakEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			breakBlock(b, e);
 	}
@@ -91,13 +92,13 @@ public class EffectUtils {
 		}
 	}
 
-	public static void placeEffect(Effect e, Location shooter, Location location) {
+	public static void placeEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			placeBlock(b, e);
 	}
@@ -109,13 +110,13 @@ public class EffectUtils {
 		 }
 	}
 
-	public static void explosionEffect(Effect e, Location shooter, Location location) {
+	public static void explosionEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			explosion(b.getLocation(), e);
 	}
@@ -126,13 +127,13 @@ public class EffectUtils {
 			 eff.getArgument("SIZE"));
 	}
 
-	public static void lightningEffect(Effect e, Location shooter, Location location) {
+	public static void lightningEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			lightning(b.getLocation(), e);
 	}
@@ -141,13 +142,13 @@ public class EffectUtils {
 		l.getWorld().strikeLightning(l);
 	}
 
-	public static void spawnEffect(Effect e, Location shooter, Location location) {
+	public static void spawnEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			spawn(b.getLocation(), e);
 	}
@@ -159,13 +160,13 @@ public class EffectUtils {
 		 eff.getArgument("ENTITY")));
 	}
 	
-	public static void smokeEffect(Effect e, Location shooter, Location location) {
+	public static void smokeEffect(Effect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
 			targetBlocks = getTargetBlocks(e, target);
 		else
-			targetBlocks = getFlightPath(shooter, location);
+			targetBlocks = getFlightPath(e, shooter, range);
 		for(Block b : targetBlocks)
 			smoke(b.getLocation(), e);
 	}
@@ -186,7 +187,7 @@ public class EffectUtils {
 		Integer.valueOf(eff.getArgument("STRENGTH").toString()).intValue()));	
 	}
 
-	public static void fireEffect(Effect e, LivingEntity shooterEntity, LivingEntity le) {
+	public static void fireEffect(Effect e, LivingEntity shooterEntity, LivingEntity le, int range) {
 		LivingEntity target = switchEntity(e, shooterEntity, le);
 		if(target!=null){
 			fire(target, e);
@@ -196,7 +197,7 @@ public class EffectUtils {
 			if(targetLoc!=null)
 				targetBlocks = getTargetBlocks(e, targetLoc);
 			else
-				targetBlocks = getFlightPath(shooterEntity.getLocation(), le.getLocation());
+				targetBlocks = getFlightPath(e, shooterEntity.getLocation(), range);
 			for(Block b : targetBlocks)
 				fire(b.getLocation(), e);
 		}

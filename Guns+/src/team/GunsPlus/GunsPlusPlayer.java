@@ -74,7 +74,7 @@ public class GunsPlusPlayer extends LivingShooter {
 
 	@Override
 	public Location getLocation(){
-		return getPlayer().getLocation();
+		return getPlayer().getEyeLocation();
 	}
 	
 	public void zoom(Gun g) {

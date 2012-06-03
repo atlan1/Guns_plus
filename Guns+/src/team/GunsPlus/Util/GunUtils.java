@@ -308,6 +308,7 @@ public class GunUtils {
 		HashSet<LivingEntity> targets = new HashSet<LivingEntity>();
 		LivingEntity shooterEntity = null;
 		Location shooterLocation, targetLocation;
+		int gunrange = (int) gun.getValue("RANGE");
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
@@ -321,32 +322,32 @@ public class GunUtils {
 				targetLocation = target.getLocation();
 				shooterLocation = shooter.getLocation();
 				if(shooterEntity!=null&&shooterEntity.equals(target)){
-					targetLocation = shooterEntity.getTargetBlock(null, (int) gun.getValue("RANGE")).getLocation();
+					targetLocation = shooterEntity.getTargetBlock(null, gunrange).getLocation();
 				}
 				switch(e.getEffecttype()){
 					case BREAK:
-						EffectUtils.breakEffect(e, shooterLocation, targetLocation);
+						EffectUtils.breakEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case PLACE:
-						EffectUtils.placeEffect(e, shooterLocation, targetLocation);
+						EffectUtils.placeEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case POTION:
 						EffectUtils.potionEffect(e, shooterEntity,  target);
 						break;
 					case SMOKE:
-						EffectUtils.smokeEffect(e, shooterLocation, targetLocation);
+						EffectUtils.smokeEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case FIRE:
-						EffectUtils.fireEffect(e,shooterEntity, target);
+						EffectUtils.fireEffect(e,shooterEntity, target, gunrange);
 						break;
 					case SPAWN:
-						EffectUtils.spawnEffect(e, shooterLocation, targetLocation);
+						EffectUtils.spawnEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case LIGHTNING:
-						EffectUtils.lightningEffect(e, shooterLocation, targetLocation);
+						EffectUtils.lightningEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case EXPLOSION:
-						EffectUtils.explosionEffect(e, shooterLocation, targetLocation);
+						EffectUtils.explosionEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
 					case PUSH:
 						EffectUtils.pushEffect(e, target, shooterEntity, shooterLocation.getDirection());
