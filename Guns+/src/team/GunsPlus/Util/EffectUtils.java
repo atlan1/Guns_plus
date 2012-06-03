@@ -109,8 +109,7 @@ public class EffectUtils {
 		 }
 	}
 
-	public static void explosionEffect(Effect e, Location shooter,
-			Location location) {
+	public static void explosionEffect(Effect e, Location shooter, Location location) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)

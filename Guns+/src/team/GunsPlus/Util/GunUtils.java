@@ -304,46 +304,55 @@ public class GunUtils {
 		return counter;
 	}
 	
-	public static void performEffects(Shooter shooter, Location shooterLoc, HashSet<LivingEntity> targets, Gun gun){
+	public static void performEffects(Shooter shooter, HashSet<LivingEntity> tars, Gun gun){
+		HashSet<LivingEntity> targets = new HashSet<LivingEntity>();
 		LivingEntity shooterEntity = null;
+		Location shooterLocation, targetLocation;
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
-		ArrayList<Effect> effects = gun.getEffects();
-		for(Effect e : effects){
+		for(Effect e : gun.getEffects()){
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
-			for(LivingEntity le : targets){
-				if(shooterEntity!=null&&shooterEntity.equals(le)) continue;
+			if(targets.isEmpty()&&shooterEntity!=null){
+
+				targets.add(shooterEntity);
+			}
+			for(LivingEntity target : targets){
+				targetLocation = target.getLocation();
+				shooterLocation = shooter.getLocation();
+				if(shooterEntity!=null&&shooterEntity.equals(target)){
+					targetLocation = shooterEntity.getTargetBlock(null, (int) gun.getValue("RANGE")).getLocation();
+				}
 				switch(e.getEffecttype()){
 					case BREAK:
-						EffectUtils.breakEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.breakEffect(e, shooterLocation, targetLocation);
 						break;
 					case PLACE:
-						EffectUtils.placeEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.placeEffect(e, shooterLocation, targetLocation);
 						break;
 					case POTION:
-						EffectUtils.potionEffect(e, shooterEntity,  le);
+						EffectUtils.potionEffect(e, shooterEntity,  target);
 						break;
 					case SMOKE:
-						EffectUtils.smokeEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.smokeEffect(e, shooterLocation, targetLocation);
 						break;
 					case FIRE:
-						EffectUtils.fireEffect(e,shooterEntity, le);
+						EffectUtils.fireEffect(e,shooterEntity, target);
 						break;
 					case SPAWN:
-						EffectUtils.spawnEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.spawnEffect(e, shooterLocation, targetLocation);
 						break;
 					case LIGHTNING:
-						EffectUtils.lightningEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.lightningEffect(e, shooterLocation, targetLocation);
 						break;
 					case EXPLOSION:
-						EffectUtils.explosionEffect(e, shooterLoc, le.getLocation());
+						EffectUtils.explosionEffect(e, shooterLocation, targetLocation);
 						break;
 					case PUSH:
-						EffectUtils.pushEffect(e, le, shooterEntity, shooterLoc.getDirection());
+						EffectUtils.pushEffect(e, target, shooterEntity, shooterLocation.getDirection());
 						break;
 					case DRAW:
-						EffectUtils.drawEffect(e,le,shooterEntity, shooterLoc.getDirection());
+						EffectUtils.drawEffect(e,target,shooterEntity, shooterLocation.getDirection());
 						break;
 				}
 			}

@@ -207,7 +207,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 				}
 				tar.damage(damage);
 			}
-			GunUtils.performEffects(this, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
+			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
 
 			GunUtils.removeAmmo(inv, g.getAmmo());
 			
