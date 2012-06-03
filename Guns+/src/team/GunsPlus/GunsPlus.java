@@ -129,7 +129,7 @@ public class GunsPlus extends JavaPlugin {
 		Plugin spout = getServer().getPluginManager().getPlugin("Spout");
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
-		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
+		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuard");
 		Plugin machina = getServer().getPluginManager().getPlugin("MachinaRedstoneBridge");
 		Plugin show = getServer().getPluginManager().getPlugin("Showcase");
 		if(spout != null) {
