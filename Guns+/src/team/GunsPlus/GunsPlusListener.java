@@ -111,7 +111,7 @@ public class GunsPlusListener implements Listener {
 									GunUtils.removeGunInHand(sp);
 								}else{
 									if(GunsPlus.notifications)
-										sp.sendNotification("You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
+										PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
 								}
 							}else if(td.getGun()!=null&&sp.isSneaking()){
 								TripodPopup tpp = new TripodPopup(plugin, td);

@@ -96,16 +96,14 @@ public class GunsPlusPlayer extends LivingShooter {
 					.getObjects().get("ZOOMTEXTURE"), (int) g
 					.getValue("ZOOMFACTOR"));
 			setZooming(true);
-			if (GunsPlus.notifications)
-				(getPlayer()).sendNotification(g.getName(), "Zoomed in!",
-						Material.SULPHUR);
+			PlayerUtils.sendNotification(getPlayer(), g.getName(), "Zoomed in!",
+						new ItemStack(Material.SULPHUR), 2000);
 			Bukkit.getPluginManager().callEvent(new GunZoomInEvent(this.getPlayer(), g));
 		} else {
 			GunUtils.zoomOut(this);
 			setZooming(false);
-			if (GunsPlus.notifications)
-				(getPlayer()).sendNotification(g.getName(), "Zoomed out!",
-						Material.SULPHUR);
+			PlayerUtils.sendNotification(getPlayer(), g.getName(), "Zoomed out!",
+					new ItemStack(Material.SULPHUR), 2000);
 			Bukkit.getPluginManager().callEvent(new GunZoomOutEvent(this.getPlayer(), g));
 		}
 	}

@@ -51,7 +51,7 @@ public class Tripod extends GenericCustomBlock {
 				GunsPlus.allTripodBlocks.add(td);
 			} else {
 				if (GunsPlus.notifications)
-					sp.sendNotification(ChatColor.RED
+					PlayerUtils.sendNotification(sp, ChatColor.RED
 							+ "You reached the maximum", ChatColor.RED
 							+ "amount of Tripods!", new SpoutItemStack(this),
 							2000);
