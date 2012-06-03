@@ -167,7 +167,7 @@ public class Util {
 			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name))
 				return true;
 		}
-		if(GunsPlus.tripod.getName().equals(name))
+		if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(name))
 			return true;
 		return false;
 	}
@@ -193,7 +193,7 @@ public class Util {
 				return cm;
 			}
 		}
-		if(name.equals(GunsPlus.tripod.getName()))
+		if(Tripod.tripodenabled&&name.equals(GunsPlus.tripod.getName()))
 			cm = GunsPlus.tripod;
 		return cm;
 	}
