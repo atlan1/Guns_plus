@@ -32,10 +32,9 @@ public class FireBinding implements BindingExecutionDelegate{
 			if(GunUtils.holdsGun(sp)){
 				Gun g = GunUtils.getGunInHand(sp);
 				FireBehavior f = (FireBehavior)g.getObject("FIREBEHAVIOR");
-				if(f.toString().equalsIgnoreCase("SINGLE")){
+				if(f.equals(FireBehavior.SINGLE)){
 					PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
-				}
-				else if(f.toString().equalsIgnoreCase("AUTOMATIC")){
+				}else if(f.equals(FireBehavior.AUTOMATIC)){
 					Task task = new Task(GunsPlus.plugin, sp, g){
 						public void run(){
 							SpoutPlayer sp = (SpoutPlayer) this.getArg(0);

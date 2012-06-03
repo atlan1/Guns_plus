@@ -132,15 +132,14 @@ public class ConfigParser {
     	return new KeyType(keyname, hold);
     }
     
-    public static FireBehavior parseFireBehavoir(String node) throws Exception{
-    	int count = ConfigLoader.gunsConfig.getInt(node+".burst.shot-count", 1);
-    	int delay = ConfigLoader.gunsConfig.getInt(node+"burst.shot-delay", 0);
-    	if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("single")){
-    		return FireBehavior.SINGLE(count, delay);
-    	}else if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("automatic")){
-    		return FireBehavior.AUTOMATIC(count, delay);
+    public static FireBehavior parseFireBehavoir(String node){
+    	try{
+    		return FireBehavior.valueOf(ConfigLoader.gunsConfig.getString(node, "single").toUpperCase());
+    	}catch(Exception e){
+    		Util.warn(e.getMessage());
+    		Util.debug(e);
     	}
-    	throw new Exception("Could not parse fire behavoir of a gun.");
+    	return null;
     }
     
     public static List<Effect> parseEffects(String path){
