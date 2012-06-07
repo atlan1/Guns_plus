@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 //import org.getspout.spoutapi.material.CustomBlock;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.Effect;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -72,7 +73,7 @@ public class ConfigParser {
 					custom = new SpoutItemStack(a);
 				}
 			}
-			if(GunsPlus.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
+			if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
 				custom = new SpoutItemStack(GunsPlus.tripod);
 			}
         }
@@ -131,15 +132,14 @@ public class ConfigParser {
     	return new KeyType(keyname, hold);
     }
     
-    public static FireBehavior parseFireBehavoir(String node) throws Exception{
-    	int count = ConfigLoader.gunsConfig.getInt(node+".burst.shot-count", 1);
-    	int delay = ConfigLoader.gunsConfig.getInt(node+"burst.shot-delay", 0);
-    	if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("single")){
-    		return FireBehavior.SINGLE(count, delay);
-    	}else if(ConfigLoader.gunsConfig.getString(node+".type").equalsIgnoreCase("automatic")){
-    		return FireBehavior.AUTOMATIC(count, delay);
+    public static FireBehavior parseFireBehavoir(String node){
+    	try{
+    		return FireBehavior.valueOf(ConfigLoader.gunsConfig.getString(node, "single").toUpperCase());
+    	}catch(Exception e){
+    		Util.warn(e.getMessage());
+    		Util.debug(e);
     	}
-    	throw new Exception("Could not parse fire behavoir of a gun.");
+    	return null;
     }
     
     public static List<Effect> parseEffects(String path){

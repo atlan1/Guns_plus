@@ -18,9 +18,16 @@ import team.GunsPlus.Util.Task;
 
 public class Tripod extends GenericCustomBlock {
 
+	public static String tripodTexture = null;
+	public static int maxtripodcount = -1;
+	public static int tripodinvsize = 9;
+	public static boolean tripodenabled = true;
+	public static boolean forcezoom = true;
+	public static float hardness = 2.0f;
+
 	public Tripod(GunsPlus plugin, String texture) {
 		super(plugin, "Tripod", false);
-		this.setHardness(MaterialData.cobblestone.getHardness());
+		this.setHardness(hardness);
 		this.setLightLevel(MaterialData.cobblestone.getLightLevel());
 		this.setItemDrop(new SpoutItemStack(this, 1));
 		this.setStepSound(SoundEffect.WOOD);
@@ -36,15 +43,15 @@ public class Tripod extends GenericCustomBlock {
 				remove(l);
 				return;
 			}
-			if (TripodDataHandler.getIdsByPlayers(sp.getName()).size() < GunsPlus.maxtripodcount
-					|| GunsPlus.maxtripodcount < 0) {
+			if (TripodDataHandler.getIdsByPlayers(sp.getName()).size() < Tripod.maxtripodcount
+					|| Tripod.maxtripodcount < 0) {
 				TripodData td = new TripodData(
 						PlayerUtils.getPlayerBySpoutPlayer(sp), l);
 				TripodDataHandler.save(td);
 				GunsPlus.allTripodBlocks.add(td);
 			} else {
 				if (GunsPlus.notifications)
-					sp.sendNotification(ChatColor.RED
+					PlayerUtils.sendNotification(sp, ChatColor.RED
 							+ "You reached the maximum", ChatColor.RED
 							+ "amount of Tripods!", new SpoutItemStack(this),
 							2000);

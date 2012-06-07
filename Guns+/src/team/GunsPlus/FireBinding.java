@@ -7,7 +7,6 @@ import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
-import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
@@ -23,11 +22,7 @@ public class FireBinding implements BindingExecutionDelegate{
 	
 	public FireBinding(GunsPlus p, KeyType kt){
 		plugin = p;
-		if(kt.getKey() <= -2) {
-			
-		} else {
-			SpoutManager.getKeyBindingManager().registerBinding("Fire", Keyboard.getKey(kt.getKey()), "If pressed guns will fire.", this, plugin);
-		}
+		SpoutManager.getKeyBindingManager().registerBinding("Fire", kt.getKey(), "If pressed guns will fire.", this, plugin);
 	}
 	
 	@Override
@@ -37,10 +32,9 @@ public class FireBinding implements BindingExecutionDelegate{
 			if(GunUtils.holdsGun(sp)){
 				Gun g = GunUtils.getGunInHand(sp);
 				FireBehavior f = (FireBehavior)g.getObject("FIREBEHAVIOR");
-				if(f.toString().equalsIgnoreCase("SINGLE")){
+				if(f.equals(FireBehavior.SINGLE)){
 					PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
-				}
-				else if(f.toString().equalsIgnoreCase("AUTOMATIC")){
+				}else if(f.equals(FireBehavior.AUTOMATIC)){
 					Task task = new Task(GunsPlus.plugin, sp, g){
 						public void run(){
 							SpoutPlayer sp = (SpoutPlayer) this.getArg(0);

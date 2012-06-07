@@ -16,4 +16,4 @@ ExtraScope:
     zoom-factor: 3
 Bayonet:
     add-texture: 'http://dl.dropbox.com/u/1420065/Guns/Bayonet.png'
-	melee-damage: 4
+    melee-damage: 4

@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.getspout.spoutapi.event.input.KeyPressedEvent;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 import org.getspout.spoutapi.gui.Button;
@@ -99,109 +98,46 @@ public class GunsPlusListener implements Listener {
 		}
 		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
 		if(gp==null) return;
-//		Gun g = null;
-//		if (GunUtils.holdsGun(sp))
-//			g = GunUtils.getGunInHand(sp);
 		switch (a) {
-//		case RIGHT_CLICK_AIR:
-//			if(g!=null){
-//				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-//					gp.zoom(g);
-//				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-//					gp.reload(g);
-//				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-//					gp.fire(g);
-//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-//					gp.zoom(g);
-//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-//					gp.reload(g);
-//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-//					gp.fire(g);
-//			}
-//			break;
-		case RIGHT_CLICK_BLOCK:
-//			if(g!=null){
-//				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-//					gp.zoom(g);
-//				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-//					gp.reload(g);
-//				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-//					gp.fire(g);
-//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-//					gp.zoom(g);
-//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-//					gp.reload(g);
-//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-//					gp.fire(g);
-//			}
-				if(Util.isTripod(e.getClickedBlock())){
-					TripodData td = Util.loadTripodData(e.getClickedBlock());
-					e.setUseInteractedBlock(Result.DENY);
-					if(td.getOwner()!=null&&td.getOwner().equals(gp)){
-						if(td.getGun()==null&&sp.isSneaking()&&GunUtils.holdsGun(sp)){
-							Gun tg = GunUtils.getGunInHand(sp);
-							if(GunUtils.isMountable(tg)){
-								td.setGun(tg);
-								GunUtils.removeGunInHand(sp);
-							}else{
-								if(GunsPlus.notifications)
-									sp.sendNotification("You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
+			case RIGHT_CLICK_BLOCK:
+					if(Util.isTripod(e.getClickedBlock())){
+						TripodData td = Util.loadTripodData(e.getClickedBlock());
+						e.setUseInteractedBlock(Result.DENY);
+						if(td.getOwner()!=null&&td.getOwner().equals(gp)){
+							if(td.getGun()==null&&sp.isSneaking()&&GunUtils.holdsGun(sp)){
+								Gun tg = GunUtils.getGunInHand(sp);
+								if(GunUtils.isMountable(tg)){
+									td.setGun(tg);
+									GunUtils.removeGunInHand(sp);
+								}else{
+									if(GunsPlus.notifications)
+										PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
+								}
+							}else if(td.getGun()!=null&&sp.isSneaking()){
+								TripodPopup tpp = new TripodPopup(plugin, td);
+								tpp.attach(sp);
+							}else if(td.getGun()!=null){
+								sp.openInventory(td.getInventory());
 							}
-						}else if(td.getGun()!=null&&sp.isSneaking()){
-							TripodPopup tpp = new TripodPopup(plugin, td);
-							tpp.attach(sp);
-						}else if(td.getGun()!=null){
-							sp.openInventory(td.getInventory());
 						}
 					}
-				}
-				break;
-//		case LEFT_CLICK_AIR:
-//			if(g!=null){
-//				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-//					gp.zoom(g);
-//				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-//					gp.reload(g);
-//				if (GunsPlus.fireKey.equals(KeyType.LEFT))
-//					gp.fire(g);
-//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-//					gp.zoom(g);
-//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-//					gp.reload(g);
-//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-//					gp.fire(g);
-//			}
-//			break;
-		case LEFT_CLICK_BLOCK:
-//			if(g!=null){
-//				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-//					gp.zoom(g);
-//				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-//					gp.reload(g);
-//				if (GunsPlus.fireKey.equals(KeyType.LEFT))
-//					gp.fire(g);
-//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-//					gp.zoom(g);
-//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-//					gp.reload(g);
-//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-//					gp.fire(g);
-//			}
-				if(Util.isTripod(e.getClickedBlock())){
-					TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
-					if(td.getOwnername().equals(gp.getPlayer().getName())&&td.getGun()!=null){
-						if(!td.isAutomatic()&&!td.isEntered()){
-							td.setEntered(true);
-						}else if(!td.isAutomatic()&&td.isEntered()){
-							td.setEntered(false);
-						}else if(td.isAutomatic()&&!td.isWorking()){
-							td.setWorking(true);
-						}else if(td.isAutomatic()&&td.isWorking()){
-							td.setWorking(false);
+					break;
+			case LEFT_CLICK_BLOCK:
+					if(Util.isTripod(e.getClickedBlock())){
+						TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
+						if(td.getOwnername().equals(gp.getPlayer().getName())&&td.getGun()!=null){
+							if(!td.isAutomatic()&&!td.isEntered()){
+								td.setEntered(true);
+							}else if(!td.isAutomatic()&&td.isEntered()){
+								td.setEntered(false);
+							}else if(td.isAutomatic()&&!td.isWorking()){
+								td.setWorking(true);
+							}else if(td.isAutomatic()&&td.isWorking()){
+								td.setWorking(false);
+							}
 						}
 					}
-				}
-				break;
+					break;
 		}
 	}
 
@@ -409,11 +345,6 @@ public class GunsPlusListener implements Listener {
 				credits(p);
 			}
 		}, 100L);
-	}
-	
-	@EventHandler
-	public void test(KeyPressedEvent e) {
-		System.out.println(e.getKey());
 	}
 	
 	@EventHandler

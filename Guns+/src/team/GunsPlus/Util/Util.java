@@ -26,6 +26,7 @@ import org.getspout.spoutapi.sound.SoundManager;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.EffectType;
@@ -166,7 +167,7 @@ public class Util {
 			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name))
 				return true;
 		}
-		if(GunsPlus.tripod.getName().equals(name))
+		if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(name))
 			return true;
 		return false;
 	}
@@ -192,7 +193,7 @@ public class Util {
 				return cm;
 			}
 		}
-		if(name.equals(GunsPlus.tripod.getName()))
+		if(Tripod.tripodenabled&&name.equals(GunsPlus.tripod.getName()))
 			cm = GunsPlus.tripod;
 		return cm;
 	}
@@ -261,7 +262,7 @@ public class Util {
 						+ new SpoutItemStack(add).getDurability());
 			}
 		}
-		if(GunsPlus.tripodenabled){
+		if(Tripod.tripodenabled){
 			info(" ------------ loaded the tripod block --------------");
 			info(" ID: "+new SpoutItemStack(GunsPlus.tripod).getTypeId()+":"+new SpoutItemStack(GunsPlus.tripod).getDurability());
 		}
@@ -412,28 +413,28 @@ public class Util {
 		return vector;
 	}
 
-	public static Location setLookingAt(Location loc, Location lookat) {
-		loc = loc.clone();
-		double dx = lookat.getX() - loc.getX();
-		double dy = lookat.getY() - loc.getY();
-		double dz = lookat.getZ() - loc.getZ();
+	public static Location setLookingAt(final Location loc, final Location lookat) {
+		Location location = loc.clone();
+		double dx = lookat.getX() - location.getX();
+		double dy = lookat.getY() - location.getY();
+		double dz = lookat.getZ() - location.getZ();
 
 		if (dx != 0) {
 			if (dx < 0) {
-				loc.setYaw((float) (1.5 * Math.PI));
+				location.setYaw((float) (1.5 * Math.PI));
 			} else {
-				loc.setYaw((float) (0.5 * Math.PI));
+				location.setYaw((float) (0.5 * Math.PI));
 			}
-			loc.setYaw((float) loc.getYaw() - (float) Math.atan(dz / dx));
+			location.setYaw((float) location.getYaw() - (float) Math.atan(dz / dx));
 		} else if (dz < 0) {
-			loc.setYaw((float) Math.PI);
+			location.setYaw((float) Math.PI);
 		}
 		double dxz = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
-		loc.setPitch((float) -Math.atan(dy / dxz));
-		loc.setYaw(-loc.getYaw() * 180f / (float) Math.PI);
-		loc.setPitch(loc.getPitch() * 180f / (float) Math.PI);
+		location.setPitch((float) - Math.atan(dy / dxz));
+		location.setYaw(-location.getYaw() * 180f / (float) Math.PI);
+		location.setPitch(location.getPitch() * 180f / (float) Math.PI);
 
-		return loc;
+		return location;
 	}
 
 	public static Location getHandLocation(Player p) {

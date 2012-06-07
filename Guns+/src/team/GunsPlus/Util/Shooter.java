@@ -2,6 +2,9 @@ package team.GunsPlus.Util;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.Location;
+
 import team.GunsPlus.Item.Gun;
 
 public abstract class Shooter{
@@ -89,4 +92,6 @@ public abstract class Shooter{
 	public abstract void reload(Gun g);
 	public abstract void delay(Gun g);
 	public abstract void fire(Gun g);
+	
+	public abstract Location getLocation();
 }

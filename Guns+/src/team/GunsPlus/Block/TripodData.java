@@ -31,7 +31,7 @@ import team.GunsPlus.Util.Util;
 
 public class TripodData extends Shooter implements InventoryHolder {
 
-	private Inventory inventory = Bukkit.getServer().createInventory(this, GunsPlus.tripodinvsize, "Tripod Inventory");
+	private Inventory inventory = Bukkit.getServer().createInventory(this, Tripod.tripodinvsize, "Tripod Inventory");
 	private Inventory owner_inv = Bukkit.getServer().createInventory(null, InventoryType.PLAYER);
 	private Gun gun;
 	private boolean automatic = false;
@@ -207,7 +207,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 				}
 				tar.damage(damage);
 			}
-			GunUtils.performEffects(this, getLocation(), new HashSet<LivingEntity>(targets_damage.keySet()), g);
+			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
 
 			GunUtils.removeAmmo(inv, g.getAmmo());
 			
@@ -237,7 +237,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 			owner_inv.setContents(owner.getPlayer().getInventory().getContents());
 			owner.getPlayer().getInventory().setContents(new ItemStack[owner.getPlayer().getInventory().getSize()]);
 			owner.getPlayer().setItemInHand(new SpoutItemStack(getGun(), 1));
-			if(GunsPlus.forcezoom)
+			if(Tripod.forcezoom)
 				owner.zoom(gun);
 //			 if (owner.getPlayer().getVehicle() != null){
 //		        owner.getPlayer().getVehicle().eject();

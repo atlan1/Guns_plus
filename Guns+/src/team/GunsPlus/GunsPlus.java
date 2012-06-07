@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -22,8 +21,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import team.GunsPlus.API.GunsPlusAPI;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
-//TODO
-//import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
@@ -58,18 +56,9 @@ public class GunsPlus extends JavaPlugin {
 	public static int hudX = 20;
 	public static int hudY = 20;
 	public static String hudBackground = null;
-	public static String tripodTexture = null;
-	public static int maxtripodcount = -1;
-	public static int tripodinvsize = 9;
-	public static boolean tripodenabled = true;
-	public static boolean forcezoom = true;
-	//TODO
-	/*public static KeyType zoomKey = new KeyType("right", true);
+	public static KeyType zoomKey = new KeyType("right", true);
 	public static KeyType fireKey = new KeyType("left", false);
-	public static KeyType reloadKey = new KeyType("R", false);*/
-	public static BindingExecutionDelegate fireBinding;
-	public static BindingExecutionDelegate zoomBinding;
-	public static BindingExecutionDelegate reloadBinding;
+	public static KeyType reloadKey = new KeyType("R", false);
 
 	//ITEM AND BLOCK LISTS
 	public static List<Gun> allGuns = new ArrayList<Gun>();
@@ -84,7 +73,7 @@ public class GunsPlus extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if(tripodenabled = true) {
+		if(Tripod.tripodenabled = true) {
 			for(TripodData td : allTripodBlocks) {
 				td.destroy();
 			}
@@ -102,10 +91,9 @@ public class GunsPlus extends JavaPlugin {
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		hook();
 		init();
-		//TODO
-		/*fireBinding = new FireBinding(this, GunsPlus.fireKey);
-		reloadBinding = new ReloadBinding(this, GunsPlus.reloadKey);
-		zoomBinding = new ZoomBinding(this, GunsPlus.zoomKey);*/
+		new FireBinding(this, GunsPlus.fireKey);
+		new ReloadBinding(this, GunsPlus.reloadKey);
+		new ZoomBinding(this, GunsPlus.zoomKey);
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		getCommand("guns+").setExecutor(new CommandEx(this));
 		api = new GunsPlusAPI(this);
@@ -114,14 +102,14 @@ public class GunsPlus extends JavaPlugin {
 
 	private void init() {
 		ConfigLoader.loadGeneral();
-		if(tripodenabled){
-			tripod = new Tripod(this, tripodTexture);
+		if(Tripod.tripodenabled){
+			tripod = new Tripod(this, Tripod.tripodTexture);
 		}
 		ConfigLoader.loadAdditions();
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
 		ConfigLoader.loadRecipes();
-		if(tripodenabled) {
+		if(Tripod.tripodenabled) {
 			initTripod();
 			updateTripods();
 		}
@@ -141,7 +129,7 @@ public class GunsPlus extends JavaPlugin {
 		Plugin spout = getServer().getPluginManager().getPlugin("Spout");
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
-		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuardPlugin");
+		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuard");
 		Plugin machina = getServer().getPluginManager().getPlugin("MachinaRedstoneBridge");
 		Plugin show = getServer().getPluginManager().getPlugin("Showcase");
 		if(spout != null) {
@@ -185,7 +173,7 @@ public class GunsPlus extends JavaPlugin {
 	}
 	
 	private void updateTripods(){
-		if(tripodenabled == false) return;
+		if(Tripod.tripodenabled == false) return;
 		Task update = new Task(this){
 			public void run(){
 				for(TripodData td: GunsPlus.allTripodBlocks){

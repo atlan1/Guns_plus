@@ -4,30 +4,30 @@ import org.getspout.spoutapi.keyboard.Keyboard;
 
 public class KeyType {
 	
-	private int key;
+	private Keyboard key;
 	private boolean hold;
 
-	public KeyType(String keyString, boolean h) {
-		int key = (-1);
+	public  KeyType(String keyString, boolean h) {
+		Keyboard key = null;
 		if(keyString.equalsIgnoreCase("left"))
-			key = (-2);
+			key = Keyboard.MOUSE_LEFT;
 		else if(keyString.equalsIgnoreCase("right"))
-			key = (-3);
+			key = Keyboard.MOUSE_RIGHT;
 		else if(keyString.equalsIgnoreCase("middle"))
-			key = (-4);
+			key = Keyboard.MOUSE_MIDDLE;
 		else
-		    key = Keyboard.valueOf("KEY_"+keyString.toUpperCase()).getKeyCode();
+		    key = Keyboard.valueOf("KEY_"+keyString.toUpperCase());
 		this.key = key;
 		this.hold = h;
 	}
 
 	public boolean isHoldKey(){return hold;} 
-	public int getKey(){return key;}
+	public Keyboard getKey(){return key;}
 	
 	@Override
 	public boolean equals(Object obj){
 		if(!(obj instanceof KeyType)) return false;
 		KeyType kt = (KeyType) obj;
-		return kt.getKey() == (this.getKey());
+		return kt.getKey().equals(this.getKey());
 	}
 }

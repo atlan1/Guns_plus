@@ -188,9 +188,15 @@ public class PlayerUtils {
 
 	public static void sendNotification(SpoutPlayer sp, String title,
 			String text, ItemStack icon, int duration) {
-		try {
-			sp.sendNotification(title, text, icon, duration);
-		} catch (Exception e) {
+		if(!GunsPlus.notifications) return;
+		if(title.length()>26){
+			Util.warn("Too long notification. Check your gun and addition names.");
+			title = title.replace(title.substring(25, title.length()-1),"");
 		}
+		if(text.length()>26){
+			Util.warn("Too long notification. Check your gun and addition names.");
+			text = text.replace(text.substring(25, text.length()-1),"");
+		}
+		sp.sendNotification(title, text, icon, duration);
 	}
 }
