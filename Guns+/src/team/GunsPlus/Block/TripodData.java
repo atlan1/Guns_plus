@@ -136,10 +136,10 @@ public class TripodData extends Shooter implements InventoryHolder {
 					s.resetFireCounter(g);
 				}
 			};
-			reloadTask.startTaskDelayed((int) g.getValue("RELOADTIME"));
+			reloadTask.startTaskDelayed((Integer) g.getProperty("RELOADTIME"));
 			setReloading();
-			if(!(g.getResource("RELOADSOUND")==null)){
-				Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("RELOADSOUND"), (int) g.getValue("RELOADSOUNDVOLUME"));
+			if(!(g.getProperty("RELOADSOUND")==null)){
+				Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("RELOADSOUND"), (Integer) g.getProperty("RELOADSOUNDVOLUME"));
 			}
 			return;
 		}else if(isReloading()){
@@ -159,20 +159,21 @@ public class TripodData extends Shooter implements InventoryHolder {
 					sp.resetDelay();
 				}
 			};
-			t.startTaskDelayed((int) g.getValue("SHOTDELAY"));
+			t.startTaskDelayed((Integer) g.getProperty("SHOTDELAY"));
 			setDelaying();
 		}else if(isDelaying()){
 			return;
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fire(Gun g){
 		Inventory inv = getInventory();
 		if(!GunUtils.isMountable(g)){
 			return;
 		}
-		if(!GunUtils.checkInvForAmmo(inv, g.getAmmo())){
+		if(!GunUtils.checkInvForAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"))){
 			return;
 		}
 		if(isReloading()){
@@ -181,25 +182,22 @@ public class TripodData extends Shooter implements InventoryHolder {
 		else if(isDelaying()){
 			return;
 		}
-		else if(isOutOfAmmo(g)){
-			return;
-		}
 		else{
-			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, g.getAmmo());
+			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"));
 			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(getLocation(), gun, false));
 			if(targets_damage.isEmpty()){
 				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
 				GunUtils.shootProjectile(from, getLocation().getDirection().toLocation(getLocation().getWorld()),
-						(Projectile) g.getObject("PROJECTILE"));
+						(Projectile) g.getProperty("PROJECTILE"));
 			}
 			for(LivingEntity tar : targets_damage.keySet()){
 				if (tar.equals(getOwner().getPlayer())) {
 					continue;
 				}
 				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
+				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getProperty("PROJECTILE"));
 				int damage = Math.abs(targets_damage.get(tar));
-				if(Util.getRandomInteger(0, 100)<=g.getValue("CRITICAL")){
+				if(Util.getRandomInteger(0, 100)<=(Integer)g.getProperty("CRITICAL")){
 					damage = tar.getHealth()+1000;
 				}
 				if(usedAmmo!=null){
@@ -209,21 +207,21 @@ public class TripodData extends Shooter implements InventoryHolder {
 			}
 			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
 
-			GunUtils.removeAmmo(inv, g.getAmmo());
+			GunUtils.removeAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"));
 			
 			setFireCounter(g, getFireCounter(g)+1);
 			
-			if(!(g.getResource("SHOTSOUND")==null)){
-				if(g.getValue("SHOTDELAY")<5&&Util.getRandomInteger(0, 100)<35){
-					Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("SHOTSOUND"), (int) g.getValue("SHOTSOUNDVOLUME"));
+			if(!(g.getProperty("SHOTSOUND")==null)){
+				if((Integer)g.getProperty("SHOTDELAY")<5&&Util.getRandomInteger(0, 100)<35){
+					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
 				}else{
-					Util.playCustomSound(GunsPlus.plugin, getLocation(), g.getResource("SHOTSOUND"), (int) g.getValue("SHOTSOUNDVOLUME"));
+					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
 				}
 				
 			}
 			
-			if(GunsPlus.autoreload&&getFireCounter(g)>=g.getValue("SHOTSBETWEENRELOAD")) reload(g);
-			if((int)g.getValue("SHOTDELAY")>0) delay(g);
+			if(GunsPlus.autoreload&&getFireCounter(g)>=(Integer)g.getProperty("SHOTSBETWEENRELOAD")) reload(g);
+			if((Integer)g.getProperty("SHOTDELAY")>0) delay(g);
 		}
 	}
 	

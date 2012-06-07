@@ -12,15 +12,16 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.material.MaterialData;
-import team.GunsPlus.Enum.Effect;
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.GunEffect;
+import team.GunsPlus.Enum.GunEffectSection;
+import team.GunsPlus.Enum.GunEffectType;
 import team.GunsPlus.Manager.ConfigParser;
 
 public class EffectUtils {
 	
-	private static Location switchLocation(Effect e, Location shooter, Location target){
+	private static Location switchLocation(GunEffect e, Location shooter, Location target){
 		Location ret = null;
-		switch (e.getEffectsection()) {
+		switch ((GunEffectSection)e.getEffectSection()) {
 			case TARGETLOCATION:
 				ret = target;
 				break;
@@ -39,8 +40,8 @@ public class EffectUtils {
 		return ret;
 	}
 	
-	private static LivingEntity switchEntity(Effect e, LivingEntity shooter, LivingEntity target){
-		switch(e.getEffectsection()){
+	private static LivingEntity switchEntity(GunEffect e, LivingEntity shooter, LivingEntity target){
+		switch((GunEffectSection)e.getEffectSection()){
 			case TARGETENTITY:
 				return target;
 			case SHOOTER:
@@ -50,11 +51,11 @@ public class EffectUtils {
 		}	
 	}
 	
-	private static List<Block> getTargetBlocks(Effect e, Location t){
+	private static List<Block> getTargetBlocks(GunEffect e, Location t){
 		List<Block> targetBlocks = new ArrayList<Block>();
-		if(!e.getEffectsection().getData().isEmpty()){
+		if(!e.getEffectSection().getProperties().isEmpty()){
 			targetBlocks = Util.getSphere(t, (Integer)
-					e.getEffectsection().getData().get("RADIUS"));
+					e.getEffectSection().getProperty("RADIUS"));
 		}
 		if(targetBlocks.isEmpty()){
 			 targetBlocks.add(t.getBlock());
@@ -62,9 +63,9 @@ public class EffectUtils {
 		return targetBlocks;
 	}
 	
-	private static List<Block> getFlightPath(Effect e, Location direction, int maxrange){
+	private static List<Block> getFlightPath(GunEffect e, Location direction, int maxrange){
 		List<Block> blockList = new ArrayList<Block>();
-		Integer range = (Integer) e.getEffectsection().getData().get("LENGTH");
+		Integer range = (Integer) e.getEffectSection().getProperty("LENGTH");
 		BlockIterator bitr = new BlockIterator(direction, 0d, range==null||range<0?maxrange:range);
 		while(bitr.hasNext()){
 			Block b = bitr.next();
@@ -75,7 +76,7 @@ public class EffectUtils {
 		return blockList;
 	}
 
-	public static void breakEffect(Effect e, Location shooter, Location location, int range) {
+	public static void breakEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -86,13 +87,13 @@ public class EffectUtils {
 			breakBlock(b, e);
 	}
 	
-	private static void  breakBlock(Block b, Effect eff){
-		if(MaterialData.getBlock(b.getTypeId()).getHardness()<Float.valueOf(eff.getArgument("POTENCY").toString()).floatValue()&&!Util.isTripod(b)){
+	private static void  breakBlock(Block b, GunEffect eff){
+		if(MaterialData.getBlock(b.getTypeId()).getHardness()<Float.valueOf(eff.getProperty("POTENCY").toString()).floatValue()&&!Util.isTripod(b)){
 			 b.breakNaturally();
 		}
 	}
 
-	public static void placeEffect(Effect e, Location shooter, Location location, int range) {
+	public static void placeEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -103,14 +104,14 @@ public class EffectUtils {
 			placeBlock(b, e);
 	}
 	
-	private static void placeBlock(Block b , Effect eff) {
+	private static void placeBlock(Block b , GunEffect eff) {
 		 if(Util.isTransparent(b)&&!Util.isTripod(b)){
 			 b.setTypeId(ConfigParser.parseItem((String)
-			 eff.getArgument("BLOCK")).getTypeId());
+			 eff.getProperty("BLOCK")).getTypeId());
 		 }
 	}
 
-	public static void explosionEffect(Effect e, Location shooter, Location location, int range) {
+	public static void explosionEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -121,13 +122,13 @@ public class EffectUtils {
 			explosion(b.getLocation(), e);
 	}
 	
-	private static void explosion(Location l, Effect eff){
+	private static void explosion(Location l, GunEffect eff){
 		if(Util.tntIsAllowedInRegion(l))
 			 l.getWorld().createExplosion(l, (Integer)
-			 eff.getArgument("SIZE"));
+			 eff.getProperty("SIZE"));
 	}
 
-	public static void lightningEffect(Effect e, Location shooter, Location location, int range) {
+	public static void lightningEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -138,11 +139,11 @@ public class EffectUtils {
 			lightning(b.getLocation(), e);
 	}
 	
-	private static void lightning(Location l, Effect eff){
+	private static void lightning(Location l, GunEffect eff){
 		l.getWorld().strikeLightning(l);
 	}
 
-	public static void spawnEffect(Effect e, Location shooter, Location location, int range) {
+	public static void spawnEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -153,14 +154,14 @@ public class EffectUtils {
 			spawn(b.getLocation(), e);
 	}
 	
-	private static void spawn(Location l, Effect eff){
+	private static void spawn(Location l, GunEffect eff){
 		Location l1 = l.clone();
 		 l1.setY(l.getY()+1);
 		 l1.getWorld().spawnCreature(l1, EntityType.valueOf((String)
-		 eff.getArgument("ENTITY")));
+		 eff.getProperty("ENTITY")));
 	}
 	
-	public static void smokeEffect(Effect e, Location shooter, Location location, int range) {
+	public static void smokeEffect(GunEffect e, Location shooter, Location location, int range) {
 		Location target = switchLocation(e, shooter, location);
 		List<Block> targetBlocks = null;
 		if(target!=null)
@@ -171,23 +172,23 @@ public class EffectUtils {
 			smoke(b.getLocation(), e);
 	}
 	
-	private static void smoke(Location l, Effect eff){
+	private static void smoke(Location l, GunEffect eff){
 		l.getWorld().playEffect(l,org.bukkit.Effect.SMOKE ,
-				 BlockFace.UP, (Integer) eff.getArgument("DENSITY"));
+				 BlockFace.UP, (Integer) eff.getProperty("DENSITY"));
 	}
 
-	public static void potionEffect(Effect e, LivingEntity shooterEntity, LivingEntity le) {
+	public static void potionEffect(GunEffect e, LivingEntity shooterEntity, LivingEntity le) {
 		potion(switchEntity(e, shooterEntity, le), e);
 	}
 	
-	private static void potion(LivingEntity le, Effect eff){
+	private static void potion(LivingEntity le, GunEffect eff){
 		le.addPotionEffect(new
-		PotionEffect(PotionEffectType.getById(Integer.valueOf(eff.getArgument("ID").toString()).intValue()),
-		Integer.valueOf(eff.getArgument("DURATION").toString()).intValue(),
-		Integer.valueOf(eff.getArgument("STRENGTH").toString()).intValue()));	
+		PotionEffect(PotionEffectType.getById(Integer.valueOf(eff.getProperty("ID").toString()).intValue()),
+		Integer.valueOf(eff.getProperty("DURATION").toString()).intValue(),
+		Integer.valueOf(eff.getProperty("STRENGTH").toString()).intValue()));	
 	}
 
-	public static void fireEffect(Effect e, LivingEntity shooterEntity, LivingEntity le, int range) {
+	public static void fireEffect(GunEffect e, LivingEntity shooterEntity, LivingEntity le, int range) {
 		LivingEntity target = switchEntity(e, shooterEntity, le);
 		if(target!=null){
 			fire(target, e);
@@ -203,29 +204,29 @@ public class EffectUtils {
 		}
 	}
 		
-	private static void fire(LivingEntity le, Effect eff){
-		le.setFireTicks(Integer.valueOf(eff.getArgument("DURATION").toString()).intValue());
+	private static void fire(LivingEntity le, GunEffect eff){
+		le.setFireTicks(Integer.valueOf(eff.getProperty("DURATION").toString()).intValue());
 	}
 	
-	private static void fire(Location l, Effect eff){
+	private static void fire(Location l, GunEffect eff){
 		l.getWorld().playEffect(l,
 				 org.bukkit.Effect.MOBSPAWNER_FLAMES, null, (Integer)
-				 eff.getArgument("STRENGTH"));
+				 eff.getProperty("STRENGTH"));
 	}
 
-	public static void drawEffect(Effect e, LivingEntity le, LivingEntity shooterEntity, Vector v) {
+	public static void drawEffect(GunEffect e, LivingEntity le, LivingEntity shooterEntity, Vector v) {
 		move(v, switchEntity(e, shooterEntity, le), e);
 	}
 	
-	public static void pushEffect(Effect e, LivingEntity le, LivingEntity shooterEntity, Vector v) {
+	public static void pushEffect(GunEffect e, LivingEntity le, LivingEntity shooterEntity, Vector v) {
 		move(v, switchEntity(e, shooterEntity, le), e);
 	}
 	
-	private static void move(Vector dir, LivingEntity l, Effect eff){
+	private static void move(Vector dir, LivingEntity l, GunEffect eff){
 		int factor = 1;
-		if(eff.getEffecttype().equals(EffectType.DRAW))
+		if(((GunEffectType)eff.getEffectType()).equals(GunEffectType.DRAW))
 			factor = -1;
-		dir.multiply(Double.valueOf(eff.getArgument("SPEED").toString()).doubleValue()*factor);
+		dir.multiply(Double.valueOf(eff.getProperty("SPEED").toString()).doubleValue()*factor);
 		l.setVelocity(dir);
 	}
 }

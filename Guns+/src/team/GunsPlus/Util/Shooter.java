@@ -81,13 +81,6 @@ public abstract class Shooter{
 	public void resetFireCounter(Gun g){
 			fireCounter.put(g, 0);
 	}
-	
-	public boolean isOutOfAmmo(Gun g){
-		if(this.getFireCounter(g)>=g.getValue("SHOTSBETWEENRELOAD")){
-			return true;
-		}
-		return false;
-	}
 
 	public abstract void reload(Gun g);
 	public abstract void delay(Gun g);

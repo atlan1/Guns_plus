@@ -3,7 +3,7 @@ package team.GunsPlus.API.Event;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import team.GunsPlus.Enum.Effect;
+import team.GunsPlus.Enum.GunEffect;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.Shooter;
 
@@ -16,9 +16,9 @@ public class GunEffectEvent extends Event{
     private static final HandlerList handlers = new HandlerList();
     private Shooter shooter = null;
     private Gun gun = null;
-    private Effect eff = null;
+    private GunEffect eff = null;
     
-    public GunEffectEvent(Shooter s, Gun g, Effect e) {
+    public GunEffectEvent(Shooter s, Gun g, GunEffect e) {
     	shooter = s;
     	gun = g;
     	eff = e;
@@ -60,7 +60,7 @@ public class GunEffectEvent extends Event{
      * Get Effect associated with Event
      * @return Effect used by Event
      */
-    public Effect getEffect() {
+    public GunEffect getEffect() {
     	return eff;
     }
 }

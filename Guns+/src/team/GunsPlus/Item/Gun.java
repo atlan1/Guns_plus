@@ -1,11 +1,10 @@
 package team.GunsPlus.Item;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.material.item.GenericCustomTool;
@@ -15,16 +14,14 @@ import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 
+import team.ApiPlus.API.Effect.Effect;
+import team.ApiPlus.API.Effect.EffectHolder;
+import team.ApiPlus.API.PropertyHolder;
 import team.GunsPlus.GunsPlus;
-import team.GunsPlus.Enum.Effect;
 
-public class Gun extends GenericCustomTool {
+public class Gun extends GenericCustomTool implements PropertyHolder, EffectHolder{
 
-	private ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
-	private HashMap<String, Float> values = new HashMap<String, Float>();
-	private HashMap<String, String> resources = new HashMap<String, String>();
-	private HashMap<String, Object> objects = new HashMap<String, Object>();
-	private ArrayList<Effect> effects = new ArrayList<Effect>();
+	private Map<String, Object> properties = new HashMap<String, Object>();
 
 	public Gun(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
@@ -66,81 +63,52 @@ public class Gun extends GenericCustomTool {
 		}
 	}
 
-	public ArrayList<ItemStack> getAmmo() {
-		return ammo;
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Effect> getEffects() {
+		return  (List<Effect>) properties.get("EFFECTS");
+	}
+	
+	@Override
+	public void setEffects(List<Effect> eff){
+		properties.put("EFFECTS", eff);
 	}
 
-	public void setAmmo(ArrayList<ItemStack> ammo) {
-		ArrayList<ItemStack> list = new ArrayList<ItemStack>(ammo);
-		this.ammo = list;
+	@Override
+	public void performEffects() {
+		
 	}
 
-	public String getResource(String s) {
-		return resources.containsKey(s) ? resources.get(s) : null;
+	@Override
+	public Object getProperty(String id) {
+		return properties.get(id);
 	}
 
-	public void setResource(String name, String resource) {
-		this.resources.put(name, resource);
+	@Override
+	public void addProperty(String id, Object property) {
+		if(!properties.containsKey(id))
+			properties.put(id, property);
 	}
 
-	public Object getObject(String s) {
-		return objects.containsKey(s) ? objects.get(s) : null;
+	@Override
+	public Map<String, Object> getProperties() {
+		return properties;
 	}
 
-	public void setObject(String name, Object o) {
-		this.objects.put(name, o);
+	@Override
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = new HashMap<String, Object>(properties);
 	}
 
-	public void setValue(String name, Float value) {
-		values.put(name, value);
+	@Override
+	public void removeProperty(String id) {
+		if(properties.containsKey(id))
+			properties.remove(id);
 	}
 
-	public float getValue(String name) {
-		return values.containsKey(name) ? values.get(name) : 0;
-	}
-
-	public void addEffect(Effect es) {
-		effects.add(es);
-	}
-
-	public void removeEffect(Effect es) {
-		if (effects.contains(es))
-			effects.remove(es);
-	}
-
-	public ArrayList<Effect> getEffects() {
-		return effects;
-	}
-
-	public void setEffects(ArrayList<Effect> effects) {
-		ArrayList<Effect> list = new ArrayList<Effect>(effects);
-		this.effects = list;
-	}
-
-	public HashMap<String, String> getResources() {
-		return resources;
-	}
-
-	public HashMap<String, Object> getObjects() {
-		return objects;
-	}
-
-	public void setResources(HashMap<String, String> resources) {
-		HashMap<String, String> list = new HashMap<String, String>(resources);
-		this.resources = list;
-	}
-
-	public void setObjects(HashMap<String, Object> objects) {
-		HashMap<String, Object> list = new HashMap<String, Object>(objects);
-		this.objects = list;
-	}
-
-	public HashMap<String, Float> getValues() {
-		return values;
-	}
-
-	public void setValues(HashMap<String, Float> values) {
-		HashMap<String, Float> list = new HashMap<String, Float>(values);
-		this.values = list;
+	@Override
+	public void editProperty(String id, Object property) {
+		if(properties.containsKey(id))
+			properties.put(id, property);
 	}
 }

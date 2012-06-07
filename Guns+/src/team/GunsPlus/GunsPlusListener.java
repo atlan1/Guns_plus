@@ -153,8 +153,8 @@ public class GunsPlusListener implements Listener {
 			sp.getInventory().setItem(e.getNewSlot(), preItem);
 			sp.getInventory().setItem(e.getPreviousSlot(), null);
 			return;
-		}else if(PlayerUtils.isZooming(sp)) {
-			PlayerUtils.setZooming(sp, false);
+		}else if(PlayerUtils.getPlayerBySpoutPlayer(sp).isZooming()) {
+			PlayerUtils.getPlayerBySpoutPlayer(sp).setZooming(false);
 			GunUtils.zoomOut(PlayerUtils.getPlayerBySpoutPlayer(sp));
 		}
 		
@@ -163,7 +163,7 @@ public class GunsPlusListener implements Listener {
 		}
 		if (GunUtils.isGun(nextItem)) {
 			Gun g = GunUtils.getGun(nextItem);
-			sp.setWalkingMultiplier(1 - (g.getValue("WEIGHT")/100));
+			sp.setWalkingMultiplier(1 - (((Number)g.getProperty("WEIGHT")).intValue()/100));
 		}
 	}
 	
@@ -355,7 +355,7 @@ public class GunsPlusListener implements Listener {
 			if(Util.isGunsPlusMaterial(is.getName())) {
 				Object g = Util.getGunsPlusMaterial(is.getName());
 				if(g instanceof Gun) {
-					event.setDamage((int) ((Gun) g).getValue("MELEE"));
+					event.setDamage((Integer) ((Gun) g).getProperty("MELEE"));
 				}
 			}
 		}

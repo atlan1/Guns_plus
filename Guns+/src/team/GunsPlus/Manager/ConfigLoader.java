@@ -1,6 +1,7 @@
 package team.GunsPlus.Manager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,10 +13,11 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
 
+import team.ApiPlus.Manager.FileManager;
+import team.ApiPlus.Manager.RecipeManager;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
-import team.GunsPlus.Enum.Effect;
-//import team.GunsPlus.Enum.FireBehavior;
+import team.GunsPlus.Enum.GunEffect;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
@@ -51,7 +53,9 @@ public class ConfigLoader {
 		dataFile = new File(GunsPlus.plugin.getDataFolder(), "data.dat");
 		try {
 			firstRun();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			
+		}
 		gunsConfig = new YamlConfiguration();
 		ammoConfig = new YamlConfiguration();
 		recipeConfig = new YamlConfiguration();
@@ -68,7 +72,7 @@ public class ConfigLoader {
 		} catch (Exception e) {}
 	}
 
-	private static void firstRun() {
+	private static void firstRun() throws IOException {
 		if(FileManager.create(gunsFile))
 			FileManager.copy(GunsPlus.plugin.getResource("guns.yml"), ConfigLoader.gunsFile);
 		if(FileManager.create(ammoFile))
@@ -134,55 +138,55 @@ public class ConfigLoader {
 				
 				Addition a = AdditionManager.buildAddition(GunsPlus.plugin, name, addtexture);
 				if(weight!=0)
-					AdditionManager.editNumberValue(a, "WEIGHT", weight);
+					a.addProperty("WEIGHT", weight);
 				if(changedamage!=0)
-					AdditionManager.editNumberValue(a, "CHANGEDAMAGE", changedamage);
+					a.addProperty("CHANGEDAMAGE", changedamage);
 				if(damage!=0)
-					AdditionManager.editNumberValue(a, "DAMAGE", (float) damage);
+					a.addProperty("DAMAGE", (float) damage);
 				if(melee!=0)
-					AdditionManager.editNumberValue(a, "MELEE", (float) melee);
+					a.addProperty("MELEE", (float) melee);
 				if(headShotDamage!=0)
-					AdditionManager.editNumberValue(a, "HEADSHOTDAMAGE", (float) headShotDamage);
+					a.addProperty("HEADSHOTDAMAGE", (float) headShotDamage);
 				if(zoomfactor!=0)
-					AdditionManager.editNumberValue(a, "ZOOMFACTOR", (float) zoomfactor);
+					a.addProperty("ZOOMFACTOR", (float) zoomfactor);
 				if(critical!=0)
-					AdditionManager.editNumberValue(a, "CRITICAL", (float) critical);
+					a.addProperty("CRITICAL", (float) critical);
 				if(range!=0)
-					AdditionManager.editNumberValue(a, "RANGE", (float) range);
+					a.addProperty("RANGE", (float) range);
 				if(randomfactor!=0)
-					AdditionManager.editNumberValue(a, "RANDOMFACTOR", randomfactor);
+					a.addProperty("RANDOMFACTOR", randomfactor);
 				if(spreadangleOUT!=0)
-					AdditionManager.editNumberValue(a, "SPREAD_OUT", (float) spreadangleOUT);
+					a.addProperty("SPREAD_OUT", (float) spreadangleOUT);
 				if(spreadangleIN!=0)
-					AdditionManager.editNumberValue(a, "SPREAD_IN", (float) spreadangleIN);
+					a.addProperty("SPREAD_IN", (float) spreadangleIN);
 				if(missingchanceOUT!=0)
-					AdditionManager.editNumberValue(a, "MISSING_OUT", (float) missingchanceOUT);
+					a.addProperty("MISSING_OUT", (float) missingchanceOUT);
 				if(missingchanceIN!=0)
-					AdditionManager.editNumberValue(a, "MISSING_IN", (float) missingchanceIN);
+					a.addProperty("MISSING_IN", (float) missingchanceIN);
 				if(recoil!=0)
-					AdditionManager.editNumberValue(a, "RECOIL", recoil);
+					a.addProperty("RECOIL", recoil);
 				if(reloadTime!=0)
-					AdditionManager.editNumberValue(a, "RELOADTIME", (float) reloadTime);
+					a.addProperty("RELOADTIME", (float) reloadTime);
 				if(shotsBetweenReload!=0)
-					AdditionManager.editNumberValue(a, "SHOTSBETWEENRELOAD", (float) shotsBetweenReload);
+					a.addProperty("SHOTSBETWEENRELOAD", (float) shotsBetweenReload);
 				if(shotDelay!=0)
-					AdditionManager.editNumberValue(a, "SHOTDELAY", (float) shotDelay);
+					a.addProperty("SHOTDELAY", (float) shotDelay);
 				if(knockback!=0)
-					AdditionManager.editNumberValue(a, "KNOCKBACK", knockback);
+					a.addProperty("KNOCKBACK", knockback);
 				if(shotsoundvolume!=0)
-					AdditionManager.editNumberValue(a, "SHOTSOUNDVOLUME", (float) shotsoundvolume);
+					a.addProperty("SHOTSOUNDVOLUME", (float) shotsoundvolume);
 				if(reloadsoundvolume!=0)
-					AdditionManager.editNumberValue(a, "RELOADSOUNDVOLUME", (float) reloadsoundvolume);
+					a.addProperty("RELOADSOUNDVOLUME", (float) reloadsoundvolume);
 				if(zoomTexture!=null)
-					AdditionManager.editStringValue(a, "ZOOMTEXTURE", zoomTexture);
+					a.addProperty("ZOOMTEXTURE", zoomTexture);
 				if(shotSound!=null)
-					AdditionManager.editStringValue(a, "SHOTSOUND", shotSound);
+					a.addProperty("SHOTSOUND", shotSound);
 				if(reloadSound!=null)
-					AdditionManager.editStringValue(a, "RELOADSOUND", reloadSound);
+					a.addProperty("RELOADSOUND", reloadSound);
 				
-				if(a.getNumberValues().isEmpty()&&a.getStringValues().isEmpty()){
+				if(a.getProperties().isEmpty()){
 					GunsPlus.allAdditions.remove(a);
-					throw new Exception(" Could not find any values for addition "+name+"!");
+					throw new Exception(" Could not find any properties for addition "+name+"!");
 				}
 				
 			}catch(Exception e){
@@ -259,7 +263,7 @@ public class ConfigLoader {
 					result = new SpoutItemStack(cb, amount);
 				}
 				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
-				team.GunsPlus.Manager.RecipeManager.RecipeType type = team.GunsPlus.Manager.RecipeManager.RecipeType.valueOf(recipeConfig.getString(key+".type").toUpperCase());
+				RecipeManager.RecipeType type = RecipeManager.RecipeType.valueOf(recipeConfig.getString(key+".type").toUpperCase());
 				RecipeManager.addRecipe(type, ingredients, result);
 			}catch (Exception e) {
 				Util.warn("Config Error:" + e.getMessage());
@@ -326,7 +330,7 @@ public class ConfigLoader {
 					missingchanceOUT=Integer.parseInt(missing_chance[0]);
 				}
 				
-				ArrayList<Effect> effects = new ArrayList<Effect>(ConfigParser.parseEffects(gunnode+".effects"));
+				ArrayList<GunEffect> effects = new ArrayList<GunEffect>(ConfigParser.parseEffects(gunnode+".effects"));
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>();
 				List<ItemStack> ammoStacks = ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
@@ -341,37 +345,37 @@ public class ConfigLoader {
 						throw new Exception(" Can't find texture url for "+gunnode+"!");
 				
 				Gun g = GunManager.buildNewGun(GunsPlus.plugin,name, texture);
-
-				GunManager.editGunValue(g, "WEIGHT", weight);
-				GunManager.editGunValue(g, "CHANGEDAMAGE", changedamage);
-				GunManager.editGunValue(g, "DAMAGE", damage);
-				GunManager.editGunValue(g, "MELEE", melee);
-				GunManager.editGunValue(g, "HEADSHOTDAMAGE", headShotDamage);
-				GunManager.editGunValue(g, "ZOOMFACTOR", zoomfactor);
-				GunManager.editGunValue(g, "CRITICAL", critical);
-				GunManager.editGunValue(g, "RANGE", range);
-				GunManager.editGunValue(g, "RANDOMFACTOR", randomfactor);
-				GunManager.editGunValue(g, "SPREAD_OUT", spreadangleOUT);
-				GunManager.editGunValue(g, "SPREAD_IN", spreadangleIN);
-				GunManager.editGunValue(g, "MISSING_OUT", missingchanceOUT);
-				GunManager.editGunValue(g, "MISSING_IN", missingchanceIN);
-				GunManager.editGunValue(g, "RECOIL", recoil);
-				GunManager.editGunValue(g, "RELOADTIME", reloadTime);
-				GunManager.editGunValue(g, "SHOTSBETWEENRELOAD", shotsBetweenReload);
-				GunManager.editGunValue(g, "SHOTDELAY", shotDelay);
-				GunManager.editGunValue(g, "KNOCKBACK", knockback);
-				GunManager.editGunValue(g, "SHOTSOUNDVOLUME", shotsoundvolume);
-				GunManager.editGunValue(g, "RELOADSOUNDVOLUME", reloadsoundvolume);
-				GunManager.editGunResource(g, "ZOOMTEXTURE", zoomTexture);
-				GunManager.editGunResource(g, "SHOTSOUND", shotSound);
-				GunManager.editGunResource(g, "RELOADSOUND", reloadSound);
-			 	GunManager.editAmmo(g, ammo);
-				GunManager.editObject(g, "PROJECTILE", projectile);
-				GunManager.editObject(g, "HUDENABLED", hudenabled);
-				GunManager.editObject(g, "MOUNTABLE", mountable);
-				GunManager.editObject(g, "SHOOTABLE", shootable);
-				GunManager.editObject(g, "FIREBEHAVIOR", fb);
-				GunManager.editEffects(g, effects);
+				
+				g.addProperty("WEIGHT", weight);
+				g.addProperty("CHANGEDAMAGE", changedamage);
+				g.addProperty("DAMAGE", damage);
+				g.addProperty("MELEE", melee);
+				g.addProperty("HEADSHOTDAMAGE", headShotDamage);
+				g.addProperty("ZOOMFACTOR", zoomfactor);
+				g.addProperty("CRITICAL", critical);
+				g.addProperty("RANGE", range);
+				g.addProperty("RANDOMFACTOR", randomfactor);
+				g.addProperty("SPREAD_OUT", spreadangleOUT);
+				g.addProperty("SPREAD_IN", spreadangleIN);
+				g.addProperty("MISSING_OUT", missingchanceOUT);
+				g.addProperty("MISSING_IN", missingchanceIN);
+				g.addProperty("RECOIL", recoil);
+				g.addProperty("RELOADTIME", reloadTime);
+				g.addProperty("SHOTSBETWEENRELOAD", shotsBetweenReload);
+				g.addProperty("SHOTDELAY", shotDelay);
+				g.addProperty("KNOCKBACK", knockback);
+				g.addProperty("SHOTSOUNDVOLUME", shotsoundvolume);
+				g.addProperty("ZOOMTEXTURE", zoomTexture);
+				g.addProperty("SHOTSOUND", shotSound);
+				g.addProperty("RELOADSOUND", reloadSound);
+				g.addProperty("RELOADSOUNDVOLUME", reloadsoundvolume);
+				g.addProperty("AMMO", ammo);
+				g.addProperty("PROJECTILE", projectile);
+				g.addProperty("HUDENABLED", hudenabled);
+				g.addProperty("MOUNTABLE", mountable);
+				g.addProperty("SHOOTABLE", shootable);
+				g.addProperty("FIREBEHAVIOR", fb);
+				g.addProperty("EFFECTS", effects);
 				
 				//registering shapeless recipes for additions + building an extra gun for each addition
 				for(Addition a: adds){
@@ -425,7 +429,7 @@ public class ConfigLoader {
 							SpoutItemStack result = new SpoutItemStack(GunsPlus.tripod, ConfigLoader.generalConfig.getInt("tripod.recipe.amount", 1));
 							List<ItemStack> ingred = ConfigParser.parseItems(ConfigLoader.generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
 							try {
-								RecipeManager.addRecipe(team.GunsPlus.Manager.RecipeManager.RecipeType.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
+								RecipeManager.addRecipe(RecipeManager.RecipeType.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
 							} catch (Exception e) {
 								Util.debug(e);
 								Util.warn("Config Error: "+e.getMessage());

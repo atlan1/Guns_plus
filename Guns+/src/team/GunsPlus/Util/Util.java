@@ -28,8 +28,8 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
-import team.GunsPlus.Enum.EffectSection;
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.GunEffectSection;
+import team.GunsPlus.Enum.GunEffectType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
@@ -268,8 +268,8 @@ public class Util {
 		}
 	}
 
-	public static boolean isAllowedInEffectSection(EffectType efftyp,
-			EffectSection effsec) {
+	public static boolean isAllowedInEffectSection(GunEffectType efftyp,
+			GunEffectSection effsec) {
 		switch (effsec) {
 		case SHOOTER:
 			switch (efftyp) {

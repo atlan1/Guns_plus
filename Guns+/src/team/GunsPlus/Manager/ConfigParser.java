@@ -13,9 +13,9 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 //import org.getspout.spoutapi.material.CustomBlock;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
-import team.GunsPlus.Enum.Effect;
-import team.GunsPlus.Enum.EffectSection;
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.GunEffect;
+import team.GunsPlus.Enum.GunEffectSection;
+import team.GunsPlus.Enum.GunEffectType;
 import team.GunsPlus.Enum.FireBehavior;
 //import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
@@ -142,15 +142,15 @@ public class ConfigParser {
     	return null;
     }
     
-    public static List<Effect> parseEffects(String path){
-    	List<Effect> effects = new ArrayList<Effect>();
+    public static List<GunEffect> parseEffects(String path){
+    	List<GunEffect> effects = new ArrayList<GunEffect>();
     	if(!ConfigLoader.gunsConfig.isConfigurationSection(path)||ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
     	for(String effectsection: ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false)){
-    		EffectSection effsec = EffectSection.valueOf(effectsection.toUpperCase());
+    		GunEffectSection effsec = GunEffectSection.valueOf(effectsection.toUpperCase());
     		setSectionArguments(path+"."+effectsection, effsec);
     		for(String effecttype : ConfigLoader.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
     			if(effecttype.toUpperCase().equalsIgnoreCase("arguments")) continue;
-    			EffectType efftyp = EffectType.valueOf(effecttype.toUpperCase());
+    			GunEffectType efftyp = GunEffectType.valueOf(effecttype.toUpperCase());
     			if(Util.isAllowedInEffectSection(efftyp, effsec)){
     				effects.add(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
     			}
@@ -159,7 +159,7 @@ public class ConfigParser {
     	return effects;
     }
     
-    private static void setSectionArguments(String path ,EffectSection e){
+    private static void setSectionArguments(String path ,GunEffectSection e){
     	Map<String, Object> map = new HashMap<String, Object>();
     	ConfigurationSection cs = ConfigLoader.gunsConfig.getConfigurationSection(path+".arguments");
     	if(cs==null) return;
@@ -180,45 +180,45 @@ public class ConfigParser {
     			else return;
     			break;
     	}
-    	e.setData(map);
+    	e.setProperties(map);
     }
     
-    private static Effect buildEffect(EffectType efftyp, EffectSection es, String path){
-    		Effect e = new Effect(efftyp, es);
+    private static GunEffect buildEffect(GunEffectType efftyp, GunEffectSection es, String path){
+    		GunEffect e = new GunEffect(efftyp, es);
     		switch(efftyp){
 		    	case EXPLOSION:
-		    		e.addArgument("SIZE", ConfigLoader.gunsConfig.getInt(path+".size"));
+		    		e.addProperty("SIZE", ConfigLoader.gunsConfig.getInt(path+".size"));
 		    		break;
 		    	case LIGHTNING:
 		    		break;
 		    	case SMOKE:
-		    		e.addArgument("DENSITY", ConfigLoader.gunsConfig.getInt(path+".density"));
+		    		e.addProperty("DENSITY", ConfigLoader.gunsConfig.getInt(path+".density"));
 		    		break;
 		    	case FIRE:
-		    		if(es.equals(EffectSection.SHOOTER)||es.equals(EffectSection.TARGETENTITY))
-		    			e.addArgument("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
+		    		if(es.equals(GunEffectSection.SHOOTER)||es.equals(GunEffectSection.TARGETENTITY))
+		    			e.addProperty("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
 		    		else
-		    			e.addArgument("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
+		    			e.addProperty("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
 		    		break;
 		    	case PUSH:
-		    		e.addArgument("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
+		    		e.addProperty("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
 		    		break;
 		    	case DRAW:
-		    		e.addArgument("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
+		    		e.addProperty("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
 		    		break;
 		    	case POTION:
-		    		e.addArgument("ID", ConfigLoader.gunsConfig.getInt(path+".id"));
-		    		e.addArgument("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
-		    		e.addArgument("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
+		    		e.addProperty("ID", ConfigLoader.gunsConfig.getInt(path+".id"));
+		    		e.addProperty("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
+		    		e.addProperty("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
 		    		break;
 		    	case SPAWN:
-		    		e.addArgument("ENTITY", ConfigLoader.gunsConfig.getString(path+".entity"));
+		    		e.addProperty("ENTITY", ConfigLoader.gunsConfig.getString(path+".entity"));
 		    		break;
 		    	case PLACE:
-		    		e.addArgument("BLOCK", ConfigLoader.gunsConfig.getString(path+".block"));
+		    		e.addProperty("BLOCK", ConfigLoader.gunsConfig.getString(path+".block"));
 		    		break;
 		    	case BREAK:
-		    		e.addArgument("POTENCY", ConfigLoader.gunsConfig.getDouble(path+".potency"));
+		    		e.addProperty("POTENCY", ConfigLoader.gunsConfig.getDouble(path+".potency"));
 		    		break;
     	}
     	return e;

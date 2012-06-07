@@ -1,5 +1,8 @@
 package team.GunsPlus.Gui;
 
+import java.util.ArrayList;
+
+import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.gui.GenericItemWidget;
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -38,6 +41,7 @@ public class HUD {
 		item.setPriority(RenderPriority.High);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void update(SpoutPlayer sp) {
 		if (GunUtils.holdsGun(sp)
 				&& GunUtils.isHudEnabled(GunUtils.getGunInHand(sp))) {
@@ -47,13 +51,13 @@ public class HUD {
 			Gun g = GunUtils.getGun(sp.getItemInHand());
 			SpoutItemStack i = new SpoutItemStack(g);
 			item.setTypeId(i.getTypeId()).setData(i.getDurability());
-			int count = PlayerUtils.getFireCounter(sp, g);
+			int count = PlayerUtils.getPlayerBySpoutPlayer(sp).getFireCounter(g);
 			int total =  0;
 			if(Util.enteredTripod(sp))
-				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), g.getAmmo());
+				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
 			else
-				total = GunUtils.getAmmoCount(sp.getInventory(), g.getAmmo());
-			int mag = (int) g.getValue("SHOTSBETWEENRELOAD");
+				total = GunUtils.getAmmoCount(sp.getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
+			int mag = ((Number) g.getProperty("SHOTSBETWEENRELOAD")).intValue();
 			if (count < 0)
 				count = 0;
 			if (total < 0)

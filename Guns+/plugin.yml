@@ -2,7 +2,7 @@ name: GunsPlus
 main: team.GunsPlus.GunsPlus
 version: 1.2.6
 depend: [Spout]
-soft-depend: [LWC, FurnaceAPI, WorldGuard, MachinaRedstoneBridge, Showcase]
+soft-depend: [ApiPlus, LWC, FurnaceAPI, WorldGuard, MachinaRedstoneBridge, Showcase]
 authors: [Atlan1, SirTyler]
 website: http://dev.bukkit.org/server-mods/guns/
 description: >

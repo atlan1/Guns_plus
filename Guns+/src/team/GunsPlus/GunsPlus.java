@@ -1,5 +1,12 @@
 package team.GunsPlus;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +18,7 @@ import me.lyneira.MachinaRedstoneBridge.MachinaRedstoneBridge;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.lwc.LWC;
@@ -87,6 +95,7 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
+		checkForAPI();
 		ConfigLoader.config();
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		hook();
@@ -159,6 +168,41 @@ public class GunsPlus extends JavaPlugin {
 			showcase = (Showcase) show;
 			log.log(Level.INFO, PRE+" Plugged into Showcase!");
 		}
+	}
+	
+	private void checkForAPI() {
+		PluginManager pm = getServer().getPluginManager();
+		Plugin apiPlugin = pm.getPlugin("ApiPlus");
+		if (apiPlugin == null) {
+			try {
+				File api = new File("plugins/ApiPlus.jar");
+				download( new URL("https://github.com/atlan1/ApiPlus/downloads/ApiPlus.jar"), api);
+				pm.loadPlugin(api);
+				pm.enablePlugin(apiPlugin);
+			} catch (Exception exception) {
+				log.warning(PRE+"could not download ApiPlus! Try to install it manually.");
+				pm.disablePlugin(this);
+			}
+		}
+	}
+
+	public static void download(URL url, File file) throws IOException {
+		if (!file.getParentFile().exists())
+			file.getParentFile().mkdir();
+		if (file.exists())
+			file.delete();
+		file.createNewFile();
+		log.info(PRE+"Starting download of "+file.getName()+" ...");
+		final InputStream in = url.openStream();
+		final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		final byte[] buffer = new byte[1024];
+		int len;
+		while ((len = in.read(buffer)) >= 0) {
+			out.write(buffer, 0, len);
+		}
+		in.close();
+		out.close();
+		log.info(PRE+"Download of "+file.getName()+" finished!");
 	}
 	
 	private void updateHUD(){

@@ -32,7 +32,7 @@ public class TripodAI{
 					counter = 0;
 				}
 				if(lastTarget!=null){
-					if(Util.canSee(td.getLocation(), lastTarget.getEyeLocation(), (int) td.getGun().getValue("RANGE"))){
+					if(Util.canSee(td.getLocation(), lastTarget.getEyeLocation(), (Integer) td.getGun().getProperty("RANGE"))){
 						aim();
 						fire();
 					}
@@ -58,7 +58,7 @@ public class TripodAI{
 	}
 	
 	private LivingEntity getNearestTarget(){
-		int r = (int) td.getGun().getValue("RANGE");
+		int r = (Integer) td.getGun().getProperty("RANGE");
 		List<Entity> near = new ArrayList<Entity>(Util.getNearbyEntities(td.getLocation(), r, r, r));  
 		List<LivingEntity> les = new ArrayList<LivingEntity>();
 		LivingEntity le = null;

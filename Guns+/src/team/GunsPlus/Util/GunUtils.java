@@ -34,7 +34,8 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 
 import team.GunsPlus.API.Event.*;
-import team.GunsPlus.Enum.Effect;
+import team.GunsPlus.Enum.GunEffect;
+import team.GunsPlus.Enum.GunEffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
@@ -98,10 +99,10 @@ public class GunUtils {
 		Location loc = l.clone();
 		HashMap<LivingEntity, Integer> e = null;
 		int acc = Util.getRandomInteger(0, 101) + 1;
-		int missing = (int) g.getValue(zoom ? "MISSING_IN" : "MISSING_OUT");
-		float randomfactor = (float) g.getValue("RANDOMFACTOR");
-		int spread = (int) (zoom ? (g.getValue("SPREAD_IN") / 2) + 1 : (g
-				.getValue("SPREAD_OUT") / 2 + 1));
+		int missing = (Integer) g.getProperty(zoom ? "MISSING_IN" : "MISSING_OUT");
+		float randomfactor = (Float) g.getProperty("RANDOMFACTOR");
+		int spread = (Integer) (zoom ? ((Integer)g.getProperty("SPREAD_IN") / 2) + 1 : ((Integer)g
+				.getProperty("SPREAD_OUT") / 2 + 1));
 		if (acc >= missing) {
 			if (spread <= 0 && randomfactor <= 0) {
 				targets = getTargetEntities(l, g);
@@ -138,7 +139,7 @@ public class GunUtils {
 			Location loc, Gun g) {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		BlockIterator bitr = new BlockIterator(loc, 0d,
-				(int) g.getValue("RANGE"));
+				(Integer) g.getProperty("RANGE"));
 		Block b;
 		Location l, el;
 		while (bitr.hasNext()) {
@@ -156,18 +157,18 @@ public class GunUtils {
 			for (LivingEntity e : entities) {
 				l = Util.getMiddle(e.getLocation(), -0.5f);
 				el = e.getEyeLocation();
-				double changedamage = (int) Math.ceil((float) g
-						.getValue("CHANGEDAMAGE")
+				double changedamage = (int) Math.ceil((Float) g
+						.getProperty("CHANGEDAMAGE")
 						* loc.toVector().distance(l.toVector()));
 				if (l.toVector().distance(blockcenter.toVector()) > el
 						.toVector().distance(blockcenter.toVector())) {
 					targets.put(
 							e,
-							(int) ((int) g.getValue("HEADSHOTDAMAGE") + changedamage<0?0:(int) g.getValue("HEADSHOTDAMAGE") + changedamage)
+							(int) ((Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage<0?0:(Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage)
 									* -1);
 				} else {
 					targets.put(e,
-							(int) ((int) g.getValue("DAMAGE")<0?0:(int) g.getValue("DAMAGE") + changedamage));
+							(int) ((Integer) g.getProperty("DAMAGE")<0?0:(Integer) g.getProperty("DAMAGE") + changedamage));
 				}
 			}
 		}
@@ -304,15 +305,16 @@ public class GunUtils {
 		return counter;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void performEffects(Shooter shooter, HashSet<LivingEntity> tars, Gun gun){
 		HashSet<LivingEntity> targets = new HashSet<LivingEntity>();
 		LivingEntity shooterEntity = null;
 		Location shooterLocation, targetLocation;
-		int gunrange = (int) gun.getValue("RANGE");
+		int gunrange = (Integer) gun.getProperty("RANGE");
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
-		for(Effect e : gun.getEffects()){
+		for(GunEffect e : (List<GunEffect>)gun.getProperty("EFFECTS")){
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
 			if(targets.isEmpty()&&shooterEntity!=null){
 
@@ -324,7 +326,7 @@ public class GunUtils {
 				if(shooterEntity!=null&&shooterEntity.equals(target)){
 					targetLocation = shooterEntity.getTargetBlock(null, gunrange).getLocation();
 				}
-				switch(e.getEffecttype()){
+				switch((GunEffectType)e.getEffectType()){
 					case BREAK:
 						EffectUtils.breakEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
@@ -442,15 +444,15 @@ public class GunUtils {
 	}
 
 	public static boolean isHudEnabled(Gun g) {
-		return ((Boolean) g.getObject("HUDENABLED"));
+		return ((Boolean) g.getProperty("HUDENABLED"));
 	}
 
 	public static boolean isMountable(Gun g) {
-		return ((Boolean) g.getObject("MOUNTABLE"));
+		return ((Boolean) g.getProperty("MOUNTABLE"));
 	}
 	
 	public static boolean isShootable(Gun g) {
-		return ((Boolean) g.getObject("SHOOTABLE"));
+		return ((Boolean) g.getProperty("SHOOTABLE"));
 	}
 
 	public static boolean isGun(ItemStack i) {
@@ -467,7 +469,7 @@ public class GunUtils {
 	public static List<Block> getTargetBlocks(Location loc, Gun g) {
 		List<Block> targets = new ArrayList<Block>();
 		BlockIterator bitr = new BlockIterator(loc.add(0, 0, 0), 0d,
-				(int) g.getValue("RANGE"));
+				(Integer) g.getProperty("RANGE"));
 		Block b;
 		while (bitr.hasNext()) {
 			b = bitr.next();
