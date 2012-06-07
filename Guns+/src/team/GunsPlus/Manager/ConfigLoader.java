@@ -15,6 +15,7 @@ import org.getspout.spoutapi.material.CustomItem;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Effect;
 //import team.GunsPlus.Enum.FireBehavior;
+import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.Item.Addition;
@@ -308,7 +309,7 @@ public class ConfigLoader {
 				String reloadSound = gunsConfig.getString(gunnode+".reload-sound.url");
 				String zoomTexture = gunsConfig.getString(gunnode+".zoom-texture");
 				String texture = gunsConfig.getString(gunnode+".texture");
-//				FireBehavior fb = ConfigParser.parseFireBehavoir(gunnode+".fire-behavior");
+				FireBehavior fb = ConfigParser.parseFireBehavoir(gunnode+".fire-behavior");
 				
 				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type"));
 				projectile.setSpeed(gunsConfig.getDouble(gunnode+".projectile.speed", 1.0));
@@ -368,7 +369,7 @@ public class ConfigLoader {
 				GunManager.editObject(g, "HUDENABLED", hudenabled);
 				GunManager.editObject(g, "MOUNTABLE", mountable);
 				GunManager.editObject(g, "SHOOTABLE", shootable);
-//				GunManager.editObject(g, "FIREBEHAVIOR", fb);
+				GunManager.editObject(g, "FIREBEHAVIOR", fb);
 				GunManager.editEffects(g, effects);
 				
 				//registering shapeless recipes for additions + building an extra gun for each addition
@@ -446,25 +447,26 @@ public class ConfigLoader {
 			GunsPlus.hudY = ConfigLoader.generalConfig.getInt("hud.position.Y", 20);
 			
 			String z = ConfigLoader.generalConfig.getString("zoom", "right");
-			GunsPlus.zoomKey = ConfigParser.parseKeyType(z);
+			//TODO
+			/*GunsPlus.zoomKey = ConfigParser.parseKeyType(z);
 			if(GunsPlus.zoomKey==null) throw new Exception(" Could not parse zoom key!");
-
+			
 			String f = ConfigLoader.generalConfig.getString("fire", "left");
 			GunsPlus.fireKey = ConfigParser.parseKeyType(f);
 			if(GunsPlus.fireKey==null) throw new Exception(" Could not parse fire key!");
-
+			
 			String r = ConfigLoader.generalConfig.getString("reload", "@r");
 			GunsPlus.reloadKey = ConfigParser.parseKeyType(r);
 			if(GunsPlus.reloadKey==null) throw new Exception(" Could not parse reload key!");
-
-			if (GunsPlus.zoomKey.getData().equalsIgnoreCase(GunsPlus.fireKey.getData()) || GunsPlus.fireKey.getData().equalsIgnoreCase(GunsPlus.reloadKey.getData())
-					|| GunsPlus.reloadKey.getData().equalsIgnoreCase(GunsPlus.zoomKey.getData())) {
-				String message = ("Zoom:" + GunsPlus.zoomKey.getData() + " Fire:" + GunsPlus.fireKey.getData() + " Reload:" + GunsPlus.reloadKey.getData());
-				GunsPlus.zoomKey = KeyType.RIGHT;
-				GunsPlus.fireKey = KeyType.LEFT;
-				GunsPlus.reloadKey = KeyType.LETTER("r");
+			
+			if (GunsPlus.zoomKey.equals(GunsPlus.fireKey) || GunsPlus.fireKey.equals(GunsPlus.reloadKey)
+					|| GunsPlus.reloadKey.equals(GunsPlus.zoomKey)) {
+				String message = ("Zoom:" + GunsPlus.zoomKey.getKey().toString() + " Fire:" + GunsPlus.fireKey.getKey().toString()+ " Reload:" + GunsPlus.reloadKey.getKey().toString());
+				GunsPlus.zoomKey = new KeyType("LEFT", false);
+				GunsPlus.fireKey = new KeyType("RIGHT", false);
+				GunsPlus.reloadKey = new KeyType("R", false);
 				throw new Exception("Key's Duplicated: " + message);
-			}
+			}*/
 
 		} catch (Exception e) {
 			Util.warn( "Config Error:" + e.getMessage());

@@ -1,5 +1,6 @@
 package team.GunsPlus;
 
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.event.input.KeyBindingEvent;
 import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
@@ -11,17 +12,15 @@ import team.GunsPlus.Util.PlayerUtils;
 
 public class ReloadBinding implements BindingExecutionDelegate{
 
-	@SuppressWarnings("unused")
 	private GunsPlus plugin;
 	
 	public ReloadBinding(GunsPlus p, KeyType kt){
 		plugin = p;
-//		SpoutManager.getKeyBindingManager().registerBinding("Reload", kt.getKey(), "If pressed guns will reload.", this, plugin);
+		SpoutManager.getKeyBindingManager().registerBinding("Reload", kt.getKey(), "If pressed guns will reload.", this, plugin);
 	}
 	
 	@Override
 	public void keyPressed(KeyBindingEvent ev) {
-		System.out.print("triggered");
 		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)){
 			SpoutPlayer sp = ev.getPlayer();
 			if(GunUtils.holdsGun(sp)){

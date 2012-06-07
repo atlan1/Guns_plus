@@ -62,11 +62,18 @@ Sniper:
     mountable: false
     # if you put false in here you can't shoot with this gun at all, but you can configure it like mountable true and shootable false so that you can only use it if mounted
     shootable: true
+    # the type specifies the fire behavoir  of the gun: single(you have to press for every single shot), automatic(will shoot as long as you hold the button)
+    # The burst node defines how many times the gun will fire and how long it will delay after each shot of the burst
+    fire-behavior:
+        type: single
+        burst: 
+            shot-count: 1
+            shot-delay: 0
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
     # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target),
     # Shooter (will affect the shooter of the gun), ShooterLocation (will affect the location, the shooter is standing on)
-    # for more information about the effects see the faq on the bukkit thread. -> http://forums.bukkit.org/threads/mech-fun-gunpack-create-your-very-own-guns-spout-1-1-r3.57768/
+    # for more information about the effects see the faq on the bukkit thread. -> http://dev.bukkit.org/server-mods/guns/pages/frequently-asked-questions/
     # You can also define certain arguments for some effect sections: radius(all locations)-> the radius around the location; length(flightpath)-> the max length of the flightpath
         targetentity:
             potion:
@@ -75,7 +82,7 @@ Sniper:
                 strenght: 1
         targetlocation:
             arguments:
-                radius: 2 
+                radius: 1 
             smoke:
                 density: 4
         flightpath:

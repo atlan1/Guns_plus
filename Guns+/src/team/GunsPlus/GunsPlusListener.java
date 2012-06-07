@@ -28,18 +28,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.input.KeyPressedEvent;
-import org.getspout.spoutapi.event.input.KeyReleasedEvent;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 import org.getspout.spoutapi.gui.Button;
-import org.getspout.spoutapi.gui.ScreenType;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Block.TripodData;
-import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Gui.HUD;
 import team.GunsPlus.Gui.TripodPopup;
 import team.GunsPlus.Item.Gun;
@@ -52,7 +48,6 @@ public class GunsPlusListener implements Listener {
 
 	public GunsPlus plugin;
 	public static String credit;
-	private boolean meleeUse = false;
 
 	public GunsPlusListener(GunsPlus instance) {
 		plugin = instance;
@@ -104,41 +99,41 @@ public class GunsPlusListener implements Listener {
 		}
 		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
 		if(gp==null) return;
-		Gun g = null;
-		if (GunUtils.holdsGun(sp))
-			g = GunUtils.getGunInHand(sp);
+//		Gun g = null;
+//		if (GunUtils.holdsGun(sp))
+//			g = GunUtils.getGunInHand(sp);
 		switch (a) {
-		case RIGHT_CLICK_AIR:
-			if(g!=null){
-				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-					gp.zoom(g);
-				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-					gp.reload(g);
-				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-					gp.fire(g);
-				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-					gp.zoom(g);
-				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-					gp.reload(g);
-				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-					gp.fire(g);
-			}
-			break;
+//		case RIGHT_CLICK_AIR:
+//			if(g!=null){
+//				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
+//					gp.zoom(g);
+//				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
+//					gp.reload(g);
+//				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
+//					gp.fire(g);
+//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
+//					gp.zoom(g);
+//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
+//					gp.reload(g);
+//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
+//					gp.fire(g);
+//			}
+//			break;
 		case RIGHT_CLICK_BLOCK:
-			if(g!=null){
-				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
-					gp.zoom(g);
-				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
-					gp.reload(g);
-				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
-					gp.fire(g);
-				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
-					gp.zoom(g);
-				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
-					gp.reload(g);
-				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
-					gp.fire(g);
-			}
+//			if(g!=null){
+//				if (GunsPlus.zoomKey.equals(KeyType.RIGHT))
+//					gp.zoom(g);
+//				if (GunsPlus.reloadKey.equals(KeyType.RIGHT))
+//					gp.reload(g);
+//				if (GunsPlus.fireKey.equals(KeyType.RIGHT))
+//					gp.fire(g);
+//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.RIGHTSHIFT))
+//					gp.zoom(g);
+//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.RIGHTSHIFT))
+//					gp.reload(g);
+//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.RIGHTSHIFT))
+//					gp.fire(g);
+//			}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock());
 					e.setUseInteractedBlock(Result.DENY);
@@ -161,38 +156,37 @@ public class GunsPlusListener implements Listener {
 					}
 				}
 				break;
-		case LEFT_CLICK_AIR:
-			if(g!=null){
-				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-					gp.zoom(g);
-				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-					gp.reload(g);
-				if (GunsPlus.fireKey.equals(KeyType.LEFT))
-					gp.fire(g);
-				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-					gp.zoom(g);
-				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-					gp.reload(g);
-				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-					gp.fire(g);
-				if (meleeUse == false) meleeUse = true;
-			}
-			break;
+//		case LEFT_CLICK_AIR:
+//			if(g!=null){
+//				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
+//					gp.zoom(g);
+//				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
+//					gp.reload(g);
+//				if (GunsPlus.fireKey.equals(KeyType.LEFT))
+//					gp.fire(g);
+//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
+//					gp.zoom(g);
+//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
+//					gp.reload(g);
+//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
+//					gp.fire(g);
+//			}
+//			break;
 		case LEFT_CLICK_BLOCK:
-			if(g!=null){
-				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
-					gp.zoom(g);
-				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
-					gp.reload(g);
-				if (GunsPlus.fireKey.equals(KeyType.LEFT))
-					gp.fire(g);
-				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
-					gp.zoom(g);
-				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
-					gp.reload(g);
-				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
-					gp.fire(g);
-			}
+//			if(g!=null){
+//				if (GunsPlus.zoomKey.equals(KeyType.LEFT))
+//					gp.zoom(g);
+//				if (GunsPlus.reloadKey.equals(KeyType.LEFT))
+//					gp.reload(g);
+//				if (GunsPlus.fireKey.equals(KeyType.LEFT))
+//					gp.fire(g);
+//				if (sp.isSneaking() && GunsPlus.zoomKey.equals(KeyType.LEFTSHIFT))
+//					gp.zoom(g);
+//				if (sp.isSneaking() && GunsPlus.reloadKey.equals(KeyType.LEFTSHIFT))
+//					gp.reload(g);
+//				if (sp.isSneaking() && GunsPlus.fireKey.equals(KeyType.LEFTSHIFT))
+//					gp.fire(g);
+//			}
 				if(Util.isTripod(e.getClickedBlock())){
 					TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
 					if(td.getOwnername().equals(gp.getPlayer().getName())&&td.getGun()!=null){
@@ -355,68 +349,6 @@ public class GunsPlusListener implements Listener {
 		TripodDataHandler.removeId(TripodDataHandler.getId(td.getLocation()));   
 		GunsPlus.allTripodBlocks.remove(td); 
 	}
-	
-	@EventHandler
-	public void onKeyPressed(KeyPressedEvent e) {
-		SpoutPlayer sp = e.getPlayer();
-		if (!GunUtils.holdsGun(sp))return;
-		Gun g = GunUtils.getGunInHand(sp);
-		if(g==null) return;
-		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
-		if(gp==null) return;
-		Keyboard key = e.getKey();
-		String keyString = key.toString().split("_")[1].toLowerCase();
-		ScreenType st = e.getScreenType();
-		if ((GunsPlus.zoomKey.equals(KeyType.LETTER)
-				|| GunsPlus.zoomKey.equals(KeyType.NUMBER)
-				|| GunsPlus.zoomKey.equals(KeyType.HOLDNUMBER) || GunsPlus.zoomKey
-					.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.zoomKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			gp.zoom(g);
-		} else if ((GunsPlus.reloadKey.equals(KeyType.LETTER)
-				|| GunsPlus.reloadKey.equals(KeyType.NUMBER)
-				|| GunsPlus.reloadKey.equals(KeyType.HOLDNUMBER) || GunsPlus.reloadKey
-					.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.reloadKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			gp.reload(g);
-		} else if ((GunsPlus.fireKey.equals(KeyType.LETTER)
-				|| GunsPlus.fireKey.equals(KeyType.NUMBER)
-				|| GunsPlus.fireKey.equals(KeyType.HOLDNUMBER) || GunsPlus.fireKey
-					.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.fireKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			gp.fire(g);
-		}
-	}
-
-	@EventHandler
-	public void onKeyReleased(KeyReleasedEvent e) {
-		SpoutPlayer sp = e.getPlayer();
-		if (!GunUtils.holdsGun(sp)) return;
-		Gun g = GunUtils.getGunInHand(sp);
-		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
-		Keyboard key = e.getKey();
-		String keyString = key.toString().split("_")[1].toLowerCase();
-		ScreenType st = e.getScreenType();
-		if ((GunsPlus.zoomKey.equals(KeyType.HOLDNUMBER) || GunsPlus.zoomKey
-				.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.zoomKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			gp.zoom(g);
-		} else if ((GunsPlus.reloadKey.equals(KeyType.HOLDNUMBER) || GunsPlus.reloadKey
-				.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.reloadKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			// stop reloading ?
-		} else if ((GunsPlus.fireKey.equals(KeyType.HOLDNUMBER) || GunsPlus.fireKey
-				.equals(KeyType.HOLDLETTER))
-				&& GunsPlus.fireKey.getData().equalsIgnoreCase(keyString)
-				&& st.toString().equalsIgnoreCase("GAME_SCREEN")) {
-			// stop fireing ?
-		}
-	}
 
 	@EventHandler
 	public void onSpoutCraftEnable(SpoutCraftEnableEvent e) {
@@ -480,8 +412,13 @@ public class GunsPlusListener implements Listener {
 	}
 	
 	@EventHandler
+	public void test(KeyPressedEvent e) {
+		System.out.println(e.getKey());
+	}
+	
+	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent event) {
-		if(event.getDamager() instanceof Player & meleeUse == true) {
+		if(event.getDamager() instanceof Player) {
 			Player attacker = (Player) event.getDamager();
 			org.getspout.spoutapi.material.Material is = new SpoutItemStack(attacker.getItemInHand()).getMaterial();
 			if(Util.isGunsPlusMaterial(is.getName())) {
