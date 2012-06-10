@@ -1,71 +1,44 @@
 package team.GunsPlus.Enum;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import team.ApiPlus.API.Effect.Effect;
-import team.ApiPlus.API.Effect.EffectSection;
-import team.ApiPlus.API.Effect.EffectType;
-import team.GunsPlus.Enum.GunEffectSection;
-import team.GunsPlus.Enum.GunEffectType;
 
-public class GunEffect implements Effect{
+public class GunEffect {
 
-	private Map<String, Object> properties = new HashMap<String, Object>();
 	private GunEffectType effecttype;
 	private GunEffectSection effectsection;
+	private HashMap<String, Object> arguments = new HashMap<String, Object>();
 	
 	public GunEffect(GunEffectType et, GunEffectSection es){
-		setEffectType(et);
-		setEffectSection(es);
+		setEffecttype(et);
+		setEffectsection(es);
+	}
+	
+	public HashMap<String, Object> getArguments() {
+		return arguments;
+	}
+	
+	public Object getArgument(String id){
+		return this.arguments.containsKey(id)?this.arguments.get(id):null;
 	}
 
-	public EffectSection getEffectSection() {
+	public void addArgument(String id, Object argument) {
+		this.arguments.put(id, argument);
+	}
+
+	public GunEffectSection getEffectsection() {
 		return effectsection;
 	}
 
-	public void setEffectSection(EffectSection effectsection) {
-		this.effectsection =  (GunEffectSection) effectsection;
+	public void setEffectsection(GunEffectSection effectsection) {
+		this.effectsection = effectsection;
 	}
 
-	public EffectType getEffectType() {
+	public GunEffectType getEffecttype() {
 		return effecttype;
 	}
 
-	public void setEffectType(EffectType effecttype) {
-		this.effecttype = (GunEffectType) effecttype;
-	}
-	
-	@Override
-	public Object getProperty(String id) {
-		return properties.get(id);
-	}
-
-	@Override
-	public void addProperty(String id, Object property) {
-		if(!properties.containsKey(id))
-			properties.put(id, property);
-	}
-
-	@Override
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
-
-	@Override
-	public void setProperties(Map<String, Object> properties) {
-		this.properties = new HashMap<String, Object>(properties);
-	}
-
-	@Override
-	public void removeProperty(String id) {
-		if(properties.containsKey(id))
-			properties.remove(id);
-	}
-
-	@Override
-	public void editProperty(String id, Object property) {
-		if(properties.containsKey(id))
-			properties.put(id, property);
+	public void setEffecttype(GunEffectType effecttype) {
+		this.effecttype = effecttype;
 	}
 }

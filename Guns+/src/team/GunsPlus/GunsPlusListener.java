@@ -122,6 +122,9 @@ public class GunsPlusListener implements Listener {
 						}
 					}
 					break;
+			case LEFT_CLICK_AIR:
+				gp.setMelee();
+				break;
 			case LEFT_CLICK_BLOCK:
 					if(Util.isTripod(e.getClickedBlock())){
 						TripodData td = Util.loadTripodData(e.getClickedBlock().getLocation());
@@ -163,7 +166,7 @@ public class GunsPlusListener implements Listener {
 		}
 		if (GunUtils.isGun(nextItem)) {
 			Gun g = GunUtils.getGun(nextItem);
-			sp.setWalkingMultiplier(1 - (((Number)g.getProperty("WEIGHT")).intValue()/100));
+			sp.setWalkingMultiplier(1 - (((Number)g.getValue("WEIGHT")).intValue()/100));
 		}
 	}
 	
@@ -354,8 +357,10 @@ public class GunsPlusListener implements Listener {
 			org.getspout.spoutapi.material.Material is = new SpoutItemStack(attacker.getItemInHand()).getMaterial();
 			if(Util.isGunsPlusMaterial(is.getName())) {
 				Object g = Util.getGunsPlusMaterial(is.getName());
-				if(g instanceof Gun) {
-					event.setDamage((Integer) ((Gun) g).getProperty("MELEE"));
+				if(g instanceof Gun && GunUtils.inMeleeRange(attacker, event.getEntity())) {
+					if(PlayerUtils.getPlayerByName(attacker.getName()).isMelee()) {
+						event.setDamage((int) ((Gun) g).getValue("MELEE"));
+					}
 				}
 			}
 		}

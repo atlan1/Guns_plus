@@ -37,6 +37,7 @@ public class GunsPlusPlayer extends LivingShooter {
 	private HUD hud;
 	private GenericTexture zoomtexture;
 	private boolean zooming = false;
+	private boolean melee = false;
 
 	public GunsPlusPlayer(SpoutPlayer sp, HUD h) {
 		player = sp;
@@ -85,15 +86,15 @@ public class GunsPlusPlayer extends LivingShooter {
 		}
 		if (Util.enteredTripod(getPlayer()) && Tripod.forcezoom)
 			return;
-		if (!g.getProperties().containsKey("LOADEDZOOMTEXTURE")) {
-			GenericTexture zoomtex = new GenericTexture((String) g.getProperty("ZOOMTEXTURE"));
+		if (!g.getObjects().containsKey("LOADEDZOOMTEXTURE")) {
+			GenericTexture zoomtex = new GenericTexture(g.getResource("ZOOMTEXTURE"));
 			zoomtex.setAnchor(WidgetAnchor.SCALE).setX(0).setY(0)
 					.setPriority(RenderPriority.Low);
-			g.getProperties().put("LOADEDZOOMTEXTURE", zoomtex);
+			g.setObject("LOADEDZOOMTEXTURE", zoomtex);
 		}
 		if (!isZooming()) {
-			GunUtils.zoomIn(GunsPlus.plugin, this, (GenericTexture) g.getProperty("LOADEDZOOMTEXTURE"), (Integer) g
-					.getProperty("ZOOMFACTOR"));
+			GunUtils.zoomIn(GunsPlus.plugin, this, (GenericTexture) g.getObject("LOADEDZOOMTEXTURE"), (int) g
+					.getValue("ZOOMFACTOR"));
 			setZooming(true);
 			PlayerUtils.sendNotification(getPlayer(), g.getName(), "Zoomed in!",
 						new ItemStack(Material.SULPHUR), 2000);
@@ -134,7 +135,7 @@ public class GunsPlusPlayer extends LivingShooter {
 		}
 		if(Util.enteredTripod(getPlayer()))
 			inv = Util.getTripodDataOfEntered(getPlayer()).getInventory();
-		if (!GunUtils.checkInvForAmmo(inv, (ArrayList<ItemStack>)g.getProperty("AMMO"))){
+		if (!GunUtils.checkInvForAmmo(inv, (ArrayList<ItemStack>)g.getObject("AMMO"))){
 			setFireing(false);
 			return;
 		}
@@ -147,13 +148,13 @@ public class GunsPlusPlayer extends LivingShooter {
 			return;
 		}
 		else {
-			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv,(ArrayList<ItemStack>)g.getProperty("AMMO"));
+			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv,(ArrayList<ItemStack>)g.getObject("AMMO"));
 			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(player.getEyeLocation(), g, isZooming()));
 			
 			if(targets_damage.isEmpty()){
 				Location from = Util.getBlockInSight(this.getPlayer().getEyeLocation(), 2, 5).getLocation();
 				GunUtils.shootProjectile(from, this.getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
-						(Projectile) g.getProperty("PROJECTILE"));
+						(Projectile) g.getObject("PROJECTILE"));
 			}
 			for (LivingEntity tar : targets_damage.keySet()) {
 				if (tar.equals(this.getPlayer())) {
@@ -161,51 +162,51 @@ public class GunsPlusPlayer extends LivingShooter {
 				}
 				int damage = targets_damage.get(tar);
 				Location from = Util.getBlockInSight(this.getPlayer().getEyeLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getProperty("PROJECTILE"));
+				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getObject("PROJECTILE"));
 				if (damage < 0)
 					PlayerUtils.sendNotification(this.getPlayer(), "Headshot!",
 							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.ARROW), 2000);
 				targets_damage.put(tar, Math.abs(damage));
 				damage = targets_damage.get(tar);
-				if (Util.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
+				if (Util.getRandomInteger(1, 100) <= (int) g.getValue("CRITICAL")) {
 					PlayerUtils.sendNotification(this.getPlayer(), "Critical!",
 							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.DIAMOND_SWORD), 2000);
 					damage = tar.getHealth() + 1000;
 				}
 				if (usedAmmo != null) {
-					damage += usedAmmo.getDamage();
+					damage += usedAmmo.getValue("DAMAGE");
 				}
-				tar.damage(damage, tar);
+				tar.damage(damage, this.getLivingEntity());
 			}
 			
 			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
 
-			if (!(g.getProperty("SHOTSOUND") == null)) {
-				if ((Integer)g.getProperty("SHOTDELAY") < 5
+			if (g.getResource("SHOTSOUND") != null) {
+				if ((int)g.getValue("SHOTDELAY") < 5
 						&& Util.getRandomInteger(0, 100) < 35) {
 					Util.playCustomSound(GunsPlus.plugin, getLocation(),
-							(String) g.getProperty("SHOTSOUND"),
-							(Integer) g.getProperty("SHOTSOUNDVOLUME"));
+							g.getResource("SHOTSOUND"),
+							(int) g.getValue("SHOTSOUNDVOLUME"));
 				} else {
 					Util.playCustomSound(GunsPlus.plugin, getLocation(),
-							(String) g.getProperty("SHOTSOUND"),
-							(Integer) g.getProperty("SHOTSOUNDVOLUME"));
+							g.getResource("SHOTSOUND"),
+							(int) g.getValue("SHOTSOUNDVOLUME"));
 				}
 
 			}
 			
-			GunUtils.removeAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"));
+			GunUtils.removeAmmo(inv, (ArrayList<ItemStack>) g.getObject("AMMO"));
 			Bukkit.getServer().getPluginManager().callEvent(new GunFireEvent(getPlayer(),g));
 			getPlayer().updateInventory();
 			
 			setFireCounter(g, getFireCounter(g) + 1);
 			recoil(g);
 			
-			if (GunsPlus.autoreload && getFireCounter(g) >= ((Number) g.getProperty("SHOTSBETWEENRELOAD")).intValue())
+			if (GunsPlus.autoreload && getFireCounter(g) >= ((Number) g.getValue("SHOTSBETWEENRELOAD")).intValue())
 					reload(g);
-			if ((Integer) g.getProperty("SHOTDELAY") > 0)
+			if ((int) g.getValue("SHOTDELAY") > 0)
 				delay(g);
 			
 			setFireing(false);
@@ -237,12 +238,12 @@ public class GunsPlusPlayer extends LivingShooter {
 					s.resetFireCounter(g);
 				}
 			};
-			reloadTask.startTaskDelayed((Integer) g.getProperty("RELOADTIME"));
+			reloadTask.startTaskDelayed((int) g.getValue("RELOADTIME"));
 			setReloading();
-			if (!(g.getProperty("RELOADSOUND") == null)) {
+			if (g.getResource("RELOADSOUND") != null) {
 				Util.playCustomSound(GunsPlus.plugin, getLocation(),
-						(String) g.getProperty("RELOADSOUND"),
-						(Integer) g.getProperty("RELOADSOUNDVOLUME"));
+						g.getResource("RELOADSOUND"),
+						(int) g.getValue("RELOADSOUNDVOLUME"));
 			}
 			return;
 		} else if (isReloading()) {
@@ -262,7 +263,7 @@ public class GunsPlusPlayer extends LivingShooter {
 					s.resetDelay();
 				}
 			};
-			t.startTaskDelayed((Integer) g.getProperty("SHOTDELAY"));
+			t.startTaskDelayed((int) g.getValue("SHOTDELAY"));
 			setDelaying();
 		}else if(isDelaying()){
 			return;
@@ -285,11 +286,27 @@ public class GunsPlusPlayer extends LivingShooter {
 
 	public void recoil(Gun gun) {
 		if (!Util.enteredTripod(getPlayer())) {
-			if (((Number)gun.getProperty("KNOCKBACK")).floatValue() > 0)
+			if (((Number)gun.getValue("KNOCKBACK")).floatValue() > 0)
 				PlayerUtils.performKnockBack(getPlayer(),
-						((Number) gun.getProperty("KNOCKBACK")).floatValue());
-			if (((Number)gun.getProperty("RECOIL")).floatValue() > 0)
-				PlayerUtils.performRecoil(getPlayer(), (Float) gun.getProperty("RECOIL"));
+						((Number) gun.getValue("KNOCKBACK")).floatValue());
+			if (((Number)gun.getValue("RECOIL")).floatValue() > 0)
+				PlayerUtils.performRecoil(getPlayer(), (Float) gun.getValue("RECOIL"));
 		}
+	}
+
+	public void setMelee() {
+		if(melee == true) return;
+		melee = true;
+		Task t1 = new Task(GunsPlus.plugin, this){
+			public void run() {
+				GunsPlusPlayer p = (GunsPlusPlayer) this.getArg(0);
+				p.melee = false;
+			}
+		};
+		t1.startTaskDelayed(20L);
+	}
+
+	public boolean isMelee() {
+		return melee;
 	}
 }

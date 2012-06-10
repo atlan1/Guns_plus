@@ -5,22 +5,20 @@ import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.SpoutBlock;
-import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.griefcraft.util.ProtectionFinder;
 import com.griefcraft.util.matchers.DoorMatcher;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 
+import team.ApiPlus.Item;
 import team.GunsPlus.GunsPlus;
 
-public class Ammo extends GenericCustomItem {
-
-	private int damage = 0;
+public class Ammo extends Item {
 	
 	public Ammo(Plugin plugin, String name, String texture, int dmg) {
 		super(plugin, name, texture);
-		damage = dmg;
+		this.setValue("DAMAGE", (float) dmg);
 	}
 
 	public boolean onItemInteract(SpoutPlayer player, SpoutBlock block,
@@ -57,13 +55,5 @@ public class Ammo extends GenericCustomItem {
 		} catch (Exception e) {
 			return false;
 		}
-	}
-	
-	public int getDamage(){
-		return damage;
-	}
-	
-	public void setDamage(int dmg){
-		damage = dmg;
 	}
 }

@@ -54,10 +54,10 @@ public class HUD {
 			int count = PlayerUtils.getPlayerBySpoutPlayer(sp).getFireCounter(g);
 			int total =  0;
 			if(Util.enteredTripod(sp))
-				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
+				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), (ArrayList<ItemStack>) g.getObject("AMMO"));
 			else
-				total = GunUtils.getAmmoCount(sp.getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
-			int mag = ((Number) g.getProperty("SHOTSBETWEENRELOAD")).intValue();
+				total = GunUtils.getAmmoCount(sp.getInventory(), (ArrayList<ItemStack>) g.getObject("AMMO"));
+			int mag = ((Number) g.getValue("SHOTSBETWEENRELOAD")).intValue();
 			if (count < 0)
 				count = 0;
 			if (total < 0)

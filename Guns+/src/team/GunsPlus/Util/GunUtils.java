@@ -99,10 +99,9 @@ public class GunUtils {
 		Location loc = l.clone();
 		HashMap<LivingEntity, Integer> e = null;
 		int acc = Util.getRandomInteger(0, 101) + 1;
-		int missing = (Integer) g.getProperty(zoom ? "MISSING_IN" : "MISSING_OUT");
-		float randomfactor = (Float) g.getProperty("RANDOMFACTOR");
-		int spread = (Integer) (zoom ? ((Integer)g.getProperty("SPREAD_IN") / 2) + 1 : ((Integer)g
-				.getProperty("SPREAD_OUT") / 2 + 1));
+		int missing = (int) g.getValue(zoom ? "MISSING_IN" : "MISSING_OUT");
+		float randomfactor = g.getValue("RANDOMFACTOR");
+		int spread = (zoom ? ((int) g.getValue("SPREAD_IN") / 2) + 1 : ( (int) g.getValue("SPREAD_OUT") / 2 + 1));
 		if (acc >= missing) {
 			if (spread <= 0 && randomfactor <= 0) {
 				targets = getTargetEntities(l, g);
@@ -139,7 +138,7 @@ public class GunUtils {
 			Location loc, Gun g) {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		BlockIterator bitr = new BlockIterator(loc, 0d,
-				(Integer) g.getProperty("RANGE"));
+				(int) g.getValue("RANGE"));
 		Block b;
 		Location l, el;
 		while (bitr.hasNext()) {
@@ -157,18 +156,18 @@ public class GunUtils {
 			for (LivingEntity e : entities) {
 				l = Util.getMiddle(e.getLocation(), -0.5f);
 				el = e.getEyeLocation();
-				double changedamage = (int) Math.ceil((Float) g
-						.getProperty("CHANGEDAMAGE")
+				double changedamage = (int) Math.ceil(g
+						.getValue("CHANGEDAMAGE")
 						* loc.toVector().distance(l.toVector()));
 				if (l.toVector().distance(blockcenter.toVector()) > el
 						.toVector().distance(blockcenter.toVector())) {
 					targets.put(
 							e,
-							(int) ((Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage<0?0:(Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage)
+							(int) ( g.getValue("HEADSHOTDAMAGE") + changedamage<0?0:g.getValue("HEADSHOTDAMAGE") + changedamage)
 									* -1);
 				} else {
 					targets.put(e,
-							(int) ((Integer) g.getProperty("DAMAGE")<0?0:(Integer) g.getProperty("DAMAGE") + changedamage));
+							(int) (g.getValue("DAMAGE")<0?0: g.getValue("DAMAGE") + changedamage));
 				}
 			}
 		}
@@ -310,11 +309,11 @@ public class GunUtils {
 		HashSet<LivingEntity> targets = new HashSet<LivingEntity>();
 		LivingEntity shooterEntity = null;
 		Location shooterLocation, targetLocation;
-		int gunrange = (Integer) gun.getProperty("RANGE");
+		int gunrange = (int) gun.getValue("RANGE");
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
-		for(GunEffect e : (List<GunEffect>)gun.getProperty("EFFECTS")){
+		for(GunEffect e : (List<GunEffect>)gun.getObject("EFFECTS")){
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
 			if(targets.isEmpty()&&shooterEntity!=null){
 
@@ -326,7 +325,7 @@ public class GunUtils {
 				if(shooterEntity!=null&&shooterEntity.equals(target)){
 					targetLocation = shooterEntity.getTargetBlock(null, gunrange).getLocation();
 				}
-				switch((GunEffectType)e.getEffectType()){
+				switch((GunEffectType)e.getEffecttype()){
 					case BREAK:
 						EffectUtils.breakEffect(e, shooterLocation, targetLocation, gunrange);
 						break;
@@ -444,15 +443,15 @@ public class GunUtils {
 	}
 
 	public static boolean isHudEnabled(Gun g) {
-		return ((Boolean) g.getProperty("HUDENABLED"));
+		return (Boolean.valueOf(g.getResource("HUDENABLED")));
 	}
 
 	public static boolean isMountable(Gun g) {
-		return ((Boolean) g.getProperty("MOUNTABLE"));
+		return (Boolean.valueOf(g.getResource("MOUNTABLE")));
 	}
 	
 	public static boolean isShootable(Gun g) {
-		return ((Boolean) g.getProperty("SHOOTABLE"));
+		return (Boolean.valueOf(g.getResource("SHOOTABLE")));
 	}
 
 	public static boolean isGun(ItemStack i) {
@@ -469,12 +468,17 @@ public class GunUtils {
 	public static List<Block> getTargetBlocks(Location loc, Gun g) {
 		List<Block> targets = new ArrayList<Block>();
 		BlockIterator bitr = new BlockIterator(loc.add(0, 0, 0), 0d,
-				(Integer) g.getProperty("RANGE"));
+				(int) g.getValue("RANGE"));
 		Block b;
 		while (bitr.hasNext()) {
 			b = bitr.next();
 			if (!b.getType().equals(Material.AIR)) targets.add(b);
 		}
 		return targets;
+	}
+	
+	public static boolean inMeleeRange(Entity attacker, Entity target) {
+		if(attacker.getLocation().distance(target.getLocation()) <= 3) return true;
+		else return false;
 	}
 }

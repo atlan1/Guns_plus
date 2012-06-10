@@ -31,7 +31,7 @@ public class FireBinding implements BindingExecutionDelegate{
 			SpoutPlayer sp = ev.getPlayer();
 			if(GunUtils.holdsGun(sp)){
 				Gun g = GunUtils.getGunInHand(sp);
-				FireBehavior f = (FireBehavior)g.getProperty("FIREBEHAVIOR");
+				FireBehavior f = (FireBehavior)g.getObject("FIREBEHAVIOR");
 				if(f.equals(FireBehavior.SINGLE)){
 					PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
 				}else if(f.equals(FireBehavior.AUTOMATIC)){
@@ -42,7 +42,7 @@ public class FireBinding implements BindingExecutionDelegate{
 							PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
 						}
 					};
-					task.startTaskRepeating(((Number) g.getProperty("SHOTDELAY")).longValue(), false);
+					task.startTaskRepeating(((Number) g.getValue("SHOTDELAY")).longValue(), false);
 					autoFire.put(sp, task);
 				}
 			}

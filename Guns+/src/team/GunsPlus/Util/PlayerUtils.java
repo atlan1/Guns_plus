@@ -3,12 +3,14 @@ package team.GunsPlus.Util;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
+import team.GunsPlus.Item.Gun;
 
 public class PlayerUtils {
 
@@ -28,6 +30,103 @@ public class PlayerUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static Location getTargetBlock(SpoutPlayer sp, int range){
+		BlockIterator bitr = new BlockIterator(sp, range);
+		Location loc = null;
+		int i = 0;
+		while(bitr.hasNext()){
+			if(i==range){
+				loc = bitr.next().getLocation();
+			}
+			i++;
+		}
+		return loc;
+	}
+	
+	public static boolean isDelayResetted(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isDelayResetted();
+	}
+	
+	public static boolean isReloadResetted(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isReloadResetted();
+	}
+	
+	public static boolean isOnDelayQueue(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isOnDelayingQueue();
+	}
+	
+	public static boolean isDelayed(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isDelaying();
+	}
+	
+	public static void setOnDelayQueue(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setOnDelayingQueue();
+	}
+	
+	public static void setDelayed(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setDelaying();
+	}
+	
+	public static void removeDelay(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.resetDelay();
+	}
+	public static boolean isOnReloadQueue(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isOnReloadingQueue();
+	}
+	
+	public static boolean isReloading(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isReloading();
+	}
+	
+	public static void setOnReloadQueue(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setOnReloadingQueue();
+	}
+	
+	public static void setReloading(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setReloading();
+	}
+	
+	public static void removeReload(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.resetReload();
+	}
+	
+	public static int getFireCounter(SpoutPlayer sp, Gun g){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.getFireCounter(g);
+	}
+	
+	public static void resetFireCounter(SpoutPlayer sp, Gun g){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.resetFireCounter(g);
+	}
+	
+	public static void setFireCounter(SpoutPlayer sp,Gun g, int value){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setFireCounter(g, value);
+	}
+	
+	public static boolean isZooming(SpoutPlayer sp){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		return gp.isZooming();
+	}
+	
+	public static void setZooming(SpoutPlayer sp, boolean b){
+		GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
+		gp.setZooming(b);
 	}
 	
 	public static void performRecoil(SpoutPlayer p, float recoil){

@@ -2,43 +2,27 @@ package team.GunsPlus.Enum;
 
 import java.util.HashMap;
 import java.util.Map;
-import team.ApiPlus.API.Effect.EffectSection;
 
-public enum GunEffectSection implements EffectSection{
+public enum GunEffectSection {
 	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED();
 	
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Map<String, Object> data = new HashMap<String, Object>();
 	
-	@Override
-	public Object getProperty(String id) {
-		return properties.get(id);
+	public Map<String, Object> getData(){
+		return data;
 	}
-
-	@Override
-	public void addProperty(String id, Object property) {
-		if(!properties.containsKey(id))
-			properties.put(id, property);
+	
+	public void setData(Map<String, Object>data){
+		this.data = data;
 	}
-
-	@Override
-	public Map<String, Object> getProperties() {
-		return properties;
+	
+	public void addData(String name, Object data){
+		this.data.put(name, data);
 	}
-
-	@Override
-	public void setProperties(Map<String, Object> properties) {
-		this.properties = new HashMap<String, Object>(properties);
-	}
-
-	@Override
-	public void removeProperty(String id) {
-		if(properties.containsKey(id))
-			properties.remove(id);
-	}
-
-	@Override
-	public void editProperty(String id, Object property) {
-		if(properties.containsKey(id))
-			properties.put(id, property);
+	
+	public void removeData(String name){
+		if(this.data.containsKey(name)) { 
+			this.data.remove(name);
+		}
 	}
 }
