@@ -5,9 +5,10 @@ import java.util.Map;
 
 import org.bukkit.Location;
 
+import team.ApiPlus.API.Operator;
 import team.GunsPlus.Item.Gun;
 
-public abstract class Shooter{
+public abstract class Shooter implements Operator{
 	
 	private boolean fireing = false;
 	private Boolean reloading = null;

@@ -1,31 +1,24 @@
 package team.GunsPlus;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import me.lyneira.MachinaRedstoneBridge.MachinaRedstoneBridge;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.narrowtux.showcase.Showcase;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-
+import team.ApiPlus.API.PluginPlus;
+import team.ApiPlus.API.Type.BlockType;
+import team.ApiPlus.API.Type.ItemType;
 import team.GunsPlus.API.GunsPlusAPI;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
@@ -39,7 +32,7 @@ import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 import team.GunsPlus.Util.VersionChecker;
 
-public class GunsPlus extends JavaPlugin {
+public class GunsPlus extends PluginPlus {
 	public static String PRE = "[Guns+]";
 	
 	public static GunsPlus plugin;
@@ -55,7 +48,6 @@ public class GunsPlus extends JavaPlugin {
 	
 	public static List<GunsPlusPlayer> GunsPlusPlayers = new ArrayList<GunsPlusPlayer>();
 	
-	//DEFAULT VALUES
 	public static boolean warnings = true;
 	public static boolean debug = false;
 	public static boolean notifications = true;
@@ -68,16 +60,22 @@ public class GunsPlus extends JavaPlugin {
 	public static KeyType fireKey = new KeyType("left", false);
 	public static KeyType reloadKey = new KeyType("R", false);
 
-	//ITEM AND BLOCK LISTS
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
 	public static List<Material> transparentMaterials = new ArrayList<Material>();
 	public static List<TripodData> allTripodBlocks = Collections.synchronizedList(new ArrayList<TripodData>());
 	public static Tripod tripod;
-
-
 	
+	public static Map<String, Class<? extends BlockType>> customBlockTypes = new HashMap<String, Class<? extends BlockType>>();
+	public static Map<String, Class<? extends ItemType>> customItemTypes = new HashMap<String, Class<? extends ItemType>>();
+	
+	static{
+		customBlockTypes.put("Tripod", Tripod.class);
+		customItemTypes.put("Gun", Gun.class);
+		customItemTypes.put("Addition", Addition.class);
+		customItemTypes.put("Ammo", Ammo.class);
+	}
 
 	@Override
 	public void onDisable() {
@@ -95,7 +93,6 @@ public class GunsPlus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
-		checkForAPI();
 		ConfigLoader.config();
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		hook();
@@ -170,41 +167,6 @@ public class GunsPlus extends JavaPlugin {
 		}
 	}
 	
-	private void checkForAPI() {
-		PluginManager pm = getServer().getPluginManager();
-		Plugin apiPlugin = pm.getPlugin("ApiPlus");
-		if (apiPlugin == null) {
-			try {
-				File api = new File("plugins/ApiPlus.jar");
-				download( new URL("https://github.com/atlan1/ApiPlus/downloads/ApiPlus.jar"), api);
-				pm.loadPlugin(api);
-				pm.enablePlugin(apiPlugin);
-			} catch (Exception exception) {
-				log.warning(PRE+"could not download ApiPlus! Try to install it manually.");
-				pm.disablePlugin(this);
-			}
-		}
-	}
-
-	public static void download(URL url, File file) throws IOException {
-		if (!file.getParentFile().exists())
-			file.getParentFile().mkdir();
-		if (file.exists())
-			file.delete();
-		file.createNewFile();
-		log.info(PRE+"Starting download of "+file.getName()+" ...");
-		final InputStream in = url.openStream();
-		final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-		final byte[] buffer = new byte[1024];
-		int len;
-		while ((len = in.read(buffer)) >= 0) {
-			out.write(buffer, 0, len);
-		}
-		in.close();
-		out.close();
-		log.info(PRE+"Download of "+file.getName()+" finished!");
-	}
-	
 	private void updateHUD(){
 		Task update = new Task(this){
 			public void run(){
@@ -261,5 +223,10 @@ public class GunsPlus extends JavaPlugin {
 	
 	public GunsPlusAPI getAPI() {
 		return api;
+	}
+
+	@Override
+	public void loadConfig(FileConfiguration arg0) {
+		
 	}
 }

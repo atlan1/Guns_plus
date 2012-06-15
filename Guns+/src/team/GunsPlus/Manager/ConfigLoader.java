@@ -13,8 +13,8 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
 
-import team.ApiPlus.Manager.FileManager;
 import team.ApiPlus.Manager.RecipeManager;
+import team.ApiPlus.Util.FileUtil;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.GunEffect;
@@ -73,18 +73,18 @@ public class ConfigLoader {
 	}
 
 	private static void firstRun() throws IOException {
-		if(FileManager.create(gunsFile))
-			FileManager.copy(GunsPlus.plugin.getResource("guns.yml"), ConfigLoader.gunsFile);
-		if(FileManager.create(ammoFile))
-			FileManager.copy(GunsPlus.plugin.getResource("ammo.yml"), ConfigLoader.ammoFile);
-		if(FileManager.create(recipeFile))
-			FileManager.copy(GunsPlus.plugin.getResource("recipes.yml"), ConfigLoader.recipeFile);
-		if(FileManager.create(generalFile))
-			FileManager.copy(GunsPlus.plugin.getResource("general.yml"), ConfigLoader.generalFile);
-		if(FileManager.create(additionsFile))
-			FileManager.copy(GunsPlus.plugin.getResource("additions.yml"), ConfigLoader.additionsFile);
-		if(FileManager.create(dataFile))
-			FileManager.copy(GunsPlus.plugin.getResource("data.dat"), dataFile);
+		if(FileUtil.create(gunsFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("guns.yml"), ConfigLoader.gunsFile);
+		if(FileUtil.create(ammoFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("ammo.yml"), ConfigLoader.ammoFile);
+		if(FileUtil.create(recipeFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("recipes.yml"), ConfigLoader.recipeFile);
+		if(FileUtil.create(generalFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("general.yml"), ConfigLoader.generalFile);
+		if(FileUtil.create(additionsFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("additions.yml"), ConfigLoader.additionsFile);
+		if(FileUtil.create(dataFile))
+			FileUtil.copy(GunsPlus.plugin.getResource("data.dat"), dataFile);
 	}
 	
 	public static void loadAdditions(){

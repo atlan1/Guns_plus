@@ -7,16 +7,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.MaterialData;
-import org.getspout.spoutapi.material.block.GenericCustomBlock;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundEffect;
 
+import team.ApiPlus.API.Type.BlockType;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Manager.TripodDataHandler;
 import team.GunsPlus.Util.PlayerUtils;
 import team.GunsPlus.Util.Task;
 
-public class Tripod extends GenericCustomBlock {
+public class Tripod extends BlockType {
 
 	public static String tripodTexture = null;
 	public static int maxtripodcount = -1;
@@ -27,6 +27,7 @@ public class Tripod extends GenericCustomBlock {
 
 	public Tripod(GunsPlus plugin, String texture) {
 		super(plugin, "Tripod", false);
+		this.setRotate(true);
 		this.setHardness(hardness);
 		this.setLightLevel(MaterialData.cobblestone.getLightLevel());
 		this.setItemDrop(new SpoutItemStack(this, 1));

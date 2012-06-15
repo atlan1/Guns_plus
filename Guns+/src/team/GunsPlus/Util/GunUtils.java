@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraft.server.EntityLiving;
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.MobEffect;
 import net.minecraft.server.Packet42RemoveMobEffect;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
@@ -31,8 +28,6 @@ import org.bukkit.util.BlockIterator;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
-
-
 import team.GunsPlus.API.Event.*;
 import team.GunsPlus.Enum.GunEffect;
 import team.GunsPlus.Enum.GunEffectType;
@@ -139,7 +134,7 @@ public class GunUtils {
 			Location loc, Gun g) {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		BlockIterator bitr = new BlockIterator(loc, 0d,
-				(Integer) g.getProperty("RANGE"));
+				((Number) g.getProperty("RANGE")).intValue());
 		Block b;
 		Location l, el;
 		while (bitr.hasNext()) {
@@ -157,18 +152,18 @@ public class GunUtils {
 			for (LivingEntity e : entities) {
 				l = Util.getMiddle(e.getLocation(), -0.5f);
 				el = e.getEyeLocation();
-				double changedamage = (int) Math.ceil((Float) g
-						.getProperty("CHANGEDAMAGE")
+				double changedamage = (int) Math.ceil(((Number) g
+						.getProperty("CHANGEDAMAGE")).floatValue()
 						* loc.toVector().distance(l.toVector()));
 				if (l.toVector().distance(blockcenter.toVector()) > el
 						.toVector().distance(blockcenter.toVector())) {
 					targets.put(
 							e,
-							(int) ((Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage<0?0:(Integer) g.getProperty("HEADSHOTDAMAGE") + changedamage)
+							(int) (((Number) g.getProperty("HEADSHOTDAMAGE")).intValue() + changedamage<0?0:((Number) g.getProperty("HEADSHOTDAMAGE")).intValue() + changedamage)
 									* -1);
 				} else {
 					targets.put(e,
-							(int) ((Integer) g.getProperty("DAMAGE")<0?0:(Integer) g.getProperty("DAMAGE") + changedamage));
+							(int) (((Number) g.getProperty("DAMAGE")).intValue()<0?0:((Number) g.getProperty("DAMAGE")).intValue() + changedamage));
 				}
 			}
 		}
@@ -473,7 +468,7 @@ public class GunUtils {
 		Block b;
 		while (bitr.hasNext()) {
 			b = bitr.next();
-			if (!b.getType().equals(Material.AIR)) targets.add(b);
+			if (!Util.isTransparent(b)) targets.add(b);
 		}
 		return targets;
 	}
