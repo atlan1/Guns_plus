@@ -162,12 +162,13 @@ public class GunsPlusPlayer extends LivingShooter {
 				int damage = targets_damage.get(tar);
 				Location from = Util.getBlockInSight(this.getPlayer().getEyeLocation(), 2, 5).getLocation();
 				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getProperty("PROJECTILE"));
-				if (damage < 0)
+				if (damage < 0){
 					PlayerUtils.sendNotification(this.getPlayer(), "Headshot!",
-							"with a " + GunUtils.getRawGunName(g),
-							new ItemStack(Material.ARROW), 2000);
-				targets_damage.put(tar, Math.abs(damage));
-				damage = targets_damage.get(tar);
+					"with a " + GunUtils.getRawGunName(g),
+					new ItemStack(Material.ARROW), 2000);
+					targets_damage.put(tar, Math.abs(damage));
+					damage = targets_damage.get(tar);
+				}
 				if (Util.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
 					PlayerUtils.sendNotification(this.getPlayer(), "Critical!",
 							"with a " + GunUtils.getRawGunName(g),
@@ -177,7 +178,7 @@ public class GunsPlusPlayer extends LivingShooter {
 				if (usedAmmo != null) {
 					damage += usedAmmo.getDamage();
 				}
-				tar.damage(damage, tar);
+				tar.damage(damage, getPlayer());
 			}
 			
 			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
