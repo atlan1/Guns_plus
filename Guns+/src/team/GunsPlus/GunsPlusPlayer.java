@@ -14,7 +14,10 @@ import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.API.Event.Gun.GunFireEvent;
 import team.GunsPlus.API.Event.Gun.GunReloadEvent;
 import team.GunsPlus.API.Event.Gun.GunZoomInEvent;
@@ -79,8 +82,8 @@ public class GunsPlusPlayer extends LivingShooter {
 	}
 	
 	public void zoom(Gun g) {
-		if(!player.hasPermission("gunsplus.zoom.all")) {
-			if(!player.hasPermission("gunsplus.zoom." + g.getName().toLowerCase().replace(" ", "_")))
+		if(!player.hasPermission("gunsplus.zoom.all")&&GunsPlus.useperms) {
+			if(!player.hasPermission("gunsplus.zoom." + ((GenericCustomItem) g).getName().toLowerCase().replace(" ", "_")))
 				return;
 		}
 		if (Util.enteredTripod(getPlayer()) && Tripod.forcezoom)
@@ -95,13 +98,13 @@ public class GunsPlusPlayer extends LivingShooter {
 			GunUtils.zoomIn(GunsPlus.plugin, this, (GenericTexture) g.getProperty("LOADEDZOOMTEXTURE"), (Integer) g
 					.getProperty("ZOOMFACTOR"));
 			setZooming(true);
-			PlayerUtils.sendNotification(getPlayer(), g.getName(), "Zoomed in!",
+			PlayerUtils.sendNotification(getPlayer(), ((GenericCustomItem) g).getName(), "Zoomed in!",
 						new ItemStack(Material.SULPHUR), 2000);
 			Bukkit.getPluginManager().callEvent(new GunZoomInEvent(this.getPlayer(), g));
 		} else {
 			GunUtils.zoomOut(this);
 			setZooming(false);
-			PlayerUtils.sendNotification(getPlayer(), g.getName(), "Zoomed out!",
+			PlayerUtils.sendNotification(getPlayer(), ((GenericCustomItem) g).getName(), "Zoomed out!",
 					new ItemStack(Material.SULPHUR), 2000);
 			Bukkit.getPluginManager().callEvent(new GunZoomOutEvent(this.getPlayer(), g));
 		}
@@ -112,8 +115,8 @@ public class GunsPlusPlayer extends LivingShooter {
 	public void fire(Gun g) {
 		if(isFireing()) return;
 		setFireing(true);
-		if(!player.hasPermission("gunsplus.fire.all")) {
-			if(!player.hasPermission("gunsplus.fire." + g.getName().toLowerCase().replace(" ", "_"))){ 
+		if(!player.hasPermission("gunsplus.fire.all")&&GunsPlus.useperms) {
+			if(!player.hasPermission("gunsplus.fire." + ((GenericCustomItem) g).getName().toLowerCase().replace(" ", "_"))){ 
 				setFireing(false);
 				return;
 			}
@@ -124,11 +127,11 @@ public class GunsPlusPlayer extends LivingShooter {
 			setFireing(false);
 			return;
 		}else if(GunUtils.isShootable(g)&&!GunUtils.isMountable(g)&&Util.enteredTripod(getPlayer())){
-			PlayerUtils.sendNotification(getPlayer(), "Use this gun ", "only outside a tripod!", new SpoutItemStack(g), 2000);
+			PlayerUtils.sendNotification(getPlayer(), "Use this gun ", "only outside a tripod!", new SpoutItemStack((GenericCustomItem)g), 2000);
 			setFireing(false);
 			return;
 		}else if(!GunUtils.isShootable(g)&&GunUtils.isMountable(g)&&!Util.enteredTripod(getPlayer())){
-			PlayerUtils.sendNotification(getPlayer(), "Enter a tripod to", "use this heavy gun!", new SpoutItemStack(g), 2000);
+			PlayerUtils.sendNotification(getPlayer(), "Enter a tripod to", "use this heavy gun!", new SpoutItemStack((GenericCustomItem)g), 2000);
 			setFireing(false);
 			return;
 		}
@@ -143,6 +146,10 @@ public class GunsPlusPlayer extends LivingShooter {
 			return;
 		}
 		else if (isDelaying()){
+			setFireing(false);
+			return;
+		}
+		else if(isOutOfAmmo(g)){
 			setFireing(false);
 			return;
 		}
@@ -169,7 +176,7 @@ public class GunsPlusPlayer extends LivingShooter {
 					targets_damage.put(tar, Math.abs(damage));
 					damage = targets_damage.get(tar);
 				}
-				if (Util.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
+				if (Utils.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
 					PlayerUtils.sendNotification(this.getPlayer(), "Critical!",
 							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.DIAMOND_SWORD), 2000);
@@ -181,11 +188,11 @@ public class GunsPlusPlayer extends LivingShooter {
 				tar.damage(damage, getPlayer());
 			}
 			
-			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
+			g.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()));
 
 			if (!(g.getProperty("SHOTSOUND") == null)) {
 				if ((Integer)g.getProperty("SHOTDELAY") < 5
-						&& Util.getRandomInteger(0, 100) < 35) {
+						&& Utils.getRandomInteger(0, 100) < 35) {
 					Util.playCustomSound(GunsPlus.plugin, getLocation(),
 							(String) g.getProperty("SHOTSOUND"),
 							(Integer) g.getProperty("SHOTSOUNDVOLUME"));
@@ -216,8 +223,8 @@ public class GunsPlusPlayer extends LivingShooter {
 	
 	@Override
 	public void reload(Gun g) {
-		if(!player.hasPermission("gunsplus.reload.all")) {
-			if(!player.hasPermission("gunsplus.reload." + g.getName().toLowerCase().replace(" ", "_")))
+		if(!player.hasPermission("gunsplus.reload.all")&&GunsPlus.useperms) {
+			if(!player.hasPermission("gunsplus.reload." + ((GenericCustomItem) g).getName().toLowerCase().replace(" ", "_")))
 				return;
 		}
 		if (getFireCounter(g) == 0)

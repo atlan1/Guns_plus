@@ -7,6 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Util.Task;
@@ -54,12 +55,12 @@ public class TripodAI{
 	}
 
 	public void aim() {
-			td.setLocation(Util.setLookingAt(td.getLocation(), lastTarget.getEyeLocation()));
+			td.setLocation(Utils.setLookingAt(td.getLocation(), lastTarget.getEyeLocation()));
 	}
 	
 	private LivingEntity getNearestTarget(){
 		int r = (Integer) td.getGun().getProperty("RANGE");
-		List<Entity> near = new ArrayList<Entity>(Util.getNearbyEntities(td.getLocation(), r, r, r));  
+		List<Entity> near = new ArrayList<Entity>(Utils.getNearbyEntities(td.getLocation(), r, r, r));  
 		List<LivingEntity> les = new ArrayList<LivingEntity>();
 		LivingEntity le = null;
 		for(Target tar : td.getTargets()){

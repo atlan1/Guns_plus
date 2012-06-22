@@ -1,23 +1,22 @@
 package team.GunsPlus.Manager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-//import net.morematerials.morematerials.materials.SMCustomItem;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
-//import org.getspout.spoutapi.material.CustomBlock;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
+
+import team.ApiPlus.API.Effect.Effect;
+import team.ApiPlus.Manager.EffectManager;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
-import team.GunsPlus.Enum.GunEffect;
-import team.GunsPlus.Enum.GunEffectSection;
-import team.GunsPlus.Enum.GunEffectType;
+import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.FireBehavior;
-//import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
@@ -64,8 +63,8 @@ public class ConfigParser {
 				}
 			}
 			for(Gun g:GunsPlus.allGuns){
-				if(g.getName().toString().equals(item)){
-					custom = new SpoutItemStack(g);
+				if(((GenericCustomItem)g).getName().toString().equals(item)){
+					custom = new SpoutItemStack((GenericCustomItem)g);
 				}
 			}
 			for(Addition a : GunsPlus.allAdditions){
@@ -142,86 +141,81 @@ public class ConfigParser {
     	return null;
     }
     
-    public static List<GunEffect> parseEffects(String path){
-    	List<GunEffect> effects = new ArrayList<GunEffect>();
+    public static List<Effect> parseEffects(String path) throws Exception{
+    	List<Effect> effects = new ArrayList<Effect>();
     	if(!ConfigLoader.gunsConfig.isConfigurationSection(path)||ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
-    	for(String effectsection: ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false)){
-    		GunEffectSection effsec = GunEffectSection.valueOf(effectsection.toUpperCase());
-    		setSectionArguments(path+"."+effectsection, effsec);
-    		for(String effecttype : ConfigLoader.gunsConfig.getConfigurationSection(path+"."+effectsection).getKeys(false)){
-    			if(effecttype.toUpperCase().equalsIgnoreCase("arguments")) continue;
-    			GunEffectType efftyp = GunEffectType.valueOf(effecttype.toUpperCase());
-    			if(Util.isAllowedInEffectSection(efftyp, effsec)){
-    				effects.add(buildEffect(efftyp, effsec, path+"."+effectsection+"."+effecttype));
-    			}
-    		}
+    	for(String effect_: ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false)){
+    		String newpath=path+"."+effect_;
+    		String type =  ConfigLoader.gunsConfig.getString(newpath+".type");
+    		EffectType efftyp = EffectType.valueOf(type.toUpperCase());
+    		EffectSection effsec = buildEffectTarget(newpath+".target");
+    		if(Util.isAllowedInEffectSection(efftyp, effsec))
+    			effects.add(buildEffect(effsec, efftyp, newpath));
+    		else throw new Exception("The effect type "+efftyp.toString().toLowerCase()+" is not allowed to have the target "+effsec);
     	}
     	return effects;
     }
     
-    private static void setSectionArguments(String path ,GunEffectSection e){
-    	Map<String, Object> map = new HashMap<String, Object>();
-    	ConfigurationSection cs = ConfigLoader.gunsConfig.getConfigurationSection(path+".arguments");
-    	if(cs==null) return;
-    	switch(e) {
-    		case TARGETLOCATION:
-    			if(cs.getInt("radius")!=0)
-    				map.put("RADIUS", (Integer)cs.getInt("radius"));
-    			else return;
-    			break;
-    		case SHOOTERLOCATION:
-    			if(cs.getInt("radius")!=0)
-    				map.put("RADIUS", (Integer)cs.getInt("radius"));
-    			else return;
-    			break;
-    		case FLIGHTPATH:
-    			if(cs.getInt("length")!=0)
-    				map.put("LENGTH", (Integer)cs.getInt("length"));
-    			else return;
-    			break;
+    private static EffectSection buildEffectTarget(String path) {
+    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(ConfigLoader.gunsConfig.getMapList(path+".args"));
+    	EffectSection effsec = EffectSection.valueOf(ConfigLoader.gunsConfig.getString(path+".type").toUpperCase());
+    	switch(effsec){
+	    	case TARGETLOCATION:
+	    		effsec.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
+	    		break;
+	    	case FLIGHTPATH:
+	    		effsec.addProperty("LENGTH", searchKeyInMapList(args, "length").get("length"));
+	    		break;
+	    	case SHOOTERLOCATION:
+	    		effsec.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
+	    		break;
     	}
-    	e.setProperties(map);
+    	return effsec;
     }
     
-    private static GunEffect buildEffect(GunEffectType efftyp, GunEffectSection es, String path){
-    		GunEffect e = new GunEffect(efftyp, es);
-    		switch(efftyp){
+    private static Effect buildEffect(EffectSection es, EffectType t, String path) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+    	Effect e = null;
+    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(ConfigLoader.gunsConfig.getMapList(path+".args"));
+    		switch(t){
 		    	case EXPLOSION:
-		    		e.addProperty("SIZE", ConfigLoader.gunsConfig.getInt(path+".size"));
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "size").get("size")); 
 		    		break;
 		    	case LIGHTNING:
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName()); 
 		    		break;
-		    	case SMOKE:
-		    		e.addProperty("DENSITY", ConfigLoader.gunsConfig.getInt(path+".density"));
-		    		break;
-		    	case FIRE:
-		    		if(es.equals(GunEffectSection.SHOOTER)||es.equals(GunEffectSection.TARGETENTITY))
-		    			e.addProperty("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
-		    		else
-		    			e.addProperty("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
-		    		break;
-		    	case PUSH:
-		    		e.addProperty("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
-		    		break;
-		    	case DRAW:
-		    		e.addProperty("SPEED", ConfigLoader.gunsConfig.getDouble(path+".speed"));
+		    	case MOVE:
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "speed").get("speed"), searchKeyInMapList(args, "direction").get("direction"));
 		    		break;
 		    	case POTION:
-		    		e.addProperty("ID", ConfigLoader.gunsConfig.getInt(path+".id"));
-		    		e.addProperty("DURATION", ConfigLoader.gunsConfig.getInt(path+".duration"));
-		    		e.addProperty("STRENGTH", ConfigLoader.gunsConfig.getInt(path+".strength"));
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "id").get("id"), searchKeyInMapList(args, "duration").get("duration"), searchKeyInMapList(args, "strength").get("strength") );
 		    		break;
 		    	case SPAWN:
-		    		e.addProperty("ENTITY", ConfigLoader.gunsConfig.getString(path+".entity"));
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "entity").get("entity"));
 		    		break;
 		    	case PLACE:
-		    		e.addProperty("BLOCK", ConfigLoader.gunsConfig.getString(path+".block"));
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), parseItem((String)searchKeyInMapList(args, "block").get("block")).getType());
 		    		break;
 		    	case BREAK:
-		    		e.addProperty("POTENCY", ConfigLoader.gunsConfig.getDouble(path+".potency"));
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "potency").get("potency"));
+		    		break;
+		    	case PARTICLE:
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "type").get("type"), searchKeyInMapList(args, "amount").get("amount"), searchKeyInMapList(args, "gravity").get("gravity"), searchKeyInMapList(args, "max-age").get("max-age"), searchKeyInMapList(args, "scale").get("scale"));
+		    		break;
+		    	case BURN:
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "duration").get("duration"));
 		    		break;
     	}
+    		e.setEffectTarget(es);
     	return e;
+    }
+    
+    private static Map<?, ?> searchKeyInMapList(List<Map<?,?>> maplist, String key){
+    	for(Map<?, ?> map : maplist){
+    		if(map.containsKey(key)){
+    			return map;
+    		}
+    	}
+    	return null;
     }
     
     public static ArrayList<Addition> parseAdditions(String path){

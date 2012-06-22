@@ -12,12 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomBlock;
 import org.getspout.spoutapi.material.CustomItem;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.API.Effect.Effect;
+import team.ApiPlus.Manager.ItemManager;
 import team.ApiPlus.Manager.RecipeManager;
 import team.ApiPlus.Util.FileUtil;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
-import team.GunsPlus.Enum.GunEffect;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Projectile;
@@ -223,7 +225,8 @@ public class ConfigLoader {
 				if(texture == null)
 					throw new Exception(" Can't find texture url for "+ammonode+"! Skipping!");
 				
-				Ammo a = new Ammo(GunsPlus.plugin, name, texture, damage);
+				Ammo a = (Ammo) ItemManager.getInstance().buildItem(GunsPlus.plugin, name, texture, "Ammo");
+				a.setDamage(damage);
 				GunsPlus.allAmmo.add(a);
 			} catch (Exception e) {
 				Util.warn("Config Error:" + e.getMessage());
@@ -330,7 +333,7 @@ public class ConfigLoader {
 					missingchanceOUT=Integer.parseInt(missing_chance[0]);
 				}
 				
-				ArrayList<GunEffect> effects = new ArrayList<GunEffect>(ConfigParser.parseEffects(gunnode+".effects"));
+				ArrayList<Effect> effects = new ArrayList<Effect>(ConfigParser.parseEffects(gunnode+".effects"));
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>();
 				List<ItemStack> ammoStacks = ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
@@ -381,9 +384,9 @@ public class ConfigLoader {
 				for(Addition a: adds){
 					List<ItemStack> listIngred = new ArrayList<ItemStack>();
 						listIngred.add(new SpoutItemStack(a));
-						listIngred.add(new SpoutItemStack(g));
+						listIngred.add(new SpoutItemStack((GenericCustomItem)g));
 					Gun addgun = GunManager.buildNewAdditionGun(GunsPlus.plugin, GunUtils.getFullGunName(g, a), texture, a, g);
-					RecipeManager.addRecipe("shapeless", listIngred, new SpoutItemStack(addgun));
+					RecipeManager.addRecipe("shapeless", listIngred, new SpoutItemStack((GenericCustomItem)addgun));
 				}
 
 			}catch(Exception e){
@@ -393,7 +396,7 @@ public class ConfigLoader {
 		}
 		if(generalConfig.getBoolean("loaded-guns")==true){
 			GunsPlus.log.log(Level.INFO, GunsPlus.PRE + " -------------- Guns loaded: ---------------");
-			for(Gun g : GunsPlus.allGuns) GunsPlus.log.log(Level.INFO, "- "+g.getName());
+			for(Gun g : GunsPlus.allGuns) GunsPlus.log.log(Level.INFO, "- "+((GenericCustomItem) g).getName());
 		}
 	}
 
@@ -411,6 +414,8 @@ public class ConfigLoader {
 			GunsPlus.debug = ConfigLoader.generalConfig.getBoolean("show-debug", false);
 			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("show-notifications", true);
 			GunsPlus.autoreload = ConfigLoader.generalConfig.getBoolean("auto-reload", true);
+			GunsPlus.useperms = ConfigLoader.generalConfig.getBoolean("use-permissions", true);
+			GunsPlus.toolholding = ConfigLoader.generalConfig.getBoolean("tool-like-gun-holding", true);
 			
 			Tripod.tripodenabled = ConfigLoader.generalConfig.getBoolean("tripod.enabled", true);
 			Tripod.tripodTexture = ConfigLoader.generalConfig.getString("tripod.texture", "http://dl.dropbox.com/u/44243469/GunPack/Textures/tripod.png");

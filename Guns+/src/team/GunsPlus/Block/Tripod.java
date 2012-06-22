@@ -71,4 +71,9 @@ public class Tripod extends BlockType {
 		};
 		removeBlock.startTaskDelayed(1);
 	}
+	
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, int changedId) {
+		
+	}
 }

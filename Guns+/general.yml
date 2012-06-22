@@ -16,11 +16,17 @@ show-debug: false
 # Show Warnings in the console if a node is missing
 show-warnings: true
 
+# Used to en-/disable permission support
+use-permissions: true
+
 # Send notifications for special events, e.g. headshot
 send-notifications: true
 
 # Should the plugin auto reload an empty gun or not
 auto-reload: true
+
+# Sets tool-like holding style for guns
+tool-like-gun-holding: true
 
 # These are the keys/buttons for zooming/fireing/reloading the gun
 # Available are: 'right', 'left', all characters and numbers on your keyboard

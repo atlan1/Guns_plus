@@ -3,8 +3,6 @@ package team.GunsPlus.Util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Location;
-
 import team.ApiPlus.API.Operator;
 import team.GunsPlus.Item.Gun;
 
@@ -82,10 +80,16 @@ public abstract class Shooter implements Operator{
 	public void resetFireCounter(Gun g){
 			fireCounter.put(g, 0);
 	}
+	
+	public boolean isOutOfAmmo(Gun g){
+		if(this.getFireCounter(g)>=(Integer)g.getProperty("SHOTSBETWEENRELOAD")){
+			return true;
+		}
+		return false;
+	}
 
 	public abstract void reload(Gun g);
 	public abstract void delay(Gun g);
 	public abstract void fire(Gun g);
 	
-	public abstract Location getLocation();
 }

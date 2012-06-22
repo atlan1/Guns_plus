@@ -9,6 +9,7 @@ import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.GunsPlus;
@@ -49,7 +50,7 @@ public class HUD {
 			label.setVisible(true);
 			item.setVisible(true);
 			Gun g = GunUtils.getGun(sp.getItemInHand());
-			SpoutItemStack i = new SpoutItemStack(g);
+			SpoutItemStack i = new SpoutItemStack((GenericCustomItem)g);
 			item.setTypeId(i.getTypeId()).setData(i.getDurability());
 			int count = PlayerUtils.getPlayerBySpoutPlayer(sp).getFireCounter(g);
 			int total =  0;

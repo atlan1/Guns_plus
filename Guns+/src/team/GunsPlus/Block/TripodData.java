@@ -16,7 +16,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
 import team.GunsPlus.Enum.Projectile;
@@ -79,7 +81,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	
 	public void dropContents(){
 		if(getGun()!=null)
-			location.getWorld().dropItemNaturally(location, new SpoutItemStack(getGun(), 1));
+			location.getWorld().dropItemNaturally(location, new SpoutItemStack((GenericCustomItem)getGun(), 1));
 		for(ItemStack a : getInventory().getContents()) if(a!=null)location.getWorld().dropItemNaturally(location, a);
 	}
 
@@ -197,7 +199,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
 				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getProperty("PROJECTILE"));
 				int damage = Math.abs(targets_damage.get(tar));
-				if(Util.getRandomInteger(0, 100)<=(Integer)g.getProperty("CRITICAL")){
+				if(Utils.getRandomInteger(0, 100)<=(Integer)g.getProperty("CRITICAL")){
 					damage = tar.getHealth()+1000;
 				}
 				if(usedAmmo!=null){
@@ -212,7 +214,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 			setFireCounter(g, getFireCounter(g)+1);
 			
 			if(!(g.getProperty("SHOTSOUND")==null)){
-				if((Integer)g.getProperty("SHOTDELAY")<5&&Util.getRandomInteger(0, 100)<35){
+				if((Integer)g.getProperty("SHOTDELAY")<5&&Utils.getRandomInteger(0, 100)<35){
 					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
 				}else{
 					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
@@ -234,7 +236,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 		if(entered==true){
 			owner_inv.setContents(owner.getPlayer().getInventory().getContents());
 			owner.getPlayer().getInventory().setContents(new ItemStack[owner.getPlayer().getInventory().getSize()]);
-			owner.getPlayer().setItemInHand(new SpoutItemStack(getGun(), 1));
+			owner.getPlayer().setItemInHand(new SpoutItemStack((GenericCustomItem)getGun(), 1));
 			if(Tripod.forcezoom)
 				owner.zoom(gun);
 //			 if (owner.getPlayer().getVehicle() != null){
@@ -281,7 +283,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 
 	public void dropGun(){
 		if(gun!=null){
-			droppedGun = getLocation().getWorld().dropItemNaturally(getLocation(), new SpoutItemStack(gun));
+			droppedGun = getLocation().getWorld().dropItemNaturally(getLocation(), new SpoutItemStack((GenericCustomItem)gun));
 			droppedGun.setPickupDelay(Integer.MAX_VALUE);
 		}
 	}

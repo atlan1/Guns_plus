@@ -32,6 +32,7 @@ import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 import org.getspout.spoutapi.gui.Button;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.CustomItem;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 import team.GunsPlus.Block.TripodData;
@@ -111,7 +112,7 @@ public class GunsPlusListener implements Listener {
 									GunUtils.removeGunInHand(sp);
 								}else{
 									if(GunsPlus.notifications)
-										PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack(tg), 2000);
+										PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack((GenericCustomItem)tg), 2000);
 								}
 							}else if(td.getGun()!=null&&sp.isSneaking()){
 								TripodPopup tpp = new TripodPopup(plugin, td);
@@ -324,7 +325,7 @@ public class GunsPlusListener implements Listener {
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		org.getspout.spoutapi.material.Material is = new SpoutItemStack(event.getRecipe().getResult()).getMaterial();
-		if(Util.isGunsPlusMaterial(is.getName())) {
+		if(Util.isGunsPlusMaterial(is.getName())&&GunsPlus.useperms) {
 			if(!event.getWhoClicked().hasPermission("gunsplus.craft.all")) {
 				Object g = Util.getGunsPlusMaterial(is.getName());
 				if(!event.getWhoClicked().hasPermission("gunsplus.craft." + ((CustomItem) g).getName().toLowerCase().replace(" ", "_")))

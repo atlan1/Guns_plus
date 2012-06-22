@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.block.SpoutBlock;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
@@ -190,7 +191,7 @@ public class TripodDataHandler {
 			cs.set("loc.coords", td.getLocation().toVector());
 			cs.set("loc.world", td.getLocation().getWorld().getUID().toString());
 			if(td.getGun()!=null)
-				cs.set("gun", td.getGun().getName());
+				cs.set("gun", ((GenericCustomItem) td.getGun()).getName());
 			cs.set("auto", td.isAutomatic());
 			cs.set("work", td.isWorking());
 			cs.createSection("targets");

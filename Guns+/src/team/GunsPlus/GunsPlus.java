@@ -26,6 +26,7 @@ import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
+import team.GunsPlus.Item.GunItem;
 import team.GunsPlus.Manager.ConfigLoader;
 import team.GunsPlus.Manager.TripodDataHandler;
 import team.GunsPlus.Util.Task;
@@ -53,6 +54,8 @@ public class GunsPlus extends PluginPlus {
 	public static boolean notifications = true;
 	public static boolean autoreload = true;
 	public static boolean hudenabled = false;
+	public static boolean useperms = true;
+	public static boolean toolholding = true;
 	public static int hudX = 20;
 	public static int hudY = 20;
 	public static String hudBackground = null;
@@ -69,10 +72,12 @@ public class GunsPlus extends PluginPlus {
 	
 	public static Map<String, Class<? extends BlockType>> customBlockTypes = new HashMap<String, Class<? extends BlockType>>();
 	public static Map<String, Class<? extends ItemType>> customItemTypes = new HashMap<String, Class<? extends ItemType>>();
+
+	
 	
 	static{
 		customBlockTypes.put("Tripod", Tripod.class);
-		customItemTypes.put("Gun", Gun.class);
+		customItemTypes.put("Gun", GunItem.class);
 		customItemTypes.put("Addition", Addition.class);
 		customItemTypes.put("Ammo", Ammo.class);
 	}

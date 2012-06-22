@@ -5,7 +5,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.getspout.spoutapi.material.CustomItem;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
+
+import team.GunsPlus.Item.Gun;
 
 public class CommandEx implements CommandExecutor{
 	private GunsPlus plugin;
@@ -43,9 +45,10 @@ public class CommandEx implements CommandExecutor{
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					sender.sendMessage(ChatColor.BLUE + "---Guns----");
-					for(CustomItem c : plugin.allGuns) {
-						sender.sendMessage(ChatColor.GRAY + "- " + c.getName());
+					for(Gun c : plugin.allGuns) {
+						sender.sendMessage(ChatColor.GRAY + "- " + ((GenericCustomItem) c).getName());
 					}
+
 				}
 				return true;
 			}

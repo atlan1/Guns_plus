@@ -27,10 +27,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
+import team.ApiPlus.API.Effect.Effect;
+import team.ApiPlus.API.Effect.EntityEffect;
+import team.ApiPlus.API.Effect.LocationEffect;
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.API.Event.*;
-import team.GunsPlus.Enum.GunEffect;
-import team.GunsPlus.Enum.GunEffectType;
+import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
@@ -42,27 +47,27 @@ public class GunUtils {
 
 	public static Gun getGun(String name) {
 		for (Gun g : GunsPlus.allGuns)
-			if (g.getName().equalsIgnoreCase(name))
+			if (((GenericCustomItem)g).getName().equalsIgnoreCase(name))
 				return g;
 		return null;
 	}
 
 	public static String getFullGunName(Gun g, Addition... adds) {
-		String name = g.getName();
+		String name = ((GenericCustomItem)g).getName();
 		for (Addition a : adds)
 			name += "+" + a.getName();
 		return name;
 	}
 
 	public static String getRawGunName(Gun g) {
-		String name = g.getName();
+		String name = ((GenericCustomItem)g).getName();
 		return name.split("\\+")[0];
 	}
 
 	public static boolean holdsGun(SpoutPlayer p) {
 		ItemStack is = p.getItemInHand();
 		for (Gun g : GunsPlus.allGuns) {
-			SpoutItemStack sis = new SpoutItemStack(g);
+			SpoutItemStack sis = new SpoutItemStack((GenericCustomItem)g);
 			if (is.getTypeId() == sis.getTypeId()
 					&& is.getDurability() == sis.getDurability()) {
 				return true;
@@ -93,7 +98,7 @@ public class GunUtils {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		Location loc = l.clone();
 		HashMap<LivingEntity, Integer> e = null;
-		int acc = Util.getRandomInteger(0, 101) + 1;
+		int acc = Utils.getRandomInteger(0, 101) + 1;
 		int missing = (Integer) g.getProperty(zoom ? "MISSING_IN" : "MISSING_OUT");
 		float randomfactor = (Float) g.getProperty("RANDOMFACTOR");
 		int spread = (Integer) (zoom ? ((Integer)g.getProperty("SPREAD_IN") / 2) + 1 : ((Integer)g
@@ -105,22 +110,22 @@ public class GunUtils {
 				for (int i = 1; i <= spread; i += 4) {
 					loc = l.clone();
 					loc.setYaw(loc.getYaw()
-							+ Util.getRandomInteger(i,
+							+ Utils.getRandomInteger(i,
 									Math.round(i * randomfactor)));
 					e = getTargetEntities(loc, g);
 					targets.putAll(e);
 					loc.setYaw(loc.getYaw()
-							- Util.getRandomInteger(i,
+							- Utils.getRandomInteger(i,
 									i + Math.round(i * randomfactor)));
 					e = getTargetEntities(loc, g);
 					targets.putAll(e);
 					loc.setPitch(loc.getPitch()
-							+ Util.getRandomInteger(i,
+							+ Utils.getRandomInteger(i,
 									i + Math.round(i * randomfactor)));
 					e = getTargetEntities(loc, g);
 					targets.putAll(e);
 					loc.setPitch(loc.getPitch()
-							- Util.getRandomInteger(i,
+							- Utils.getRandomInteger(i,
 									i + Math.round(i * randomfactor)));
 					e = getTargetEntities(loc, g);
 					targets.putAll(e);
@@ -143,7 +148,7 @@ public class GunUtils {
 			Set<LivingEntity> entities = new HashSet<LivingEntity>();
 			if (!Util.isTransparent(b))
 				break;
-			for (Entity e : new ArrayList<Entity>(Util.getNearbyEntities(b.getLocation(), 0.4, 0.4,
+			for (Entity e : new ArrayList<Entity>(Utils.getNearbyEntities(b.getLocation(), 0.4, 0.4,
 					0.4))) {
 				if (e instanceof LivingEntity) {
 					entities.add((LivingEntity) e);
@@ -266,7 +271,7 @@ public class GunUtils {
 		if (g == null)
 			return true;
 		HashMap<Integer, ? extends ItemStack> invAll = new HashMap<Integer, SpoutItemStack>();
-		SpoutItemStack theStack = new SpoutItemStack(g);
+		SpoutItemStack theStack = new SpoutItemStack((GenericCustomItem)g);
 		invAll = inv.all(theStack.getTypeId());
 		for (int j = 0; j < inv.getSize(); j++) {
 			if (invAll.containsKey(j)) {
@@ -309,11 +314,11 @@ public class GunUtils {
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
-		for(GunEffect e : (List<GunEffect>)gun.getProperty("EFFECTS")){
+		for(Effect e : (List<Effect>)gun.getProperty("EFFECTS")){
+			
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
-			if(targets.isEmpty()&&shooterEntity!=null){
-
-				targets.add(shooterEntity);
+			if(targets.isEmpty()&&shooterEntity!=null){//make sure effects will be performed
+				targets.add(shooterEntity);            //if there are no targets
 			}
 			for(LivingEntity target : targets){
 				targetLocation = target.getLocation();
@@ -321,36 +326,33 @@ public class GunUtils {
 				if(shooterEntity!=null&&shooterEntity.equals(target)){
 					targetLocation = shooterEntity.getTargetBlock(null, gunrange).getLocation();
 				}
-				switch((GunEffectType)e.getEffectType()){
+				switch(EffectType.getType(e.getClass())){
 					case BREAK:
-						EffectUtils.breakEffect(e, shooterLocation, targetLocation, gunrange);
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
 					case PLACE:
-						EffectUtils.placeEffect(e, shooterLocation, targetLocation, gunrange);
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
 					case POTION:
-						EffectUtils.potionEffect(e, shooterEntity,  target);
+						EffectUtils.performEntityEffect((EntityEffect) e, shooterEntity, target);
 						break;
-					case SMOKE:
-						EffectUtils.smokeEffect(e, shooterLocation, targetLocation, gunrange);
+					case PARTICLE:
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
-					case FIRE:
-						EffectUtils.fireEffect(e,shooterEntity, target, gunrange);
+					case BURN:
+						EffectUtils.performEntityEffect((EntityEffect) e, shooterEntity, target);
 						break;
 					case SPAWN:
-						EffectUtils.spawnEffect(e, shooterLocation, targetLocation, gunrange);
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
 					case LIGHTNING:
-						EffectUtils.lightningEffect(e, shooterLocation, targetLocation, gunrange);
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
 					case EXPLOSION:
-						EffectUtils.explosionEffect(e, shooterLocation, targetLocation, gunrange);
+						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
-					case PUSH:
-						EffectUtils.pushEffect(e, target, shooterEntity, shooterLocation.getDirection());
-						break;
-					case DRAW:
-						EffectUtils.drawEffect(e,target,shooterEntity, shooterLocation.getDirection());
+					case MOVE:
+						EffectUtils.performEntityEffect((EntityEffect) e, shooterEntity, target);
 						break;
 				}
 			}
@@ -362,7 +364,7 @@ public class GunUtils {
 
 		if (holdsGun(p)) {
 			for (Gun g : GunsPlus.allGuns) {
-				SpoutItemStack sis = new SpoutItemStack(g);
+				SpoutItemStack sis = new SpoutItemStack((GenericCustomItem)g);
 				if (is.getTypeId() == sis.getTypeId()
 						&& is.getDurability() == sis.getDurability()) {
 					return g;
@@ -374,7 +376,7 @@ public class GunUtils {
 
 	public static Gun getGun(ItemStack item) {
 		for (Gun g : GunsPlus.allGuns) {
-			SpoutItemStack sis = new SpoutItemStack(g);
+			SpoutItemStack sis = new SpoutItemStack((GenericCustomItem)g);
 			if (item.getTypeId() == sis.getTypeId()
 					&& item.getDurability() == sis.getDurability()) {
 				return g;
@@ -453,7 +455,7 @@ public class GunUtils {
 	public static boolean isGun(ItemStack i) {
 		if (i != null)
 			for (Gun g : GunsPlus.allGuns) {
-				SpoutItemStack sis = new SpoutItemStack(g);
+				SpoutItemStack sis = new SpoutItemStack((GenericCustomItem)g);
 				if (i.getTypeId() == sis.getTypeId()
 						&& i.getDurability() == sis.getDurability()) {
 					return true;

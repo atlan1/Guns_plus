@@ -7,10 +7,12 @@ import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
 
 public class PlayerUtils {
+	
 
 	public static GunsPlusPlayer getPlayerBySpoutPlayer(SpoutPlayer sp){
 		for(GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers){
@@ -72,7 +74,7 @@ public class PlayerUtils {
 		}else if(loc.getPitch()<-5){
 			loc.setPitch(0);
 		}
-		Vector pdir = Util.getDirection(loc);
+		Vector pdir = Utils.getDirection(loc);
 		Vector v = pdir;
 		v.setX(v.getX()*(knockback/100)*-1);
 		v.setZ(v.getZ()*(knockback/100)*-1);

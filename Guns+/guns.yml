@@ -66,22 +66,30 @@ Sniper:
     fire-behavior: single
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
-    # Here you can assign five categories: targetLocation (will affect the target location), flightPath (will affect all blocks of the flight path of the bullets), targetEntity (will affect the target),
-    # Shooter (will affect the shooter of the gun), ShooterLocation (will affect the location, the shooter is standing on)
-    # for more information about the effects see the faq on the bukkit thread. -> http://dev.bukkit.org/server-mods/guns/pages/frequently-asked-questions/
-    # You can also define certain arguments for some effect sections: radius(all locations)-> the radius around the location; length(flightpath)-> the max length of the flightpath
-        targetentity:
-            potion:
-                id: 9
-                duration: 20
-                strenght: 1
-        targetlocation:
-            arguments:
-                radius: 1 
-            smoke:
-                density: 4
-        flightpath:
-            arguments:
-                length: 5
-            smoke:
-                density: 1
+    # In this section you can define your own effects that will occur when you fire the gun, see the Configuration Page on BukkitDev for further explanations
+    # This is just an unique name to differentiate between the effects
+        smoke_effect:
+    # The type of the effect
+            type: particle
+    # The args node contains all arguments needed for the effect type
+            args:
+            - type: smoke
+            - amount: 4
+            - max-age: 60
+            - gravity: 1
+            - scale: 1
+    # The target node defines at which target the effect will be applied on
+            target:
+    # There are 5 target types: targetlocation, targetentity, shooterlocation, shooter, flightpath
+                type: flightpath
+    # Again there is an args node for custom arguments of the target type
+                args:
+                - length: 20
+        potion_effect:
+            type: potion
+            args:
+            - id: 9
+            - duration: 100
+            - strength: 5
+            target:
+                type: targetentity

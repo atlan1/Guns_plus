@@ -7,9 +7,8 @@ public class Ammo extends ItemType {
 
 	private int damage = 0;
 	
-	public Ammo(Plugin plugin, String name, String texture, int dmg) {
+	public Ammo(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
-		damage = dmg;
 	}
 	
 	public int getDamage(){
