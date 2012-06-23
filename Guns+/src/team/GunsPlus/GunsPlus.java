@@ -100,6 +100,8 @@ public class GunsPlus extends PluginPlus {
 		plugin = this;
 		ConfigLoader.config();
 		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
+		this.registerBlockTypes(customBlockTypes);
+		this.registerItemTypes(customItemTypes);
 		hook();
 		init();
 		new FireBinding(this, GunsPlus.fireKey);

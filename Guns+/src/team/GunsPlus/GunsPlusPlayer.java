@@ -162,7 +162,7 @@ public class GunsPlusPlayer extends LivingShooter {
 				GunUtils.shootProjectile(from, this.getPlayer().getEyeLocation().getDirection().toLocation(getLocation().getWorld()),
 						(Projectile) g.getProperty("PROJECTILE"));
 			}
-			for (LivingEntity tar : targets_damage.keySet()) {
+			for (LivingEntity tar : new HashSet<LivingEntity>(targets_damage.keySet())) {
 				if (tar.equals(this.getPlayer())) {
 					continue;
 				}
@@ -176,11 +176,11 @@ public class GunsPlusPlayer extends LivingShooter {
 					targets_damage.put(tar, Math.abs(damage));
 					damage = targets_damage.get(tar);
 				}
-				if (Utils.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
+				if (!((Integer) g.getProperty("CRITICAL")<=0)&&Utils.getRandomInteger(1, 100) <= (Integer) g.getProperty("CRITICAL")) {
 					PlayerUtils.sendNotification(this.getPlayer(), "Critical!",
 							"with a " + GunUtils.getRawGunName(g),
 							new ItemStack(Material.DIAMOND_SWORD), 2000);
-					damage = tar.getHealth() + 1000;
+					damage = tar.getHealth() + 1;
 				}
 				if (usedAmmo != null) {
 					damage += usedAmmo.getDamage();
@@ -188,7 +188,7 @@ public class GunsPlusPlayer extends LivingShooter {
 				tar.damage(damage, getPlayer());
 			}
 			
-			g.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()));
+			g.performEffects(this, new HashSet<LivingEntity>(new ArrayList<LivingEntity>(targets_damage.keySet())));
 
 			if (!(g.getProperty("SHOTSOUND") == null)) {
 				if ((Integer)g.getProperty("SHOTDELAY") < 5

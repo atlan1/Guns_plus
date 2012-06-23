@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -355,8 +356,10 @@ public class GunsPlusListener implements Listener {
 			org.getspout.spoutapi.material.Material is = new SpoutItemStack(attacker.getItemInHand()).getMaterial();
 			if(Util.isGunsPlusMaterial(is.getName())) {
 				Object g = Util.getGunsPlusMaterial(is.getName());
-				if(g instanceof Gun) {
-					event.setDamage((Integer) ((Gun) g).getProperty("MELEE"));
+				if(g instanceof Gun&&event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
+					if(!PlayerUtils.getPlayerBySpoutPlayer((SpoutPlayer) attacker).isFireing()){			
+						event.setDamage((Integer) ((Gun) g).getProperty("MELEE"));
+					}
 				}
 			}
 		}
