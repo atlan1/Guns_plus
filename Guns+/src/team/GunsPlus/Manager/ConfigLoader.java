@@ -18,6 +18,7 @@ import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.Manager.ItemManager;
 import team.ApiPlus.Manager.RecipeManager;
 import team.ApiPlus.Util.FileUtil;
+import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Enum.FireBehavior;
@@ -27,7 +28,6 @@ import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class ConfigLoader {
@@ -319,7 +319,7 @@ public class ConfigLoader {
 				String texture = gunsConfig.getString(gunnode+".texture");
 				FireBehavior fb = ConfigParser.parseFireBehavoir(gunnode+".fire-behavior");
 				
-				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type"));
+				Projectile projectile = Projectile.valueOf(gunsConfig.getString(gunnode+".projectile.type").toUpperCase());
 				projectile.setSpeed(gunsConfig.getDouble(gunnode+".projectile.speed", 1.0));
 				
 				String[] spread_angle = gunsConfig.getString(gunnode+".accuracy.spread-angle").split("->");
@@ -446,11 +446,6 @@ public class ConfigLoader {
 				trecipe.startTaskRepeating(5, false);
 			}
 			
-			
-			List<ItemStack> il = ConfigParser.parseItems(ConfigLoader.generalConfig.getString("transparent-materials"));
-			for(int m=0;m<il.size();m++){
-				GunsPlus.transparentMaterials.add(il.get(m).getType());
-			}
 			GunsPlus.hudenabled = ConfigLoader.generalConfig.getBoolean("hud.enabled", true);
 			GunsPlus.hudBackground = ConfigLoader.generalConfig.getString("hud.background",
 					"http://dl.dropbox.com/u/44243469/GunPack/Textures/HUDBackground.png");

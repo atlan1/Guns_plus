@@ -5,7 +5,6 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
@@ -133,7 +132,7 @@ public class Util {
 		while (bitr.hasNext()) {
 			Block b = bitr.next();
 			if(b.equals(w.getBlock())) return true;
-			if (!Util.isTransparent(b)) {
+			if (!Utils.isTransparent(b)) {
 				break;
 			}
 		}
@@ -197,14 +196,6 @@ public class Util {
 			int volume) {
 		SoundManager SM = SpoutManager.getSoundManager();
 		SM.playGlobalCustomSoundEffect(plugin, url, false, l, 40, volume);
-	}
-
-	public static boolean isTransparent(Block block) {
-		Material m = block.getType();
-		if (GunsPlus.transparentMaterials.contains(m)||isTripod(block)) {
-			return true;
-		}
-		return false;
 	}
 
 	public static void printCustomIDs() {

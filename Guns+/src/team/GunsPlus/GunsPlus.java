@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.lyneira.MachinaRedstoneBridge.MachinaRedstoneBridge;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import com.griefcraft.lwc.LWC;
@@ -19,6 +18,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import team.ApiPlus.API.PluginPlus;
 import team.ApiPlus.API.Type.BlockType;
 import team.ApiPlus.API.Type.ItemType;
+import team.ApiPlus.Util.Task;
 import team.GunsPlus.API.GunsPlusAPI;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
@@ -29,7 +29,6 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Item.GunItem;
 import team.GunsPlus.Manager.ConfigLoader;
 import team.GunsPlus.Manager.TripodDataHandler;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 import team.GunsPlus.Util.VersionChecker;
 
@@ -66,7 +65,6 @@ public class GunsPlus extends PluginPlus {
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
-	public static List<Material> transparentMaterials = new ArrayList<Material>();
 	public static List<TripodData> allTripodBlocks = Collections.synchronizedList(new ArrayList<TripodData>());
 	public static Tripod tripod;
 	
@@ -132,7 +130,7 @@ public class GunsPlus extends PluginPlus {
 	}
 	
 	private void initTripod(){
-		TripodDataHandler.nextID = ConfigLoader.dataDB.getKeys(false).size();
+		TripodDataHandler.setNextId(ConfigLoader.dataDB.getKeys(false).size());
 		TripodDataHandler.allowLoading();//uhh ugly hack ;)
 		TripodDataHandler.loadAll();
 		TripodDataHandler.denyLoading(); 
@@ -210,11 +208,10 @@ public class GunsPlus extends PluginPlus {
 	}
 
 	private void resetFields() {
-		GunsPlus.allGuns = new ArrayList<Gun>();
-		GunsPlus.allAmmo = new ArrayList<Ammo>();
-		GunsPlus.allAdditions = new ArrayList<Addition>();
-		GunsPlus.transparentMaterials = new ArrayList<Material>();
-		GunsPlus.allTripodBlocks = new ArrayList<TripodData>();
+		GunsPlus.allGuns.clear();
+		GunsPlus.allAmmo.clear();
+		GunsPlus.allAdditions.clear();
+		GunsPlus.allTripodBlocks.clear();
 	}
 	
 	public void reload(){

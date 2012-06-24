@@ -82,7 +82,7 @@ public abstract class Shooter implements Operator{
 	}
 	
 	public boolean isOutOfAmmo(Gun g){
-		if(this.getFireCounter(g)>=(Integer)g.getProperty("SHOTSBETWEENRELOAD")){
+		if(this.getFireCounter(g)>=((Number)g.getProperty("SHOTSBETWEENRELOAD")).intValue()){
 			return true;
 		}
 		return false;

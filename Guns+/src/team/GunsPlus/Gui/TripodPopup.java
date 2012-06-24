@@ -20,13 +20,13 @@ import org.getspout.spoutapi.gui.Widget;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Enum.Target.Player;
 import team.GunsPlus.Enum.Target.Animal;
 import team.GunsPlus.Enum.Target.Monster;
-import team.GunsPlus.Util.Task;
 
 public class TripodPopup extends GenericPopup{
 	

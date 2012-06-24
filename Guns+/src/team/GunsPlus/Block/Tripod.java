@@ -11,10 +11,10 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundEffect;
 
 import team.ApiPlus.API.Type.BlockType;
+import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Manager.TripodDataHandler;
 import team.GunsPlus.Util.PlayerUtils;
-import team.GunsPlus.Util.Task;
 
 public class Tripod extends BlockType {
 

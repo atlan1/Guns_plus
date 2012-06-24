@@ -7,6 +7,7 @@ import org.bukkit.util.BlockIterator;
 
 import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.API.Effect.LocationEffect;
+import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 
 public class FlightPathEffect implements Runnable {
@@ -23,11 +24,14 @@ public class FlightPathEffect implements Runnable {
 	
 	@Override
 	public void run() {
+		if(maxrange<=0) return; 
 		BlockIterator bitr = new BlockIterator(l, 0d, maxrange);
 		while(bitr.hasNext()){
 			Block b = bitr.next();
-			if(Util.isTransparent(b)&&!Util.isTripod(b)){
+			if(Utils.isTransparent(b)&&!Util.isTripod(b)){
 				effect.performEffect(b.getLocation());
+			}else{
+				break;
 			}
 		}
 	}

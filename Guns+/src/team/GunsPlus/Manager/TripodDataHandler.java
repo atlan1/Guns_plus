@@ -17,18 +17,18 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class TripodDataHandler {
 	
 	private static boolean stopLoading = false;
-	public static int nextID;
+	private static int nextID;
 	
 	public static void denyLoading(){
 		stopLoading = true;
@@ -211,5 +211,9 @@ public class TripodDataHandler {
 			return false;
 		}
 		return true;
+	}
+
+	public static void setNextId(int size) {
+		nextID = size;
 	}
 }

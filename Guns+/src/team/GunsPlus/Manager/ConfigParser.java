@@ -159,6 +159,7 @@ public class ConfigParser {
     private static EffectSection buildEffectTarget(String path) {
     	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(ConfigLoader.gunsConfig.getMapList(path+".args"));
     	EffectSection effsec = EffectSection.valueOf(ConfigLoader.gunsConfig.getString(path+".type").toUpperCase());
+    	if(args.isEmpty()||args==null) return effsec;
     	switch(effsec){
 	    	case TARGETLOCATION:
 	    		effsec.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));

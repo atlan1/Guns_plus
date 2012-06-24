@@ -146,7 +146,7 @@ public class GunUtils {
 			b = bitr.next();
 			Location blockcenter = Util.getMiddle(b.getLocation(), -0.5f);
 			Set<LivingEntity> entities = new HashSet<LivingEntity>();
-			if (!Util.isTransparent(b))
+			if (!Utils.isTransparent(b))
 				break;
 			for (Entity e : new ArrayList<Entity>(Utils.getNearbyEntities(b.getLocation(), 0.4, 0.4,
 					0.4))) {
@@ -307,20 +307,20 @@ public class GunUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static void performEffects(Shooter shooter, HashSet<LivingEntity> tars, Gun gun){
-		HashSet<LivingEntity> targets = new HashSet<LivingEntity>();
 		LivingEntity shooterEntity = null;
 		Location shooterLocation, targetLocation;
 		int gunrange = (Integer) gun.getProperty("RANGE");
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
+		if(tars.isEmpty()&&shooterEntity!=null){
+				tars.add(shooterEntity);
+		}
 		for(Effect e : (List<Effect>)gun.getProperty("EFFECTS")){
 			
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
-			if(targets.isEmpty()&&shooterEntity!=null){//make sure effects will be performed
-				targets.add(shooterEntity);            //if there are no targets
-			}
-			for(LivingEntity target : targets){
+
+			for(LivingEntity target : tars){
 				targetLocation = target.getLocation();
 				shooterLocation = shooter.getLocation();
 				if(shooterEntity!=null&&shooterEntity.equals(target)){
@@ -351,7 +351,7 @@ public class GunUtils {
 					case EXPLOSION:
 						EffectUtils.performLocationEffect((LocationEffect) e, shooterLocation, targetLocation);
 						break;
-					case MOVE:
+					case MOVE:	
 						EffectUtils.performEntityEffect((EntityEffect) e, shooterEntity, target);
 						break;
 				}
@@ -470,7 +470,7 @@ public class GunUtils {
 		Block b;
 		while (bitr.hasNext()) {
 			b = bitr.next();
-			if (!Util.isTransparent(b)) targets.add(b);
+			if (!Utils.isTransparent(b)) targets.add(b);
 		}
 		return targets;
 	}

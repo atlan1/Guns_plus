@@ -23,6 +23,11 @@ public class SphereEffect implements Runnable {
 	
 	@Override
 	public void run() {
+		if(radius<=0) return;
+		if(radius==1){
+			effect.performEffect(l);
+			return;
+		}
 		List<Block> list = Utils.getSphere(l, radius);
 		for(Block b:list){
 			effect.performEffect(b.getLocation());

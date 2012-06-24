@@ -17,6 +17,7 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.API.Event.Gun.GunFireEvent;
 import team.GunsPlus.API.Event.Gun.GunReloadEvent;
@@ -31,7 +32,6 @@ import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.LivingShooter;
 import team.GunsPlus.Util.PlayerUtils;
 import team.GunsPlus.Util.Shooter;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class GunsPlusPlayer extends LivingShooter {

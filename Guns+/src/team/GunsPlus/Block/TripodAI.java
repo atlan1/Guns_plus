@@ -7,10 +7,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
+import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Enum.Target;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class TripodAI{

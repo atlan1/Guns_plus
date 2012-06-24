@@ -18,6 +18,7 @@ import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
@@ -28,7 +29,6 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.PlayerUtils;
 import team.GunsPlus.Util.Shooter;
-import team.GunsPlus.Util.Task;
 import team.GunsPlus.Util.Util;
 
 public class TripodData extends Shooter implements InventoryHolder {
