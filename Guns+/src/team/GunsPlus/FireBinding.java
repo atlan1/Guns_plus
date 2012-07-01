@@ -19,7 +19,7 @@ import team.GunsPlus.Util.PlayerUtils;
 public class FireBinding implements BindingExecutionDelegate{
 
 	private GunsPlus plugin;
-	private Map<SpoutPlayer, Task> autoFire = new HashMap<SpoutPlayer, Task>();
+	private static Map<SpoutPlayer, Task> autoFire = new HashMap<SpoutPlayer, Task>();
 	
 	public FireBinding(GunsPlus p, KeyType kt){
 		plugin = p;
@@ -36,11 +36,11 @@ public class FireBinding implements BindingExecutionDelegate{
 				if(f.equals(FireBehavior.SINGLE)){
 					PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
 				}else if(f.equals(FireBehavior.AUTOMATIC)){
-					Task task = new Task(GunsPlus.plugin, sp, g){
+					Task task = new Task(GunsPlus.plugin, PlayerUtils.getPlayerBySpoutPlayer(sp), g){
 						public void run(){
-							SpoutPlayer sp = (SpoutPlayer) this.getArg(0);
+							GunsPlusPlayer gp = (GunsPlusPlayer) this.getArg(0);
 							Gun g = (Gun) this.getArg(1);
-							PlayerUtils.getPlayerBySpoutPlayer(sp).fire(g);
+							gp.fire(g);
 						}
 					};
 					task.startTaskRepeating(((Number) g.getProperty("SHOTDELAY")).longValue(), false);

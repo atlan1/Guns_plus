@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Enum.PlayerTarget;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Util.Util;
 
@@ -65,9 +65,9 @@ public class TripodAI{
 		LivingEntity le = null;
 		for(Target tar : td.getTargets()){
 			for(Entity e : near){
-				if(e.getType().equals(tar.getRealEntity())&&e instanceof LivingEntity){
-					if(e.getType().equals(EntityType.PLAYER)){
-						if(((Target.Player)tar.getEntity()).getName().equals(((org.bukkit.entity.Player)e).getName())){
+				if(e.getType().equals(tar.getEntityType())&&e instanceof LivingEntity){
+					if(tar instanceof PlayerTarget){
+						if(((PlayerTarget)tar).getName().equals(((org.bukkit.entity.Player)e).getName())){
 							les.add((LivingEntity)e);
 						}
 					}else{

@@ -17,10 +17,12 @@ import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.Util.ConfigUtil;
 import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.Target;
+import team.GunsPlus.Enum.TargetType;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.Util;
@@ -51,19 +53,19 @@ public class TripodDataHandler {
 			boolean auto = cs.getBoolean("auto");
 			boolean working = cs.getBoolean("work");
 			ConfigurationSection tars = db.getConfigurationSection(id+".targets");
-			List<Target> targets = new ArrayList<Target>();
+			Set<Target> targets = new HashSet<Target>();
 			if(tars!=null&&!tars.getKeys(false).isEmpty()){
 				for(int i=0;i<tars.getKeys(false).size();i++){
 					String[] type_name = tars.getString(""+i).split("-");
 					if(type_name.length==2)
-						targets.add(Target.getTarget(type_name[0], type_name[1], i));
+						targets.add(ConfigParser.parseTarget(type_name[0], type_name[1]));
 				}
 			}
-			TripodData td = new TripodData(player, l, g, new ArrayList<Target>(targets));
+			TripodData td = new TripodData(player, l, g, new HashSet<Target>(targets));
 			ConfigurationSection inventory = db.getConfigurationSection(id+".inventory");
 			if(inventory!=null&&!inventory.getKeys(false).isEmpty()){
 				for(int j=0;j<td.getInventory().getSize();j++){
-					td.getInventory().setItem(j, ConfigParser.parseItem(inventory.getString(""+j)));
+					td.getInventory().setItem(j, ConfigUtil.parseItem(inventory.getString(""+j)));
 				}
 			}
 			td.setAutomatic(auto);
@@ -198,7 +200,7 @@ public class TripodDataHandler {
 			List<Target> tar = new ArrayList<Target>(td.getTargets());
 			int j = 0;
 			for(Target t : tar){
-				cs.set("targets."+j, t.toString()+"-"+(t.toString().equalsIgnoreCase("player")?((team.GunsPlus.Enum.Target.Player)t.getEntity()).getName():t.getEntity()));
+				cs.set("targets."+j, TargetType.getTargetType(t.getClass()).name()+"-"+(Util.isPlayerTarget(t)?((team.GunsPlus.Enum.PlayerTarget)t).getName():t.toString()));
 				j++;
 			}
 			cs.createSection("inventory");

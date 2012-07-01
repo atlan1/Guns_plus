@@ -2,121 +2,25 @@ package team.GunsPlus.Manager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.material.item.GenericCustomItem;
-
 import team.ApiPlus.API.Effect.Effect;
+import team.ApiPlus.API.Effect.EffectType;
 import team.ApiPlus.Manager.EffectManager;
+import team.ApiPlus.Util.ConfigUtil;
 import team.GunsPlus.GunsPlus;
-import team.GunsPlus.Block.Tripod;
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.Animal;
 import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
+import team.GunsPlus.Enum.Monster;
+import team.GunsPlus.Enum.PlayerTarget;
+import team.GunsPlus.Enum.Target;
+import team.GunsPlus.Enum.TargetType;
 import team.GunsPlus.Item.Addition;
-import team.GunsPlus.Item.Ammo;
-import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.Util;
 
 public class ConfigParser {
-
-	public static List<ItemStack> parseItems(String s){
-        List<ItemStack> result = new LinkedList<ItemStack>();
-        
-        String[] items = s.split(",");
-        for (String item : items){
-            ItemStack mat = parseItem(item.trim());
-            if (mat != null)
-                result.add(mat);
-        }
-        
-        return result;
-    }
-    
-    public static ItemStack parseItem(String item){
-        if (item == null || item.equals(""))
-            return null;
-        
-        String[] parts = item.split(":");
-        if (parts.length == 1)
-            return singleItem(parts[0]);
-        if (parts.length == 2)
-            return withDurability(parts[0], parts[1]);
-        if(parts.length == 3)
-        	return withAmount(parts[0], parts[1], parts[2]);
-        
-        return null;
-    }
-    
-    private static ItemStack singleItem(String item){
-    	SpoutItemStack custom = null;
-        Material m = getMaterial(item);
-        if(m==null){
-			for(Ammo a:GunsPlus.allAmmo){
-				if(a.getName().toString().equals(item)){
-					custom = new SpoutItemStack(a);
-				}
-			}
-			for(Gun g:GunsPlus.allGuns){
-				if(((GenericCustomItem)g).getName().toString().equals(item)){
-					custom = new SpoutItemStack((GenericCustomItem)g);
-				}
-			}
-			for(Addition a : GunsPlus.allAdditions){
-				if(a.getName().toString().equals(item)){
-					custom = new SpoutItemStack(a);
-				}
-			}
-			if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(item)){
-				custom = new SpoutItemStack(GunsPlus.tripod);
-			}
-        }
-        if(custom==null){
-        	if(m==null){
-        		return null;
-        	}else{
-        		return new ItemStack(m);
-        	}
-        }else{
-        	return new SpoutItemStack(custom);
-        }
-    }
-    
-    private static ItemStack withDurability(String item, String durab){
-    	Material m = getMaterial(item);
-        if (m == null)
-            return null;
-        SpoutItemStack sis = new SpoutItemStack(new ItemStack(m));
-        if(durab.matches("[0-9]+")){
-        	sis.setDurability(Short.parseShort(durab));
-        }
-        
-        return sis;
-    }
-    
-    private static ItemStack withAmount(String item, String durab, String amount){
-    	Material m = getMaterial(item);
-        if (m == null)
-            return null;
-        SpoutItemStack sis = new SpoutItemStack(new ItemStack(m, Integer.parseInt(amount)));
-        if(durab.matches("[0-9]+")){
-        	sis.setDurability(Short.parseShort(durab));
-        }
-        
-        return sis;
-    }
-    
-    private static Material getMaterial(String item){
-        if (item.matches("[0-9]*"))
-            return Material.getMaterial(Integer.parseInt(item));
-        
-        return Material.getMaterial(item.toUpperCase());
-    }
     
     public static KeyType parseKeyType(String string) throws Exception{
     	boolean hold = false;
@@ -194,7 +98,7 @@ public class ConfigParser {
 		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "entity").get("entity"));
 		    		break;
 		    	case PLACE:
-		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), parseItem((String)searchKeyInMapList(args, "block").get("block")).getType());
+		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), ConfigUtil.parseItem((String)searchKeyInMapList(args, "block").get("block")).getType());
 		    		break;
 		    	case BREAK:
 		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "potency").get("potency"));
@@ -234,4 +138,18 @@ public class ConfigParser {
     	}
     	return adds;
     }
+    
+	
+	public static Target parseTarget(String type, String subtype) {
+		Target t = null;
+		if(type.equals(TargetType.Monster.name())){
+			t = Monster.valueOf(subtype.toUpperCase());
+		}else if(type.equals(TargetType.Animal.name())){
+			t =  Animal.valueOf(subtype.toUpperCase());
+		}else if(type.equals(TargetType.Player.name())){
+			t = new  PlayerTarget(subtype);
+		}
+		
+		return t;
+	}
 }

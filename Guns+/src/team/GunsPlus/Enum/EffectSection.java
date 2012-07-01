@@ -44,4 +44,10 @@ public enum EffectSection implements EffectTarget, PropertyHolder{
 		if(properties.containsKey(id))
 			properties.put(id, property);
 	}
+	
+	@Override
+	public void setProperty(String id, Object property) {
+		addProperty(id, property);
+		editProperty(id, property);
+	}
 }

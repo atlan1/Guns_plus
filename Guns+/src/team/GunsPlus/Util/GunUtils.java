@@ -30,12 +30,13 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.ApiPlus.API.PropertyHolder;
+import team.ApiPlus.API.Effect.EffectType;
 import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.API.Effect.EntityEffect;
 import team.ApiPlus.API.Effect.LocationEffect;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.API.Event.*;
-import team.GunsPlus.Enum.EffectType;
 import team.GunsPlus.Enum.Projectile;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.GunsPlusPlayer;
@@ -47,7 +48,7 @@ public class GunUtils {
 
 	public static Gun getGun(String name) {
 		for (Gun g : GunsPlus.allGuns)
-			if (((GenericCustomItem)g).getName().equalsIgnoreCase(name))
+			if (((GenericCustomItem)g).getName().equals(name))
 				return g;
 		return null;
 	}
@@ -93,7 +94,7 @@ public class GunUtils {
 		}
 	}
 
-	public static HashMap<LivingEntity, Integer> getTargets(Location l, Gun g,
+	public static HashMap<LivingEntity, Integer> getTargets(Location l, PropertyHolder g,
 			boolean zoom) {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		Location loc = l.clone();
@@ -105,7 +106,7 @@ public class GunUtils {
 				.getProperty("SPREAD_OUT") / 2 + 1));
 		if (acc >= missing) {
 			if (spread <= 0 && randomfactor <= 0) {
-				targets = getTargetEntities(l, g);
+				targets = getTargetEntities(loc, g);
 			} else {
 				for (int i = 1; i <= spread; i += 4) {
 					loc = l.clone();
@@ -136,7 +137,7 @@ public class GunUtils {
 	}
 
 	public static HashMap<LivingEntity, Integer> getTargetEntities(
-			Location loc, Gun g) {
+			final Location loc, PropertyHolder g) {
 		HashMap<LivingEntity, Integer> targets = new HashMap<LivingEntity, Integer>();
 		BlockIterator bitr = new BlockIterator(loc, 0d,
 				((Number) g.getProperty("RANGE")).intValue());
@@ -146,7 +147,7 @@ public class GunUtils {
 			b = bitr.next();
 			Location blockcenter = Util.getMiddle(b.getLocation(), -0.5f);
 			Set<LivingEntity> entities = new HashSet<LivingEntity>();
-			if (!Utils.isTransparent(b))
+			if (!Utils.isTransparent(b)&&!Util.isTripod(b))
 				break;
 			for (Entity e : new ArrayList<Entity>(Utils.getNearbyEntities(b.getLocation(), 0.4, 0.4,
 					0.4))) {
@@ -306,17 +307,17 @@ public class GunUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void performEffects(Shooter shooter, HashSet<LivingEntity> tars, Gun gun){
+	public static void performEffects(Shooter shooter, HashSet<LivingEntity> tars, PropertyHolder gunP, Gun gun){
 		LivingEntity shooterEntity = null;
 		Location shooterLocation, targetLocation;
-		int gunrange = (Integer) gun.getProperty("RANGE");
+		int gunrange = (Integer) gunP.getProperty("RANGE");
 		if(shooter instanceof LivingShooter){
 			shooterEntity = ((LivingShooter)shooter).getLivingEntity();
 		}
 		if(tars.isEmpty()&&shooterEntity!=null){
 				tars.add(shooterEntity);
 		}
-		for(Effect e : (List<Effect>)gun.getProperty("EFFECTS")){
+		for(Effect e : (List<Effect>)gunP.getProperty("EFFECTS")){
 			
 			Bukkit.getServer().getPluginManager().callEvent(new GunEffectEvent(shooter, gun, e));
 

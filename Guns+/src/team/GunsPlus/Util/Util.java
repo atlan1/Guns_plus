@@ -1,6 +1,9 @@
 package team.GunsPlus.Util;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -9,7 +12,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
@@ -18,12 +20,17 @@ import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
+import team.ApiPlus.API.PropertyHolder;
+import team.ApiPlus.API.Effect.EffectType;
+import team.ApiPlus.Manager.PropertyManager;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
 import team.GunsPlus.Enum.EffectSection;
-import team.GunsPlus.Enum.EffectType;
+import team.GunsPlus.Enum.PlayerTarget;
+import team.GunsPlus.Enum.Target;
+import team.GunsPlus.Enum.TargetType;
 import team.GunsPlus.Item.Addition;
 import team.GunsPlus.Item.Ammo;
 import team.GunsPlus.Item.Gun;
@@ -31,17 +38,25 @@ import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
 	
-	public static boolean containsCustomItems(List<ItemStack> items){
-		for(ItemStack i : items){
-			if(isCustomItem(i)){
-				return true;
-			}
-		}
-		return false;
+	public static boolean isPlayerTarget(Target t) {
+		return (TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class));
 	}
 	
-	public static boolean isCustomItem(ItemStack item){
-		return new SpoutItemStack(item).isCustomItem();
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public static void editProperties(final PropertyHolder a, PropertyHolder b) {
+		for(String s : PropertyManager.getPropertiesInstanceOf(a, Number.class, false).keySet()){
+			b.setProperty(s, ((Number)a.getProperty(s)).doubleValue()+((Number)b.getProperty(s)).doubleValue());
+		}
+		for(String s : PropertyManager.getPropertiesInstanceOf(a, List.class, false).keySet()){
+			b.setProperty(s, ((List)b.getProperty(s)).addAll((List) a.getProperty(s)));
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.putAll(PropertyManager.getPropertiesAssignableFrom(a, Collection.class, true));
+		map.putAll(PropertyManager.getPropertiesAssignableFrom(a, Number.class, true));
+
+		for(String s : map.keySet()){
+			b.setProperty(s, map.get(s));
+		}
 	}
 	
 	public static Block getBlockInSight(Location l, int blockIndex, int maxradius){
@@ -132,15 +147,15 @@ public class Util {
 		while (bitr.hasNext()) {
 			Block b = bitr.next();
 			if(b.equals(w.getBlock())) return true;
-			if (!Utils.isTransparent(b)) {
+			if (!Utils.isTransparent(b)&&!isTripod(b 	)) {
 				break;
 			}
 		}
 		return false;
 	}
 
-	public static Location getMiddle(Location l, float YShift) {
- 		Location loc = l;
+	public static Location getMiddle(final Location l, float YShift) {
+ 		Location loc = l.clone();
 		loc = loc.getBlock().getLocation();
 		Vector vec = loc.toVector();
 		vec.add(new Vector(0.5, YShift, 0.5));

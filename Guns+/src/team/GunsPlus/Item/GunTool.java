@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
+
+import team.ApiPlus.API.PropertyHolder;
 import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.API.Type.ToolType;
 import team.GunsPlus.Util.GunUtils;
@@ -23,7 +25,7 @@ public class GunTool extends ToolType implements Gun{
 	@SuppressWarnings("unchecked")
 	@Override
 	public  void performEffects(Object... args) {
-		GunUtils.performEffects((Shooter)args[0], (HashSet<LivingEntity>)args[1], this);
+		GunUtils.performEffects((Shooter)args[0], (HashSet<LivingEntity>)args[1], (PropertyHolder) args[2], this);
 	}
 	
 	@Override
@@ -71,5 +73,10 @@ public class GunTool extends ToolType implements Gun{
 		addProperty("EFFECTS", effects);
 	}
 
+	@Override
+	public void setProperty(String id, Object property) {
+		addProperty(id, property);
+		editProperty(id, property);
+	}
 	
 }

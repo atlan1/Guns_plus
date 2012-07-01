@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.API.Effect.EntityEffect;
 import team.ApiPlus.API.Effect.LocationEffect;
+import team.ApiPlus.API.Effect.SphereEffect;
 import team.ApiPlus.API.Effect.Default.MoveEffect;
 import team.GunsPlus.Enum.EffectSection;
 

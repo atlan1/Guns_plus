@@ -15,8 +15,8 @@ import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 
 import team.ApiPlus.API.Effect.Effect;
-import team.ApiPlus.Manager.ItemManager;
 import team.ApiPlus.Manager.RecipeManager;
+import team.ApiPlus.Util.ConfigUtil;
 import team.ApiPlus.Util.FileUtil;
 import team.ApiPlus.Util.Task;
 import team.GunsPlus.GunsPlus;
@@ -131,14 +131,12 @@ public class ConfigLoader {
 					missingchanceOUT=Integer.parseInt(split[0]);
 				}
 				
-//				ArrayList<EffectSection> effects = new ArrayList<EffectSection>(ConfigParser.getEffects(additionnode+".effects"));
-//		TODO:
-//				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>(ConfigParser.parseItems(gunsConfig.getString(additionnode+".ammo")));
+				List<Effect> effects = new ArrayList<Effect>(ConfigParser.parseEffects(name+".effects"));
 				
 				if(addtexture == null)
-					throw new Exception (" Texture for "+name+" is missing or could not be found! Skipping!");
+					throw new Exception (" Texture for addition "+name+" is missing or could not be found! Skipping!");
 				
-				Addition a = AdditionManager.buildAddition(GunsPlus.plugin, name, addtexture);
+				Addition a = ItemBuilder.buildAddition(GunsPlus.plugin, name, addtexture);
 				if(weight!=0)
 					a.addProperty("WEIGHT", weight);
 				if(changedamage!=0)
@@ -185,12 +183,11 @@ public class ConfigLoader {
 					a.addProperty("SHOTSOUND", shotSound);
 				if(reloadSound!=null)
 					a.addProperty("RELOADSOUND", reloadSound);
+				if(!effects.isEmpty())
+					a.addProperty("EFFECTS", effects);
 				
-				if(a.getProperties().isEmpty()){
-					GunsPlus.allAdditions.remove(a);
-					throw new Exception(" Could not find any properties for addition "+name+"!");
-				}
-				
+				if(a.getProperties().isEmpty())
+					Util.warn(" Could not find any properties for addition "+name+"!");
 			}catch(Exception e){
 				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
@@ -209,25 +206,100 @@ public class ConfigLoader {
 		Object[] ammoArray =  ammoConfig.getKeys(false).toArray();
 		for(Object ammonode:ammoArray){
 			try{
-				YamlConfiguration defaultConfig = new YamlConfiguration();
-				defaultConfig.load(GunsPlus.plugin.getResource("ammo.yml"));
-				for(String node : defaultConfig.getConfigurationSection("SniperAmmo").getKeys(false)){
-					if(ammoConfig.get(ammonode+"."+node)==null){
-						Util.warn( "The node '"+node+"' in "+ammonode+" is missing or invalid!");
-					}
+				String name = ammonode.toString();
+				String ammotexture = ammoConfig.getString(name+".ammo-texture");
+				float randomfactor = (float) ammoConfig.getDouble(name+".accuracy.random-factor");
+				int spreadangleIN = 0;
+				int spreadangleOUT = 0;
+				int missingchanceIN = 0;
+				int missingchanceOUT = 0;
+				int critical =  ammoConfig.getInt(name+".critical");
+				int range =  ammoConfig.getInt(name+".range");
+				int damage =  ammoConfig.getInt(name+".damage");
+				int melee = ammoConfig.getInt(name+".melee-damage");
+				int reloadTime =   ammoConfig.getInt(name+".reload-time");
+				int shotDelay=  ammoConfig.getInt(name+".shot-delay");
+				int shotsBetweenReload =  ammoConfig.getInt(name+".shots-between-reload");
+				float recoil = (float) ammoConfig.getDouble(name+".recoil");
+				float weight = (float) ammoConfig.getDouble(name+".weight");
+				float knockback =  (float) ammoConfig.getDouble(name+".knockback");
+				float changedamage =  (float) ammoConfig.getDouble(name+".damage-change");
+				int zoomfactor =  ammoConfig.getInt(name+".zoom-factor");
+				int headShotDamage =  ammoConfig.getInt(name+".head-shot-damage");
+				int shotsoundvolume = ammoConfig.getInt(name+".shot-sound.volume");
+				int reloadsoundvolume = ammoConfig.getInt(name+".reload-sound.volume");
+				String shotSound = ammoConfig.getString(name+".shot-sound.url");
+				String reloadSound = ammoConfig.getString(name+".reload-sound.url");
+				String zoomTexture = ammoConfig.getString(name+".zoom-texture");
+				String spread_angle = ammoConfig.getString(name+".accuracy.spread-angle");
+				String missing_chance = ammoConfig.getString(name+".accuracy.missing-chance");
+				
+				if(spread_angle!=null){
+					String[] split = spread_angle.split("->");
+					spreadangleIN=Integer.parseInt(split[1]);
+					spreadangleOUT=Integer.parseInt(split[0]);
+				}
+				if(missing_chance!=null){
+					String[] split = missing_chance.split("->");
+					missingchanceIN=Integer.parseInt(split[1]);
+					missingchanceOUT=Integer.parseInt(split[0]);
 				}
 				
-				String texture = ammoConfig.getString(ammonode+".texture");
-				int damage = ammoConfig.getInt(ammonode+".damage", 0);
+				List<Effect> effects = new ArrayList<Effect>(ConfigParser.parseEffects(name+".effects"));
 				
-				String name = ammonode.toString();
+				if(ammotexture == null)
+					throw new Exception (" Texture for ammo "+name+" is missing or could not be found! Skipping!");
 				
-				if(texture == null)
-					throw new Exception(" Can't find texture url for "+ammonode+"! Skipping!");
+				Ammo a = (Ammo) ItemBuilder.buildAmmo(GunsPlus.plugin, name, ammotexture);
+				if(weight!=0)
+					a.addProperty("WEIGHT", weight);
+				if(changedamage!=0)
+					a.addProperty("CHANGEDAMAGE", changedamage);
+				if(damage!=0)
+					a.addProperty("DAMAGE", damage);
+				if(melee!=0)
+					a.addProperty("MELEE",  melee);
+				if(headShotDamage!=0)
+					a.addProperty("HEADSHOTDAMAGE",  headShotDamage);
+				if(zoomfactor!=0)
+					a.addProperty("ZOOMFACTOR",  zoomfactor);
+				if(critical!=0)
+					a.addProperty("CRITICAL", critical);
+				if(range!=0)
+					a.addProperty("RANGE", range);
+				if(randomfactor!=0)
+					a.addProperty("RANDOMFACTOR", randomfactor);
+				if(spreadangleOUT!=0)
+					a.addProperty("SPREAD_OUT", spreadangleOUT);
+				if(spreadangleIN!=0)
+					a.addProperty("SPREAD_IN", spreadangleIN);
+				if(missingchanceOUT!=0)
+					a.addProperty("MISSING_OUT", missingchanceOUT);
+				if(missingchanceIN!=0)
+					a.addProperty("MISSING_IN", missingchanceIN);
+				if(recoil!=0)
+					a.addProperty("RECOIL", recoil);
+				if(reloadTime!=0)
+					a.addProperty("RELOADTIME", reloadTime);
+				if(shotsBetweenReload!=0)
+					a.addProperty("SHOTSBETWEENRELOAD", shotsBetweenReload);
+				if(shotDelay!=0)
+					a.addProperty("SHOTDELAY", shotDelay);
+				if(knockback!=0)
+					a.addProperty("KNOCKBACK", knockback);
+				if(shotsoundvolume!=0)
+					a.addProperty("SHOTSOUNDVOLUME", shotsoundvolume);
+				if(reloadsoundvolume!=0)
+					a.addProperty("RELOADSOUNDVOLUME", reloadsoundvolume);
+				if(zoomTexture!=null)
+					a.addProperty("ZOOMTEXTURE", zoomTexture);
+				if(shotSound!=null)
+					a.addProperty("SHOTSOUND", shotSound);
+				if(reloadSound!=null)
+					a.addProperty("RELOADSOUND", reloadSound);
+				if(!effects.isEmpty())
+					a.addProperty("EFFECTS", effects);
 				
-				Ammo a = (Ammo) ItemManager.getInstance().buildItem(GunsPlus.plugin, name, texture, "Ammo");
-				a.setDamage(damage);
-				GunsPlus.allAmmo.add(a);
 			} catch (Exception e) {
 				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
@@ -265,7 +337,7 @@ public class ConfigLoader {
 					CustomBlock cb = (CustomBlock) cm;
 					result = new SpoutItemStack(cb, amount);
 				}
-				List<ItemStack> ingredients = ConfigParser.parseItems(recipeConfig.getString(key+".ingredients"));
+				List<ItemStack> ingredients = ConfigUtil.parseItems(recipeConfig.getString(key+".ingredients"));
 				RecipeManager.RecipeType type = RecipeManager.RecipeType.valueOf(recipeConfig.getString(key+".type").toUpperCase());
 				RecipeManager.addRecipe(type, ingredients, result);
 			}catch (Exception e) {
@@ -336,7 +408,7 @@ public class ConfigLoader {
 				ArrayList<Effect> effects = new ArrayList<Effect>(ConfigParser.parseEffects(gunnode+".effects"));
 				
 				ArrayList<ItemStack> ammo =  new ArrayList<ItemStack>();
-				List<ItemStack> ammoStacks = ConfigParser.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
+				List<ItemStack> ammoStacks = ConfigUtil.parseItems(gunsConfig.getString((String) gunnode+".ammo"));
 				if(!(ammoStacks==null||ammoStacks.isEmpty())){
 					ammo = new ArrayList<ItemStack>(ammoStacks);
 				}
@@ -347,7 +419,7 @@ public class ConfigLoader {
 				if(texture==null)
 						throw new Exception(" Can't find texture url for "+gunnode+"!");
 				
-				Gun g = GunManager.buildNewGun(GunsPlus.plugin,name, texture);
+				Gun g = ItemBuilder.buildGun(GunsPlus.plugin,name, texture);
 				
 				g.addProperty("WEIGHT", weight);
 				g.addProperty("CHANGEDAMAGE", changedamage);
@@ -385,7 +457,7 @@ public class ConfigLoader {
 					List<ItemStack> listIngred = new ArrayList<ItemStack>();
 						listIngred.add(new SpoutItemStack(a));
 						listIngred.add(new SpoutItemStack((GenericCustomItem)g));
-					Gun addgun = GunManager.buildNewAdditionGun(GunsPlus.plugin, GunUtils.getFullGunName(g, a), texture, a, g);
+					Gun addgun = ItemBuilder.buildAdditionGun(GunsPlus.plugin, GunUtils.getFullGunName(g, a), texture, a, g);
 					RecipeManager.addRecipe("shapeless", listIngred, new SpoutItemStack((GenericCustomItem)addgun));
 				}
 
@@ -432,7 +504,7 @@ public class ConfigLoader {
 					public void run(){
 						if(GunsPlus.tripod!=null){
 							SpoutItemStack result = new SpoutItemStack(GunsPlus.tripod, ConfigLoader.generalConfig.getInt("tripod.recipe.amount", 1));
-							List<ItemStack> ingred = ConfigParser.parseItems(ConfigLoader.generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
+							List<ItemStack> ingred = ConfigUtil.parseItems(ConfigLoader.generalConfig.getString("tripod.recipe.ingredients", "blaze_rod, 0, blaze_rod, 0, cobblestone, 0, blaze_rod, 0, blaze_rod"));
 							try {
 								RecipeManager.addRecipe(RecipeManager.RecipeType.valueOf(ConfigLoader.generalConfig.getString("tripod.recipe.type", "shaped").toUpperCase()), ingred, result);
 							} catch (Exception e) {
@@ -472,7 +544,6 @@ public class ConfigLoader {
 				GunsPlus.reloadKey = new KeyType("R", false);
 				throw new Exception("Key's Duplicated: " + message);
 			}
-
 		} catch (Exception e) {
 			Util.warn( "Config Error:" + e.getMessage());
 			Util.debug(e);}

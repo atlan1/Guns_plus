@@ -3,8 +3,7 @@ package team.GunsPlus.Block;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,6 +17,7 @@ import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 
+import team.ApiPlus.API.PropertyContainer;
 import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
@@ -39,7 +39,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 	private boolean automatic = false;
 	private boolean working = false;
 	private boolean entered = false;
-	private List<Target> targets = new Vector<Target>();
+	private Set<Target> targets = new HashSet<Target>();
 	private String ownername;
 	private GunsPlusPlayer owner;
 	private Location gunLoc;
@@ -48,7 +48,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 //	private Item chair;
 	private TripodAI ai = new TripodAI(this);
 	
-	public TripodData(String name, Location l, Gun g, ArrayList<Target> tars){
+	public TripodData(String name, Location l, Gun g, Set<Target> tars){
 		setOwnername(name);
 		setLocation(l);
 		setGunLoc(Util.getMiddle(l, 0.6f));
@@ -63,7 +63,7 @@ public class TripodData extends Shooter implements InventoryHolder {
 		setGunLoc(Util.getMiddle(l, 0.6f));
 	}
 	
-	public TripodData(GunsPlusPlayer own, Location l, Gun g, ArrayList<Target> tars){
+	public TripodData(GunsPlusPlayer own, Location l, Gun g, Set<Target> tars){
 		setOwnername(own.getPlayer().getName());
 		setOwner(own);
 		setLocation(l);
@@ -175,55 +175,76 @@ public class TripodData extends Shooter implements InventoryHolder {
 		if(!GunUtils.isMountable(g)){
 			return;
 		}
-		if(!GunUtils.checkInvForAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"))){
+		if (!GunUtils.checkInvForAmmo(inv, (ArrayList<ItemStack>)g.getProperty("AMMO"))){
+			setFireing(false);
 			return;
 		}
-		if(isReloading()){
+		if (isReloading()){
+			setFireing(false);
 			return;
 		}
-		else if(isDelaying()){
+		else if (isDelaying()){
+			setFireing(false);
 			return;
 		}
-		else{
-			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"));
-			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(getLocation(), gun, false));
+		else if(isOutOfAmmo(g)){
+			setFireing(false);
+			return;
+		}else{
+			PropertyContainer pc = new PropertyContainer(g.getProperties());
+			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv,(ArrayList<ItemStack>)g.getProperty("AMMO"));
+			if(usedAmmo != null){
+				Util.editProperties(usedAmmo, pc);
+			}
+			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(this.getLocation(), pc, false));
 			if(targets_damage.isEmpty()){
-				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, getLocation().getDirection().toLocation(getLocation().getWorld()),
-						(Projectile) g.getProperty("PROJECTILE"));
+				Location from = Util.getBlockInSight(this.getLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, this.getLocation().getDirection().toLocation(getLocation().getWorld()),
+						(Projectile) pc.getProperty("PROJECTILE"));
 			}
-			for(LivingEntity tar : targets_damage.keySet()){
-				if (tar.equals(getOwner().getPlayer())) {
-					continue;
+			for (LivingEntity tar : new HashSet<LivingEntity>(targets_damage.keySet())) {
+				int damage = targets_damage.get(tar);
+				Location from = Util.getBlockInSight(this.getLocation(), 2, 5).getLocation();
+				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) pc.getProperty("PROJECTILE"));
+				if (damage < 0){
+					targets_damage.put(tar, Math.abs(damage));
+					damage = targets_damage.get(tar);
 				}
-				Location from = Util.getBlockInSight(getLocation(), 2, 5).getLocation();
-				GunUtils.shootProjectile(from, tar.getEyeLocation(),(Projectile) g.getProperty("PROJECTILE"));
-				int damage = Math.abs(targets_damage.get(tar));
-				if(Utils.getRandomInteger(0, 100)<=(Integer)g.getProperty("CRITICAL")){
-					damage = tar.getHealth()+1000;
+				if (!((Integer) pc.getProperty("CRITICAL")<=0)&&Utils.getRandomInteger(1, 100) <= (Integer) pc.getProperty("CRITICAL")) {
+					damage = tar.getHealth() + 1;
 				}
-				if(usedAmmo!=null){
-					damage += usedAmmo.getDamage();
-				}
-				tar.damage(damage);
+				if(this.owner!=null)
+					tar.damage(damage, owner.getPlayer());
+				else
+					tar.damage(damage);
 			}
-			GunUtils.performEffects(this, new HashSet<LivingEntity>(targets_damage.keySet()), g);
+			
+			g.performEffects(this, new HashSet<LivingEntity>(new ArrayList<LivingEntity>(targets_damage.keySet())), pc);
 
-			GunUtils.removeAmmo(inv, (ArrayList<ItemStack>) g.getProperty("AMMO"));
-			
-			setFireCounter(g, getFireCounter(g)+1);
-			
-			if(!(g.getProperty("SHOTSOUND")==null)){
-				if((Integer)g.getProperty("SHOTDELAY")<5&&Utils.getRandomInteger(0, 100)<35){
-					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
-				}else{
-					Util.playCustomSound(GunsPlus.plugin, getLocation(), (String) g.getProperty("SHOTSOUND"), (Integer) g.getProperty("SHOTSOUNDVOLUME"));
+			if (!(pc.getProperty("SHOTSOUND") == null)) {
+				if ((Integer)pc.getProperty("SHOTDELAY") < 5
+						&& Utils.getRandomInteger(0, 100) < 35) {
+					Util.playCustomSound(GunsPlus.plugin, getLocation(),
+							(String) pc.getProperty("SHOTSOUND"),
+							(Integer) pc.getProperty("SHOTSOUNDVOLUME"));
+				} else {
+					Util.playCustomSound(GunsPlus.plugin, getLocation(),
+							(String) pc.getProperty("SHOTSOUND"),
+							(Integer) pc.getProperty("SHOTSOUNDVOLUME"));
 				}
-				
+
 			}
 			
-			if(GunsPlus.autoreload&&getFireCounter(g)>=(Integer)g.getProperty("SHOTSBETWEENRELOAD")) reload(g);
-			if((Integer)g.getProperty("SHOTDELAY")>0) delay(g);
+			GunUtils.removeAmmo(inv, (ArrayList<ItemStack>) pc.getProperty("AMMO"));
+			
+			setFireCounter(g, getFireCounter(g) + 1);
+			
+			if (GunsPlus.autoreload && getFireCounter(g) >= ((Number) pc.getProperty("SHOTSBETWEENRELOAD")).intValue())
+				reload(g);
+			if ((Integer) pc.getProperty("SHOTDELAY") > 0)
+				delay(g);
+			
+			setFireing(false);
 		}
 	}
 	
@@ -330,12 +351,12 @@ public class TripodData extends Shooter implements InventoryHolder {
 		this.gunLoc = gunLoc;
 	}
 
-	public List<Target> getTargets() {
+	public Set<Target> getTargets() {
 		return targets;
 	}
 
-	public void setTargets(List<Target> targets) {
-		this.targets = targets;
+	public void setTargets(Set<Target> tars) {
+		this.targets = tars;
 	}
 	
 	public String getOwnername() {

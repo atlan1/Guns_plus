@@ -66,7 +66,7 @@ public class GunsPlusListener implements Listener {
 				tpp.setChooserEnabled();
 			}else if (tpp.getId("APPLY").equals(b.getId())){
 				tpp.applyData();
-				tpp.close(sp);
+				tpp.close();
 			}else if (tpp.getId("ADD").equals(b.getId())&&tpp.getMode()==-1){
 				tpp.setAddMode();
 				tpp.setTargetChooser();
@@ -81,7 +81,9 @@ public class GunsPlusListener implements Listener {
 				tpp.setEditMode();
 				tpp.setTargetChooser();
 			}
+		tpp.getWidget(tpp.getId("LIST")).setDirty(true);
 		}
+		b.setDirty(true);
 	}
 	
 
@@ -89,8 +91,6 @@ public class GunsPlusListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
 		Action a = e.getAction();
-		if (GunsPlus.lwc != null)//do we need this here?
-			GunsPlus.lwc.wrapPlayer(p);
 		if (!PlayerUtils.hasSpoutcraft(p))return;
 		SpoutPlayer sp;
 		if(GunsPlus.mrb != null) {
