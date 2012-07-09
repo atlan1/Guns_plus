@@ -112,8 +112,7 @@ public class GunsPlusListener implements Listener {
 									td.setGun(tg);
 									GunUtils.removeGunInHand(sp);
 								}else{
-									if(GunsPlus.notifications)
-										PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack((GenericCustomItem)tg), 2000);
+									PlayerUtils.sendNotification(sp, "You can't mount a", GunUtils.getRawGunName(tg), new SpoutItemStack((GenericCustomItem)tg), 2000);
 								}
 							}else if(td.getGun()!=null&&sp.isSneaking()){
 								TripodPopup tpp = new TripodPopup(plugin, td);
@@ -241,12 +240,16 @@ public class GunsPlusListener implements Listener {
 		if(GunUtils.isGun(itemstack) && GunUtils.checkInvForGun(sp.getInventory(), GunUtils.getGun(itemstack))){
 			if(GunsPlus.showcase!=null&&GunsPlus.showcase.getItemByDrop(i)==null){
 				e.setCancelled(true);
-				i.remove();
-				sp.getInventory().setItem(sp.getInventory().firstEmpty(), itemstack);
+				if(sp.getInventory().firstEmpty()>=0){
+					sp.getInventory().setItem(sp.getInventory().firstEmpty(), itemstack);
+					i.remove();
+				}
 			}else if(GunsPlus.showcase==null){
 				e.setCancelled(true);
-				i.remove();
-				sp.getInventory().setItem(sp.getInventory().firstEmpty(), itemstack);
+				if(sp.getInventory().firstEmpty()>=0){
+					sp.getInventory().setItem(sp.getInventory().firstEmpty(), itemstack);
+					i.remove();
+				}
 			}
 		}
 	}
@@ -318,9 +321,7 @@ public class GunsPlusListener implements Listener {
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player p =  event.getPlayer();
-		if(GunsPlus.notifications) {
-			creditsDelayed(p);
-		}
+		creditsDelayed(p);
 	}
 	
 	@EventHandler
@@ -358,7 +359,7 @@ public class GunsPlusListener implements Listener {
 				Object g = Util.getGunsPlusMaterial(is.getName());
 				if(g instanceof Gun&&event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
 					if(!PlayerUtils.getPlayerBySpoutPlayer((SpoutPlayer) attacker).isFireing()){			
-						event.setDamage((Integer) ((Gun) g).getProperty("MELEE"));
+						event.setDamage(((Number) ((Gun) g).getProperty("MELEE")).intValue());
 					}
 				}
 			}

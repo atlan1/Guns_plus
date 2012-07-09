@@ -484,7 +484,7 @@ public class ConfigLoader {
 			
 			GunsPlus.warnings = ConfigLoader.generalConfig.getBoolean("show-warnings", true);
 			GunsPlus.debug = ConfigLoader.generalConfig.getBoolean("show-debug", false);
-			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("show-notifications", true);
+			GunsPlus.notifications = ConfigLoader.generalConfig.getBoolean("send-notifications", true);
 			GunsPlus.autoreload = ConfigLoader.generalConfig.getBoolean("auto-reload", true);
 			GunsPlus.useperms = ConfigLoader.generalConfig.getBoolean("use-permissions", true);
 			GunsPlus.toolholding = ConfigLoader.generalConfig.getBoolean("tool-like-gun-holding", true);

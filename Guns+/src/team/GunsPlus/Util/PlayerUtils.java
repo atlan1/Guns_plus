@@ -83,22 +83,17 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasSpoutcraft(Player p) {
-		SpoutPlayer sp = SpoutManager.getPlayer(p);
-		if (sp.isSpoutCraftEnabled()) {
-			return true;
-		}
-		return false;
+		return SpoutManager.getPlayer(p).isSpoutCraftEnabled();
 	}
 
-	public static void sendNotification(SpoutPlayer sp, String title,
-			String text, ItemStack icon, int duration) {
+	public static void sendNotification(SpoutPlayer sp, String title, String text, ItemStack icon, int duration) {
 		if(!GunsPlus.notifications) return;
 		if(title.length()>26){
-			Util.warn("Too long notification. Check your gun and addition names.");
+			Util.warn("Too long notification. Check your item names.");
 			title = title.replace(title.substring(25, title.length()-1),"");
 		}
 		if(text.length()>26){
-			Util.warn("Too long notification. Check your gun and addition names.");
+			Util.warn("Too long notification. Check your item names.");
 			text = text.replace(text.substring(25, text.length()-1),"");
 		}
 		sp.sendNotification(title, text, icon, duration);

@@ -199,11 +199,11 @@ public class GunsPlusPlayer extends LivingShooter {
 						&& Utils.getRandomInteger(0, 100) < 35) {
 					Util.playCustomSound(GunsPlus.plugin, getLocation(),
 							(String) pc.getProperty("SHOTSOUND"),
-							(Integer) pc.getProperty("SHOTSOUNDVOLUME"));
+							((Number) pc.getProperty("SHOTSOUNDVOLUME")).intValue());
 				} else {
 					Util.playCustomSound(GunsPlus.plugin, getLocation(),
 							(String) pc.getProperty("SHOTSOUND"),
-							(Integer) pc.getProperty("SHOTSOUNDVOLUME"));
+							((Number) pc.getProperty("SHOTSOUNDVOLUME")).intValue());
 				}
 
 			}
