@@ -15,9 +15,12 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.narrowtux.showcase.Showcase;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
+import team.ApiPlus.ApiPlus;
 import team.ApiPlus.API.PluginPlus;
 import team.ApiPlus.API.Type.BlockType;
 import team.ApiPlus.API.Type.ItemType;
+import team.ApiPlus.Manager.Loadout.LoadoutManager;
 import team.ApiPlus.Util.Task;
 import team.GunsPlus.API.GunsPlusAPI;
 import team.GunsPlus.Block.Tripod;
@@ -120,6 +123,7 @@ public class GunsPlus extends PluginPlus {
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
 		ConfigLoader.loadRecipes();
+		LoadoutManager.getInstance().read(plugin);
 		if(Tripod.tripodenabled) {
 			initTripod();
 			updateTripods();
@@ -170,6 +174,7 @@ public class GunsPlus extends PluginPlus {
 			showcase = (Showcase) show;
 			log.log(Level.INFO, PRE+" Plugged into Showcase!");
 		}
+		ApiPlus.addHook(plugin);
 	}
 	
 	private void updateHUD(){
@@ -230,7 +235,11 @@ public class GunsPlus extends PluginPlus {
 	}
 
 	@Override
-	public void loadConfig(FileConfiguration arg0) {
-		
+	public boolean loadConfig(FileConfiguration con) {
+		try {
+			return ConfigLoader.modify(con);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
