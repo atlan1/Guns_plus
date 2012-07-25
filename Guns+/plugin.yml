@@ -1,6 +1,6 @@
 name: GunsPlus
 main: team.GunsPlus.GunsPlus
-version: 1.5
+version: 1.5.1
 depend: [ApiPlus, Spout]
 soft-depend: [LWC, FurnaceAPI, WorldGuard, MachinaRedstoneBridge, Showcase]
 authors: [Atlan1, SirTyler]
@@ -33,13 +33,13 @@ permissions:
         default: true
     gunsplus.fire.all:
         description: Give permission to fire all guns.
-        default: false
+        default: true
     gunsplus.zoom.all:
         description: Give permission to zoom all guns.
-        default: false
+        default: true
     gunsplus.reload.all:
         description: Give permission to reload all guns.
-        default: false
+        default: true
     gunsplus.craft.all:
         description: Gives permission to crafting all guns.
-        default: false
+        default: true

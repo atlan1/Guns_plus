@@ -1,5 +1,6 @@
 package team.GunsPlus;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import team.ApiPlus.ApiPlus;
 import team.ApiPlus.API.PluginPlus;
 import team.ApiPlus.API.Type.BlockType;
 import team.ApiPlus.API.Type.ItemType;
+import team.ApiPlus.Manager.Loadout.Loadout;
 import team.ApiPlus.Manager.Loadout.LoadoutManager;
 import team.ApiPlus.Util.Task;
 import team.GunsPlus.API.GunsPlusAPI;
@@ -32,6 +34,8 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Item.GunItem;
 import team.GunsPlus.Manager.ConfigLoader;
 import team.GunsPlus.Manager.TripodDataHandler;
+import team.GunsPlus.Util.Metrics;
+import team.GunsPlus.Util.Metrics.Graph;
 import team.GunsPlus.Util.Util;
 import team.GunsPlus.Util.VersionChecker;
 
@@ -111,6 +115,7 @@ public class GunsPlus extends PluginPlus {
 		Bukkit.getPluginManager().registerEvents(new GunsPlusListener(this), this);
 		getCommand("guns+").setExecutor(new CommandEx(this));
 		api = new GunsPlusAPI(this);
+		metricStart();
 		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()+ " is now enabled.");
 	}
 
@@ -240,6 +245,32 @@ public class GunsPlus extends PluginPlus {
 			return ConfigLoader.modify(con);
 		} catch (Exception e) {
 			return false;
+		}
+	}
+	
+	public void metricStart() {
+		try {
+			Metrics met = new Metrics(this);
+			Graph g = met.createGraph("Weapon Loadouts Used");
+			List<Loadout> list = LoadoutManager.getInstance().getLoadouts(this);
+			if(list == null || list.isEmpty()) {
+				g.addPlotter(new Metrics.Plotter("None") {
+					@Override
+					public int getValue() {
+						return 1;
+					}
+				});
+			} else for(Loadout l : list) {
+				g.addPlotter(new Metrics.Plotter(l.getName()) {
+					@Override
+					public int getValue() {
+						return 1;
+					}
+				});
+			}
+			met.start();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
