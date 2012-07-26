@@ -40,6 +40,3 @@ permissions:
     gunsplus.reload.all:
         description: Give permission to reload all guns.
         default: true
-    gunsplus.craft.all:
-        description: Gives permission to crafting all guns.
-        default: true
