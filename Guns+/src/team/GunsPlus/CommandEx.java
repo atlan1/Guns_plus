@@ -15,11 +15,12 @@ public class CommandEx implements CommandExecutor{
 	public CommandEx(GunsPlus gunsPlus) {
 		plugin = gunsPlus;
 		help[0] = (ChatColor.GOLD + "------Guns+ Version:" + plugin.getDescription().getVersion() + "-------");
-		help[1] = (ChatColor.BLUE + "-   /Guns+ Credits   ~  Displays Credits of Guns+");
-		help[2] = (ChatColor.BLUE + "-   /Guns+ Reload    ~  Reloads Config");
-		help[3] = (ChatColor.BLUE + "-   /Guns+ List      ~  Lists all Loaded Items");
+		help[1] = (ChatColor.GOLD + "alias:" + plugin.getCommand("guns+").getAliases());
+		help[2] = (ChatColor.BLUE + "-   /Guns+ Credits   ~  Displays Credits of Guns+");
+		help[3] = (ChatColor.BLUE + "-   /Guns+ Reload    ~  Reloads Config");
+		help[4] = (ChatColor.BLUE + "-   /Guns+ List      ~  Lists all Loaded Items");
 	}
-	String[] help = new String[4];
+	String[] help = new String[5];
 
 	@SuppressWarnings("static-access")
 	@Override
@@ -41,7 +42,7 @@ public class CommandEx implements CommandExecutor{
 				sender.sendMessage(help);
 				return true;
 			} else if(cmd.equalsIgnoreCase("list")) {
-				if(!((Player) sender).hasPermission("gunsplus.command.list")) {
+				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.list")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					sender.sendMessage(ChatColor.BLUE + "---Guns----");

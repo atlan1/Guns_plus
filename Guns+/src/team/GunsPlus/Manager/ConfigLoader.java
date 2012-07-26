@@ -362,7 +362,7 @@ public class ConfigLoader {
 		Object[] recipeKeys = recipeConfig.getKeys(false).toArray();
 		for (Object key : recipeKeys) {
 			try {
-				if (((String) key).equalsIgnoreCase("name")) return;
+				if (!((String) key).equalsIgnoreCase("name")) {
 				YamlConfiguration defaultConfig = new YamlConfiguration();
 				defaultConfig.load(GunsPlus.plugin.getResource("recipes.yml"));
 				for (String node : defaultConfig.getConfigurationSection(
@@ -397,6 +397,7 @@ public class ConfigLoader {
 						.valueOf(recipeConfig.getString(key + ".type")
 								.toUpperCase());
 				RecipeManager.addRecipe(type, ingredients, result);
+				}
 			} catch (Exception e) {
 				Util.warn("Config Error:" + e.getMessage());
 				Util.debug(e);
