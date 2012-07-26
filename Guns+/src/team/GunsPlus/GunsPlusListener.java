@@ -238,7 +238,7 @@ public class GunsPlusListener implements Listener {
 		}
 		//make sure that the guns will not be stacked on pickup
 		if(GunUtils.isGun(itemstack) && GunUtils.checkInvForGun(sp.getInventory(), GunUtils.getGun(itemstack))){
-			if(GunsPlus.showcase!=null&&GunsPlus.showcase.getItemByDrop(i)==null){
+			if(GunsPlus.showcase!=null&&!GunsPlus.showcase.isShowCaseItem(i)){
 				e.setCancelled(true);
 				if(sp.getInventory().firstEmpty()>=0){
 					sp.getInventory().setItem(sp.getInventory().firstEmpty(), itemstack);

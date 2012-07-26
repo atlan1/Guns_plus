@@ -13,7 +13,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
-import com.narrowtux.showcase.Showcase;
+import com.miykeal.showCaseStandalone.ShowCaseStandalone;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import team.ApiPlus.ApiPlus;
@@ -42,7 +42,7 @@ public class GunsPlus extends PluginPlus {
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
 	public static MachinaRedstoneBridge mrb;
-	public static Showcase showcase;
+	public static ShowCaseStandalone showcase;
 	public static boolean useFurnaceAPI = false;
 	
 	private static GunsPlusAPI api;
@@ -82,6 +82,8 @@ public class GunsPlus extends PluginPlus {
 		customItemTypes.put("Addition", Addition.class);
 		customItemTypes.put("Ammo", Ammo.class);
 	}
+
+	
 
 	@Override
 	public void onDisable() {
@@ -171,7 +173,7 @@ public class GunsPlus extends PluginPlus {
 			log.log(Level.INFO, PRE+" Plugged into MachinaRedstoneBridge!");
 		}
 		if(show != null) {
-			showcase = (Showcase) show;
+			showcase = (ShowCaseStandalone) show;
 			log.log(Level.INFO, PRE+" Plugged into Showcase!");
 		}
 		ApiPlus.addHook(plugin);
