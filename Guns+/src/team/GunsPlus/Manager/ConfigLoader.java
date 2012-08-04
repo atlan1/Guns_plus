@@ -159,7 +159,7 @@ public class ConfigLoader {
 					}
 
 					List<Effect> effects = new ArrayList<Effect>(
-							ConfigParser.parseEffects(name + ".effects"));
+							ConfigParser.parseEffects(ConfigLoader.additionsConfig, name + ".effects"));
 
 					if (addtexture == null)
 						throw new Exception(
@@ -292,7 +292,7 @@ public class ConfigLoader {
 					}
 
 					List<Effect> effects = new ArrayList<Effect>(
-							ConfigParser.parseEffects(name + ".effects"));
+							ConfigParser.parseEffects(ConfigLoader.ammoConfig, name + ".effects"));
 
 					if (ammotexture == null)
 						throw new Exception(
@@ -494,7 +494,7 @@ public class ConfigLoader {
 					}
 
 					ArrayList<Effect> effects = new ArrayList<Effect>(
-							ConfigParser.parseEffects(gunnode + ".effects"));
+							ConfigParser.parseEffects(ConfigLoader.gunsConfig, gunnode + ".effects"));
 
 					ArrayList<ItemStack> ammo = new ArrayList<ItemStack>();
 					List<ItemStack> ammoStacks = ConfigUtil

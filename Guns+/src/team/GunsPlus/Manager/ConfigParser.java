@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
 import team.ApiPlus.API.Effect.Effect;
 import team.ApiPlus.API.Effect.EffectType;
 import team.ApiPlus.Manager.EffectManager;
@@ -45,24 +48,24 @@ public class ConfigParser {
     	return null;
     }
     
-    public static List<Effect> parseEffects(String path) throws Exception{
+    public static List<Effect> parseEffects(FileConfiguration config, String path) throws Exception{
     	List<Effect> effects = new ArrayList<Effect>();
-    	if(!ConfigLoader.gunsConfig.isConfigurationSection(path)||ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
-    	for(String effect_: ConfigLoader.gunsConfig.getConfigurationSection(path).getKeys(false)){
+    	if(!config.isConfigurationSection(path)||config.getConfigurationSection(path).getKeys(false).isEmpty()) return effects;
+    	for(String effect_: config.getConfigurationSection(path).getKeys(false)){
     		String newpath=path+"."+effect_;
-    		String type =  ConfigLoader.gunsConfig.getString(newpath+".type");
+    		String type =  config.getString(newpath+".type");
     		EffectType efftyp = EffectType.valueOf(type.toUpperCase());
-    		EffectSection effsec = buildEffectTarget(newpath+".target");
+    		EffectSection effsec = buildEffectTarget(config, newpath+".target");
     		if(Util.isAllowedInEffectSection(efftyp, effsec))
-    			effects.add(buildEffect(effsec, efftyp, newpath));
+    			effects.add(buildEffect(config, effsec, efftyp, newpath));
     		else throw new Exception("The effect type "+efftyp.toString().toLowerCase()+" is not allowed to have the target "+effsec);
     	}
     	return effects;
     }
     
-    private static EffectSection buildEffectTarget(String path) {
-    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(ConfigLoader.gunsConfig.getMapList(path+".args"));
-    	EffectSection effsec = EffectSection.valueOf(ConfigLoader.gunsConfig.getString(path+".type").toUpperCase());
+    private static EffectSection buildEffectTarget(FileConfiguration f, String path) {
+    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(f.getMapList(path+".args"));
+    	EffectSection effsec = EffectSection.valueOf(f.getString(path+".type").toUpperCase());
     	if(args.isEmpty()||args==null) return effsec;
     	switch(effsec){
 	    	case TARGETLOCATION:
@@ -78,9 +81,9 @@ public class ConfigParser {
     	return effsec;
     }
     
-    private static Effect buildEffect(EffectSection es, EffectType t, String path) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+    private static Effect buildEffect(FileConfiguration config, EffectSection es, EffectType t, String path) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
     	Effect e = null;
-    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(ConfigLoader.gunsConfig.getMapList(path+".args"));
+    	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(config.getMapList(path+".args"));
     		switch(t){
 		    	case EXPLOSION:
 		    		e =  EffectManager.getInstance().buildEffect(t.getEffectName(), searchKeyInMapList(args, "size").get("size")); 
