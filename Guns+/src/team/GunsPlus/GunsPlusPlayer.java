@@ -159,7 +159,7 @@ public class GunsPlusPlayer extends LivingShooter {
 			PropertyContainer pc = new PropertyContainer(g.getProperties());
 			Ammo usedAmmo = GunUtils.getFirstCustomAmmo(inv,(ArrayList<ItemStack>)g.getProperty("AMMO"));
 			if(usedAmmo != null){
-				Util.editProperties(usedAmmo, pc);
+				Util.setProperties(usedAmmo, pc);
 			}
 			
 			HashMap<LivingEntity, Integer> targets_damage = new HashMap<LivingEntity, Integer>(GunUtils.getTargets(player.getEyeLocation(), pc, isZooming()));

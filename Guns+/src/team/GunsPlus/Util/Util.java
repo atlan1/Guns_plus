@@ -1,9 +1,6 @@
 package team.GunsPlus.Util;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -42,20 +39,28 @@ public class Util {
 		return (TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class));
 	}
 	
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static void editProperties(final PropertyHolder a, PropertyHolder b) {
-		for(String s : PropertyManager.getPropertiesInstanceOf(a, Number.class, false).keySet()){
-			b.setProperty(s, ((Number)a.getProperty(s)).doubleValue()+((Number)b.getProperty(s)).doubleValue());
+	public static void setProperties(final PropertyHolder parent, PropertyHolder child) {
+		setNumberProperties(parent, child);
+		setStringProperties(parent, child);
+		setCollectionProperties(parent, child);
+	}
+	
+	public static void setNumberProperties(final PropertyHolder parent, PropertyHolder child) {
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, Number.class, false).keySet()){
+			child.setProperty(s, ((Number)parent.getProperty(s)).doubleValue()+((Number)child.getProperty(s)).doubleValue());
 		}
-		for(String s : PropertyManager.getPropertiesInstanceOf(a, List.class, false).keySet()){
-			b.setProperty(s, ((List)b.getProperty(s)).addAll((List) a.getProperty(s)));
+	}
+	
+	public static void setStringProperties(final PropertyHolder parent, PropertyHolder child) {
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, String.class, false).keySet()){
+			child.setProperty(s, (String)parent.getProperty(s));
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.putAll(PropertyManager.getPropertiesAssignableFrom(a, Collection.class, true));
-		map.putAll(PropertyManager.getPropertiesAssignableFrom(a, Number.class, true));
-
-		for(String s : map.keySet()){
-			b.setProperty(s, map.get(s));
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void setCollectionProperties(final PropertyHolder parent, PropertyHolder child) {
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, Collection.class, false).keySet()){
+			((Collection)child.getProperty(s)).addAll((Collection)parent.getProperty(s));
 		}
 	}
 	

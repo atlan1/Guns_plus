@@ -34,13 +34,7 @@ public class ItemBuilder{
 		}
 		GunsPlus.allGuns.add(gun);
 		PropertyManager.copyProperties(parent, gun, true);
-		Util.editProperties(a, gun);
-//		for(String s : PropertyManager.getPropertiesAssignableFrom(a, Number.class, false).keySet()){
-//			gun.editProperty(s, ((Number)a.getProperty(s)).doubleValue()+((Number)gun.getProperty(s)).doubleValue());
-//		}
-//		for(String s : PropertyManager.getPropertiesAssignableFrom(a, Number.class, true).keySet()){
-//			gun.editProperty(s, PropertyManager.getPropertiesAssignableFrom(a, Number.class, true).get(s));
-//		}
+		Util.setProperties(a, gun);
 		return gun;
 	}
 
