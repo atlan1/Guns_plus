@@ -36,7 +36,6 @@ import team.GunsPlus.Manager.TripodDataHandler;
 import team.GunsPlus.Util.Metrics;
 import team.GunsPlus.Util.Metrics.Graph;
 import team.GunsPlus.Util.Util;
-import team.GunsPlus.Util.VersionChecker;
 
 public class GunsPlus extends PluginPlus {
 	public static String PRE = "[Guns+]";
@@ -105,7 +104,7 @@ public class GunsPlus extends PluginPlus {
 	public void onEnable() {
 		plugin = this;
 		ConfigLoader.config();
-		new VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
+		new team.ApiPlus.Util.VersionChecker(this,"http://dev.bukkit.org/server-mods/guns/files.rss");
 		this.registerBlockTypes(customBlockTypes);
 		this.registerItemTypes(customItemTypes);
 		hook();
