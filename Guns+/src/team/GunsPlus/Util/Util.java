@@ -24,7 +24,7 @@ import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
 import team.GunsPlus.Block.Tripod;
 import team.GunsPlus.Block.TripodData;
-import team.GunsPlus.Enum.EffectSection;
+import team.GunsPlus.Effect.EffectTargetImpl;
 import team.GunsPlus.Enum.PlayerTarget;
 import team.GunsPlus.Enum.Target;
 import team.GunsPlus.Enum.TargetType;
@@ -260,9 +260,9 @@ public class Util {
 		}
 	}
 
-	public static boolean isAllowedInEffectSection(EffectType efftyp,
-			EffectSection effsec) {
-		switch (effsec) {
+	public static boolean isAllowedWithTarget(EffectType efftyp,
+			EffectTargetImpl efftar) {
+		switch (efftar.getType()) {
 		case SHOOTER:
 			switch (efftyp) {
 			case EXPLOSION:

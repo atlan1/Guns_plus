@@ -1,4 +1,4 @@
-package team.GunsPlus.Enum;
+package team.GunsPlus.Effect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,13 @@ import java.util.Map;
 import team.ApiPlus.API.PropertyHolder;
 import team.ApiPlus.API.Effect.EffectTarget;
 
-public enum EffectSection implements EffectTarget, PropertyHolder{
-	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED();
+public class EffectTargetImpl implements EffectTarget, PropertyHolder{
+
+	private EffectTargetType ett;
 	
+	public EffectTargetImpl(EffectTargetType ett){
+		this.ett = ett;
+	}
 	private Map<String, Object> properties = new HashMap<String, Object>();
 
 	
@@ -49,5 +53,9 @@ public enum EffectSection implements EffectTarget, PropertyHolder{
 	public void setProperty(String id, Object property) {
 		addProperty(id, property);
 		editProperty(id, property);
+	}
+	
+	public EffectTargetType getType() {
+		return ett;
 	}
 }

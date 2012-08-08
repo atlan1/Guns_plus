@@ -12,8 +12,9 @@ import team.ApiPlus.API.Effect.EffectType;
 import team.ApiPlus.Manager.EffectManager;
 import team.ApiPlus.Util.ConfigUtil;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.Effect.EffectTargetImpl;
+import team.GunsPlus.Effect.EffectTargetType;
 import team.GunsPlus.Enum.Animal;
-import team.GunsPlus.Enum.EffectSection;
 import team.GunsPlus.Enum.FireBehavior;
 import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Enum.Monster;
@@ -55,33 +56,34 @@ public class ConfigParser {
     		String newpath=path+"."+effect_;
     		String type =  config.getString(newpath+".type");
     		EffectType efftyp = EffectType.valueOf(type.toUpperCase());
-    		EffectSection effsec = buildEffectTarget(config, newpath+".target");
-    		if(Util.isAllowedInEffectSection(efftyp, effsec))
-    			effects.add(buildEffect(config, effsec, efftyp, newpath));
-    		else throw new Exception("The effect type "+efftyp.toString().toLowerCase()+" is not allowed to have the target "+effsec);
+    		EffectTargetImpl efftar = buildEffectTarget(config, newpath+".target");
+    		if(Util.isAllowedWithTarget(efftyp, efftar))
+    			effects.add(buildEffect(config, efftar, efftyp, newpath));
+    		else throw new Exception("The effect type "+efftyp.toString().toLowerCase()+" is not allowed to have the target "+efftar);
     	}
     	return effects;
     }
     
-    private static EffectSection buildEffectTarget(FileConfiguration f, String path) {
+    private static EffectTargetImpl buildEffectTarget(FileConfiguration f, String path) {
     	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(f.getMapList(path+".args"));
-    	EffectSection effsec = EffectSection.valueOf(f.getString(path+".type").toUpperCase());
-    	if(args.isEmpty()||args==null) return effsec;
-    	switch(effsec){
+    	EffectTargetType ett = EffectTargetType.valueOf(f.getString(path+".type").toUpperCase());
+    	EffectTargetImpl efftar = new EffectTargetImpl(ett);
+    	if(args.isEmpty()||args==null) return efftar;
+    	switch(efftar.getType()){
 	    	case TARGETLOCATION:
-	    		effsec.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
+	    		efftar.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
 	    		break;
 	    	case FLIGHTPATH:
-	    		effsec.addProperty("LENGTH", searchKeyInMapList(args, "length").get("length"));
+	    		efftar.addProperty("LENGTH", searchKeyInMapList(args, "length").get("length"));
 	    		break;
 	    	case SHOOTERLOCATION:
-	    		effsec.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
+	    		efftar.addProperty("RADIUS", searchKeyInMapList(args, "radius").get("radius"));
 	    		break;
     	}
-    	return effsec;
+    	return efftar;
     }
     
-    private static Effect buildEffect(FileConfiguration config, EffectSection es, EffectType t, String path) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+    private static Effect buildEffect(FileConfiguration config, EffectTargetImpl es, EffectType t, String path) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
     	Effect e = null;
     	ArrayList<Map<?, ?>> args = new ArrayList<Map<?,?>>(config.getMapList(path+".args"));
     		switch(t){
