@@ -6,6 +6,8 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -17,7 +19,11 @@ import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
-import team.ApiPlus.API.PropertyHolder;
+import team.ApiPlus.API.Property.CollectionProperty;
+import team.ApiPlus.API.Property.NumberProperty;
+import team.ApiPlus.API.Property.ObjectProperty;
+import team.ApiPlus.API.Property.PropertyHolder;
+import team.ApiPlus.API.Property.StringProperty;
 import team.ApiPlus.API.Effect.EffectType;
 import team.ApiPlus.Manager.PropertyManager;
 import team.ApiPlus.Util.Utils;
@@ -34,49 +40,81 @@ import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Manager.ConfigLoader;
 
 public class Util {
-	
+
 	public static boolean isPlayerTarget(Target t) {
-		return (TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class));
+		return(TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class));
 	}
-	
+
 	public static void setProperties(final PropertyHolder parent, PropertyHolder child) {
 		setNumberProperties(parent, child);
 		setStringProperties(parent, child);
 		setCollectionProperties(parent, child);
+		setObjectProperties(parent, child);
 	}
-	
+
 	public static void setNumberProperties(final PropertyHolder parent, PropertyHolder child) {
-		for(String s : PropertyManager.getPropertiesInstanceOf(parent, Number.class, false).keySet()){
-			child.setProperty(s, ((Number)parent.getProperty(s)).doubleValue()+((Number)child.getProperty(s)).doubleValue());
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, NumberProperty.class, false).keySet()) {
+//			System.out.println("PARENT: "+parent+"; "+s+": "+(NumberProperty) parent.getProperty(s)+"; MOD: "+ new NumberProperty(((NumberProperty) parent.getProperty(s)).modify(((NumberProperty) child.getProperty(s)).getValue())));
+			NumberProperty np = new NumberProperty(((NumberProperty) parent.getProperty(s)).getValue());
+			if(child.getProperty(s)!=null){
+				NumberProperty cp = new NumberProperty(((NumberProperty) child.getProperty(s)).getValue());
+				Number n = np.modify(cp.getValue());
+				np = new NumberProperty(n);
+			}
+			
+			child.setProperty(s, new NumberProperty(np.getValue()));
 		}
 	}
-	
+
 	public static void setStringProperties(final PropertyHolder parent, PropertyHolder child) {
-		for(String s : PropertyManager.getPropertiesInstanceOf(parent, String.class, false).keySet()){
-			child.setProperty(s, (String)parent.getProperty(s));
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, StringProperty.class, false).keySet()) {
+			StringProperty np = new StringProperty(((StringProperty) parent.getProperty(s)).getValue());
+			if(child.getProperty(s)!=null){
+				StringProperty cp = new StringProperty(((StringProperty) child.getProperty(s)).getValue());
+				np = new StringProperty(np.modify(cp.getValue()));
+			}
+			child.setProperty(s, new StringProperty(np.getValue()));
 		}
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void setCollectionProperties(final PropertyHolder parent, PropertyHolder child) {
-		for(String s : PropertyManager.getPropertiesInstanceOf(parent, Collection.class, false).keySet()){
-			((Collection)child.getProperty(s)).addAll((Collection)parent.getProperty(s));
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, CollectionProperty.class, false).keySet()) {
+			CollectionProperty np = new CollectionProperty((Collection) ((CollectionProperty) parent.getProperty(s)).getValue());
+			if(child.getProperty(s)!=null){
+				CollectionProperty cp = new CollectionProperty((Collection) ((CollectionProperty) child.getProperty(s)).getValue());
+				np = new CollectionProperty((Collection) np.modify((Collection) cp.getValue()));
+			}
+			child.setProperty(s, new CollectionProperty((Collection) np.getValue()));
 		}
 	}
-	
-	public static Block getBlockInSight(Location l, int blockIndex, int maxradius){
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void setObjectProperties(final PropertyHolder parent, PropertyHolder child) {
+		for(String s : PropertyManager.getPropertiesInstanceOf(parent, ObjectProperty.class, false).keySet()) {
+			ObjectProperty np = new ObjectProperty(((ObjectProperty) parent.getProperty(s)).getValue());
+			if(child.getProperty(s)!=null){
+				ObjectProperty cp = new ObjectProperty(((ObjectProperty) child.getProperty(s)).getValue());
+				np = new ObjectProperty(np.modify(cp.getValue()));
+			}
+			child.setProperty(s, new ObjectProperty(np.getValue()));
+		}
+	}
+
+	public static Block getBlockInSight(Location l, int blockIndex, int maxradius) {
 		BlockIterator bi = new BlockIterator(l.getWorld(), l.toVector(), l.getDirection(), 0d, maxradius);
 		Block b = null;
-		for(int i = 0; i<blockIndex; i++){
-			if(bi.hasNext()){
-				b =  bi.next(); 
-			}else break;
+		for(int i = 0; i < blockIndex; i++) {
+			if(bi.hasNext()) {
+				b = bi.next();
+			} else
+				break;
 		}
 		return b;
 	}
 
 	public static void warn(String msg) {
-		if (GunsPlus.warnings) {
+		if(GunsPlus.warnings) {
 			GunsPlus.log.warning(GunsPlus.PRE + " " + msg);
 		}
 	}
@@ -84,16 +122,15 @@ public class Util {
 	public static void info(String msg) {
 		GunsPlus.log.info(GunsPlus.PRE + " " + msg);
 	}
-	
-	public static void debug(Exception e){
-		if(GunsPlus.debug){
+
+	public static void debug(Exception e) {
+		if(GunsPlus.debug) {
 			GunsPlus.log.info(GunsPlus.PRE + "[Debug] " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	public static Projectile launchProjectile(Class<? extends Projectile> c,
-			Location from, Location to, float speed) {
+	public static Projectile launchProjectile(Class<? extends Projectile> c, Location from, Location to, float speed) {
 		Projectile e = from.getWorld().spawn(from, c);
 		e.setVelocity(to.toVector().multiply(speed));
 		Bukkit.getPluginManager().callEvent(new ProjectileLaunchEvent(e));
@@ -101,10 +138,10 @@ public class Util {
 	}
 
 	public static boolean enteredTripod(SpoutPlayer sp) {
-		for (TripodData td : GunsPlus.allTripodBlocks) {
-			if (td.getOwner() == null)
+		for(TripodData td : GunsPlus.allTripodBlocks) {
+			if(td.getOwner() == null)
 				continue;
-			if (td.getOwner().getPlayer().equals(sp) && td.isEntered()) {
+			if(td.getOwner().getPlayer().equals(sp) && td.isEntered()) {
 				return true;
 			}
 		}
@@ -112,10 +149,10 @@ public class Util {
 	}
 
 	public static TripodData getTripodDataOfEntered(SpoutPlayer sp) {
-		for (TripodData td : GunsPlus.allTripodBlocks) {
-			if (td.getOwner() == null)
+		for(TripodData td : GunsPlus.allTripodBlocks) {
+			if(td.getOwner() == null)
 				continue;
-			if (td.getOwner().getPlayer().equals(sp) && td.isEntered()) {
+			if(td.getOwner().getPlayer().equals(sp) && td.isEntered()) {
 				return td;
 			}
 		}
@@ -123,8 +160,8 @@ public class Util {
 	}
 
 	public static TripodData loadTripodData(Block b) {
-		for (TripodData td : GunsPlus.allTripodBlocks)
-			if (td.getLocation().getBlock().equals(b))
+		for(TripodData td : GunsPlus.allTripodBlocks)
+			if(td.getLocation().getBlock().equals(b))
 				return td;
 		return null;
 	}
@@ -134,8 +171,8 @@ public class Util {
 	}
 
 	public static boolean isTripod(Location l) {
-		for (TripodData td : GunsPlus.allTripodBlocks)
-			if (td.getLocation().toVector().equals(l.toVector()))
+		for(TripodData td : GunsPlus.allTripodBlocks)
+			if(td.getLocation().toVector().equals(l.toVector()))
 				return true;
 		return false;
 	}
@@ -147,12 +184,14 @@ public class Util {
 	public static boolean canSee(final Location observer, final Location observed, int range) {
 		Location o = observer.clone();
 		Location w = observed.clone();
-		if(o.toVector().distance(w.toVector())>range) return false;
+		if(o.toVector().distance(w.toVector()) > range)
+			return false;
 		BlockIterator bitr = new BlockIterator(Utils.setLookingAt(o, w), 0, range);
-		while (bitr.hasNext()) {
+		while(bitr.hasNext()) {
 			Block b = bitr.next();
-			if(b.equals(w.getBlock())) return true;
-			if (!Utils.isTransparent(b)&&!isTripod(b 	)) {
+			if(b.equals(w.getBlock()))
+				return true;
+			if(!Utils.isTransparent(b) && !isTripod(b)) {
 				break;
 			}
 		}
@@ -160,7 +199,7 @@ public class Util {
 	}
 
 	public static Location getMiddle(final Location l, float YShift) {
- 		Location loc = l.clone();
+		Location loc = l.clone();
 		loc = loc.getBlock().getLocation();
 		Vector vec = loc.toVector();
 		vec.add(new Vector(0.5, YShift, 0.5));
@@ -169,102 +208,90 @@ public class Util {
 	}
 
 	public static boolean isGunsPlusMaterial(String name) {
-		for (int j = 0; j < GunsPlus.allGuns.size(); j++) {
-			if (((GenericCustomItem)GunsPlus.allGuns.get(j)).getName().equalsIgnoreCase(name))
+		for(int j = 0; j < GunsPlus.allGuns.size(); j++) {
+			if(((GenericCustomItem) GunsPlus.allGuns.get(j)).getName().equalsIgnoreCase(name))
 				return true;
 		}
-		for (int j = 0; j < GunsPlus.allAmmo.size(); j++) {
-			if (GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name))
+		for(int j = 0; j < GunsPlus.allAmmo.size(); j++) {
+			if(GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name))
 				return true;
 		}
-		for (int j = 0; j < GunsPlus.allAdditions.size(); j++) {
-			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name))
+		for(int j = 0; j < GunsPlus.allAdditions.size(); j++) {
+			if(GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name))
 				return true;
 		}
-		if(Tripod.tripodenabled&&GunsPlus.tripod.getName().equals(name))
+		if(Tripod.tripodenabled && GunsPlus.tripod.getName().equals(name))
 			return true;
 		return false;
 	}
 
 	public static Object getGunsPlusMaterial(String name) {
 		Object cm = null;
-		if(!isGunsPlusMaterial(name)) return cm;
-		for (int i = 0; i < GunsPlus.allGuns.size(); i++) {
-			if (((GenericCustomItem)GunsPlus.allGuns.get(i)).getName().equalsIgnoreCase(name)) {
+		if(!isGunsPlusMaterial(name))
+			return cm;
+		for(int i = 0; i < GunsPlus.allGuns.size(); i++) {
+			if(((GenericCustomItem) GunsPlus.allGuns.get(i)).getName().equalsIgnoreCase(name)) {
 				cm = GunsPlus.allGuns.get(i);
 				return cm;
 			}
 		}
-		for (int j = 0; j < GunsPlus.allAmmo.size(); j++) {
-			if (GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name)) {
+		for(int j = 0; j < GunsPlus.allAmmo.size(); j++) {
+			if(GunsPlus.allAmmo.get(j).getName().equalsIgnoreCase(name)) {
 				cm = GunsPlus.allAmmo.get(j);
 				return cm;
 			}
 		}
-		for (int j = 0; j < GunsPlus.allAdditions.size(); j++) {
-			if (GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name)) {
+		for(int j = 0; j < GunsPlus.allAdditions.size(); j++) {
+			if(GunsPlus.allAdditions.get(j).getName().equalsIgnoreCase(name)) {
 				cm = GunsPlus.allAdditions.get(j);
 				return cm;
 			}
 		}
-		if(Tripod.tripodenabled&&name.equals(GunsPlus.tripod.getName()))
+		if(Tripod.tripodenabled && name.equals(GunsPlus.tripod.getName()))
 			cm = GunsPlus.tripod;
 		return cm;
 	}
-	
-	public static void playCustomSound(GunsPlus plugin, Location l, String url,
-			int volume) {
+
+	public static void playCustomSound(GunsPlus plugin, Location l, String url, int volume) {
 		SoundManager SM = SpoutManager.getSoundManager();
 		SM.playGlobalCustomSoundEffect(plugin, url, false, l, 40, volume);
 	}
 
 	public static void printCustomIDs() {
-		if (ConfigLoader.generalConfig.getBoolean("id-info-guns", true)) {
-			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
-					+ " ------------  ID's of the guns: -----------------");
-			if (GunsPlus.allGuns.isEmpty())
+		if(ConfigLoader.generalConfig.getBoolean("id-info-guns", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE + " ------------  ID's of the guns: -----------------");
+			if(GunsPlus.allGuns.isEmpty())
 				GunsPlus.log.log(Level.INFO, "EMPTY");
-			for (Gun gun : GunsPlus.allGuns) {
-				GunsPlus.log.log(Level.INFO, "ID of " + ((GenericCustomItem) gun).getName() + ":"
-						+ new SpoutItemStack((GenericCustomItem)gun).getTypeId() + ":"
-						+ new SpoutItemStack((GenericCustomItem)gun).getDurability());
+			for(Gun gun : GunsPlus.allGuns) {
+				GunsPlus.log.log(Level.INFO, "ID of " + ((GenericCustomItem) gun).getName() + ":" + new SpoutItemStack((GenericCustomItem) gun).getTypeId() + ":" + new SpoutItemStack((GenericCustomItem) gun).getDurability());
 			}
 		}
-		if (ConfigLoader.generalConfig.getBoolean("id-info-ammo", true)) {
-			GunsPlus.log.log(Level.INFO, GunsPlus.PRE
-					+ " ------------  ID's of the ammo: -----------------");
-			if (GunsPlus.allAmmo.isEmpty())
+		if(ConfigLoader.generalConfig.getBoolean("id-info-ammo", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE + " ------------  ID's of the ammo: -----------------");
+			if(GunsPlus.allAmmo.isEmpty())
 				GunsPlus.log.log(Level.INFO, "EMPTY");
-			for (Ammo ammo : GunsPlus.allAmmo) {
-				GunsPlus.log.log(Level.INFO, "ID of " + ammo.getName() + ":"
-						+ new SpoutItemStack(ammo).getTypeId() + ":"
-						+ new SpoutItemStack(ammo).getDurability());
+			for(Ammo ammo : GunsPlus.allAmmo) {
+				GunsPlus.log.log(Level.INFO, "ID of " + ammo.getName() + ":" + new SpoutItemStack(ammo).getTypeId() + ":" + new SpoutItemStack(ammo).getDurability());
 			}
 		}
-		if (ConfigLoader.generalConfig.getBoolean("id-info-additions", true)) {
-			GunsPlus.log
-					.log(Level.INFO,
-							GunsPlus.PRE
-									+ " ------------  ID's of the additions: -----------------");
-			if (GunsPlus.allAdditions.isEmpty())
+		if(ConfigLoader.generalConfig.getBoolean("id-info-additions", true)) {
+			GunsPlus.log.log(Level.INFO, GunsPlus.PRE + " ------------  ID's of the additions: -----------------");
+			if(GunsPlus.allAdditions.isEmpty())
 				GunsPlus.log.log(Level.INFO, "EMPTY");
-			for (Addition add : GunsPlus.allAdditions) {
-				GunsPlus.log.log(Level.INFO, "ID of " + add.getName() + ":"
-						+ new SpoutItemStack(add).getTypeId() + ":"
-						+ new SpoutItemStack(add).getDurability());
+			for(Addition add : GunsPlus.allAdditions) {
+				GunsPlus.log.log(Level.INFO, "ID of " + add.getName() + ":" + new SpoutItemStack(add).getTypeId() + ":" + new SpoutItemStack(add).getDurability());
 			}
 		}
-		if(Tripod.tripodenabled){
-			info(" ------------ loaded the tripod block --------------");
-			info(" ID: "+new SpoutItemStack(GunsPlus.tripod).getTypeId()+":"+new SpoutItemStack(GunsPlus.tripod).getDurability());
+		if(Tripod.tripodenabled) {
+			info(" ------------ Loaded the tripod block --------------");
+			info(" ID: " + new SpoutItemStack(GunsPlus.tripod).getTypeId() + ":" + new SpoutItemStack(GunsPlus.tripod).getDurability());
 		}
 	}
 
-	public static boolean isAllowedWithTarget(EffectType efftyp,
-			EffectTargetImpl efftar) {
-		switch (efftar.getType()) {
+	public static boolean isAllowedWithTarget(EffectType efftyp, EffectTargetImpl efftar) {
+		switch(efftar.getType()){
 		case SHOOTER:
-			switch (efftyp) {
+			switch(efftyp){
 			case EXPLOSION:
 				return false;
 			case LIGHTNING:
@@ -286,7 +313,7 @@ public class Util {
 			}
 			break;
 		case SHOOTERLOCATION:
-			switch (efftyp) {
+			switch(efftyp){
 			case EXPLOSION:
 				return true;
 			case LIGHTNING:
@@ -308,7 +335,7 @@ public class Util {
 			}
 			break;
 		case TARGETLOCATION:
-			switch (efftyp) {
+			switch(efftyp){
 			case EXPLOSION:
 				return true;
 			case LIGHTNING:
@@ -330,7 +357,7 @@ public class Util {
 			}
 			break;
 		case TARGETENTITY:
-			switch (efftyp) {
+			switch(efftyp){
 			case EXPLOSION:
 				return false;
 			case LIGHTNING:
@@ -352,7 +379,7 @@ public class Util {
 			}
 			break;
 		case FLIGHTPATH:
-			switch (efftyp) {
+			switch(efftyp){
 			case EXPLOSION:
 				return true;
 			case LIGHTNING:
@@ -380,11 +407,30 @@ public class Util {
 	}
 
 	public static boolean isBlockAction(Action a) {
-		switch (a) {
+		switch(a){
 		case RIGHT_CLICK_BLOCK:
 			return true;
 		case LEFT_CLICK_BLOCK:
 			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isHumanoid(Entity e) {
+		if(!(e instanceof LivingEntity)) return false;
+		LivingEntity le = (LivingEntity)e;
+		switch(le.getType()){
+			case ZOMBIE:
+			case SKELETON:
+			case PIG_ZOMBIE:
+			case WITCH:
+			case PLAYER:
+			case ENDERMAN:
+			case WITHER_SKULL:
+			case VILLAGER:
+			case BLAZE:
+			case CREEPER:
+				return true;
 		}
 		return false;
 	}

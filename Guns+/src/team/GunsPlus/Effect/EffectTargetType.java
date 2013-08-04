@@ -1,5 +1,5 @@
 package team.GunsPlus.Effect;
 
-public enum EffectTargetType{
+public enum EffectTargetType {
 	TARGETLOCATION(), TARGETENTITY(), SHOOTER(), SHOOTERLOCATION(), FLIGHTPATH(), UNDEFINED();
 }

@@ -10,28 +10,28 @@ import team.GunsPlus.Enum.KeyType;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.PlayerUtils;
 
-public class ReloadBinding implements BindingExecutionDelegate{
+public class ReloadBinding implements BindingExecutionDelegate {
 
 	private GunsPlus plugin;
-	
-	public ReloadBinding(GunsPlus p, KeyType kt){
+
+	public ReloadBinding(GunsPlus p, KeyType kt) {
 		plugin = p;
 		SpoutManager.getKeyBindingManager().registerBinding("Reload", kt.getKey(), "If pressed guns will reload.", this, plugin);
 	}
-	
+
 	@Override
 	public void keyPressed(KeyBindingEvent ev) {
-		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)){
+		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)) {
 			SpoutPlayer sp = ev.getPlayer();
-			if(GunUtils.holdsGun(sp)){
-				PlayerUtils.getPlayerBySpoutPlayer(sp).reload(GunUtils.getGunInHand(sp));
+			if(GunUtils.holdsGun(sp)) {
+				PlayerUtils.getPlayerBySpoutPlayer(sp).reload(GunUtils.getGunInHand(sp), false);
 			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyBindingEvent ev) {
-		//no effect
+		// no effect
 	}
-	
+
 }

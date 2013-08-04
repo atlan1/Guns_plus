@@ -8,48 +8,57 @@ import team.GunsPlus.Item.Gun;
 
 /**
  * Guns+ Event called whenever Gun is Zoomed In
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
-public class GunZoomInEvent extends Event{
-    private static final HandlerList handlers = new HandlerList();
-    private Player player = null;
-    private Gun gun = null;
-    
-    public GunZoomInEvent(Player p, Gun g) {
-    	player = p;
-    	gun = g;
-    }
-    
-    /**
-     * Bukkit Event Method
-     * @see <a href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit Event</a>
-     */
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-    
-    /**
-     * Bukkit Event Method
-     * @see <a href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit Event</a>
-     */
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-    
-    /**
-     * Get Player associated with Event
-     * @return Player that triggered Event
-     */
-    public Player getPlayer() {
-    	return player;
-    }
-    
-    /**
-     * Get Gun associated with Event
-     * @return Player that triggered Event
-     */
-    public Gun getGun() {
-    	return gun;
-    }
+public class GunZoomInEvent extends Event {
+	private static final HandlerList handlers = new HandlerList();
+	private Player player = null;
+	private Gun gun = null;
+
+	public GunZoomInEvent(Player p, Gun g) {
+		player = p;
+		gun = g;
+	}
+
+	/**
+	 * Bukkit Event Method
+	 * 
+	 * @see <a
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
+	 */
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+
+	/**
+	 * Bukkit Event Method
+	 * 
+	 * @see <a
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
+	 */
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
+	/**
+	 * Get Player associated with Event
+	 * 
+	 * @return Player that triggered Event
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
+	/**
+	 * Get Gun associated with Event
+	 * 
+	 * @return Player that triggered Event
+	 */
+	public Gun getGun() {
+		return gun;
+	}
 }
