@@ -12,7 +12,9 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.item.GenericCustomItem;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
+import team.ApiPlus.API.Property.CollectionProperty;
 import team.GunsPlus.GunsPlus;
+import team.GunsPlus.GunsPlusPlayer;
 import team.GunsPlus.Item.Gun;
 import team.GunsPlus.Util.GunUtils;
 import team.GunsPlus.Util.PlayerUtils;
@@ -28,15 +30,9 @@ public class HUD {
 	public HUD(GunsPlus gp, int x, int y, String tex) {
 		this.plugin = gp;
 		backtex = new GenericTexture(tex);
-		item.setAnchor(WidgetAnchor.SCALE).setWidth(15).setHeight(15)
-				.setPriority(RenderPriority.Normal).setX(GunsPlus.hudX + 13)
-				.setY(GunsPlus.hudY + 5);
-		label.setAnchor(WidgetAnchor.SCALE).setWidth(30).setHeight(15)
-				.setPriority(RenderPriority.High).setX(GunsPlus.hudX + 5)
-				.setY(GunsPlus.hudY + 37);
-		backtex.setAnchor(WidgetAnchor.SCALE).setWidth(45).setHeight(50)
-				.setPriority(RenderPriority.High).setX(GunsPlus.hudX)
-				.setY(GunsPlus.hudY);
+		item.setAnchor(WidgetAnchor.SCALE).setWidth(15).setHeight(15).setPriority(RenderPriority.Normal).setX(GunsPlus.hudX + 13).setY(GunsPlus.hudY + 5);
+		label.setAnchor(WidgetAnchor.SCALE).setWidth(30).setHeight(15).setPriority(RenderPriority.High).setX(GunsPlus.hudX + 5).setY(GunsPlus.hudY + 37);
+		backtex.setAnchor(WidgetAnchor.SCALE).setWidth(45).setHeight(50).setPriority(RenderPriority.High).setX(GunsPlus.hudX).setY(GunsPlus.hudY);
 		backtex.setPriority(RenderPriority.High);
 		label.setPriority(RenderPriority.High);
 		item.setPriority(RenderPriority.High);
@@ -44,41 +40,40 @@ public class HUD {
 
 	@SuppressWarnings("unchecked")
 	public void update(SpoutPlayer sp) {
-		if (GunUtils.holdsGun(sp)
-				&& GunUtils.isHudEnabled(GunUtils.getGunInHand(sp))) {
+		if(GunUtils.holdsGun(sp) && GunUtils.isHudEnabled(GunUtils.getGunInHand(sp))) {
+			GunsPlusPlayer gp = PlayerUtils.getPlayerBySpoutPlayer(sp);
 			backtex.setVisible(true);
 			label.setVisible(true);
 			item.setVisible(true);
 			Gun g = GunUtils.getGun(sp.getItemInHand());
+			ArrayList<ItemStack> ammoTypes = (ArrayList<ItemStack>) ((CollectionProperty<ItemStack>)g.getProperty("AMMO")).getValue();
+//			Inventory inv = sp.getInventory();
+//			Ammo a = GunUtils.getFirstCustomAmmo(inv, ammoTypes);
+//			SpoutItemStack sis = GunUtils.getFirstCustomAmmoStack(inv, ammoTypes); 
 			SpoutItemStack i = new SpoutItemStack((GenericCustomItem) g);
 			item.setTypeId(i.getTypeId()).setData(i.getDurability());
-			int count = PlayerUtils.getPlayerBySpoutPlayer(sp).getFireCounter(g);
-			int total = 0;
-			if (Util.enteredTripod(sp)) {
-				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
-			} else {
-				total = GunUtils.getAmmoCount(sp.getInventory(), (ArrayList<ItemStack>) g.getProperty("AMMO"));
-			}
-			int mag = ((Number) g.getProperty("SHOTSBETWEENRELOAD")).intValue();
-			if (count < 0) {
-				count = 0;
-			}
-			if (total < 0) {
-				total = 0;
-			}
-			if (mag < 0) {
-				mag = 0;
-			}
-			int current;
-			if (total <= mag) {
+//			int count = PlayerUtils.getPlayerBySpoutPlayer(sp).getFireCounter(g); old way
+//			int count = 0;
+//			if(a!=null) count = sis.getEnchantmentLevel(SpoutEnchantment.DURABILITY);
+			int total = gp.getTotalAmmo(g);
+			if(Util.enteredTripod(sp))
+				total = GunUtils.getAmmoCount(Util.getTripodDataOfEntered(sp).getInventory(), ammoTypes);
+//			int mag = ((NumberProperty) g.getProperty("SHOTSBETWEENRELOAD")).getValue().intValue();
+//			int mag = a!=null?sis.getEnchantmentLevel(SpoutEnchantment.MAX_DURABILITY):1;
+//			System.out.println("MAG: "+mag+"; TOTAL: "+total+"; COUNT: "+count);
+//			if(count < 0)
+//				count = 0;
+//			if(total < 0)
+//				total = 0;
+//			if(mag < 0)
+//				mag = 0;
+			int current = gp.getCurrentClipSize(g);
+			int mag = gp.getMaxClipSize(g);
+			if(total <= mag)
 				current = total;
-			} else {
-				current = (mag - count);
-			}
-			if (total == 0) {
+			if(total == 0)
 				current = 0;
-			}
-			label.setText(current + "/" + total);
+			label.setText(current + "|" + (total-current));
 		} else {
 			backtex.setVisible(false);
 			label.setVisible(false);
@@ -110,4 +105,5 @@ public class HUD {
 	public void setLabel(GenericLabel label) {
 		this.label = label;
 	}
+
 }

@@ -8,9 +8,9 @@ Sniper:
     # this is the damage dealt by the gun: 8 = 4 hearts
     damage: 8 
     # this is the damage dealt by the gun when used in hand-to-hand combat
-    melee-damage: 1
+    melee-damage: 3
     # this is the damage dealt by the gun if it is a headshot
-    head-shot-damage: 20
+    head-shot-damage: 17
     # this is the range within that the gun will hit an entity (in blocks)
     range: 70
     # this is the time the player needs to reload the gun in ticks
@@ -19,9 +19,12 @@ Sniper:
     shot-delay: 40
     # this is the amount of shots from reload to reload -> clipsize
     shots-between-reload: 6
+    # the durability is the amount of shots you can fire with a gun before it will break; Keep in mind that you need higher values for automatic guns with large magazines
+    # if you put a negative value in here the gun lasts forever
+    durability: 1000
     # this is the speed of the knockback of one shot.
     knockback: 40
-    # this is the recoil of one shot in degree. Note: this is just a vertical recoil and will stop the players movement.
+    # this is the vertical recoil of one shot in degree. Note: this recoil type will teleport the player and therefore stop its movement.
     recoil: 0
     # this is the url of the texture you want to use for the gun.
     texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/sniper.png'
@@ -38,30 +41,31 @@ Sniper:
         volume: 75
     # this is the ammo the gun will consume. You have to take the name from the ammo.yml or you put a bukkit item id/name; NOTE: You can assign multiple ammo types aswell.
     ammo: 'SniperAmmo, sulphur'
-    # the zoomfactor of the gun; you can specify how to zoom in general.yml
+    # the zoomfactor of the gun; you can specify the zoom key in general.yml
     zoom-factor: 9
-    # this is the shooted projectile; there are following types: ARROW, SNOWBALL, EGG, FIREBALL, FIRECHARGE, ENDERPEARL, NONE
+    # this is the shot projectile; there are following types: ARROW, SNOWBALL, EGG, FIREBALL, FIRECHARGE, ENDERPEARL, NONE
     projectile:
         type: 'NONE'
         speed: 0
     # here you can define the accuracy of the gun: the random-factor basically defines a certain hit randomness; the spread angle, separated by the pointer (->) defines the spread if zoomed in or out
-    # missing-chance defines a chance of missing the target in percent. e.g. 50 means the gun misses every second shot. Again the pointer separates between zoomed or not
+    # missing-chance defines a chance of missing the target in percent. e.g. 50 means the gun misses about every second shot. Again the pointer separates between zoomed or not
     # this nodes can be modified to very custom accuracy values. 
     accuracy: 
-        random-factor: 3.0
+        random-factor: 1.1
         spread-angle: '3->0'
         missing-chance: '60->5'
+        bullet-count: 1
     # defines the de-/increase of the damage per block (e.g. 1 would be an increase of 1 per 1 block distance to the target, -1 would decrease the damage by one per block)
-    damage-change: -0.1
+    damage-change: -0.2
     # here you put the probability of a critical hit, which means a one-hit-kill. 100 is every shoot, 1 is very rare.
-    critical: 10
+    critical: 5
     # this node sets the weight of the gun, this will modify the walk speed of the player that holds the gun
     weight: 30
     # specifies if the gun will be shown in the hud or not.
     hud-enabled: true
     # with this node you can set the available additions for this gun, use NONE for no Addition
     additions: Silencer, ExtraScope, Bayonet
-    # this sets wheater you can mount a gun on the tripod or not
+    # this sets weather you can mount a gun on the tripod or not
     mountable: false
     # if you put false in here you can't shoot with this gun at all, but you can configure it like mountable true and shootable false so that you can only use it if mounted
     shootable: true
@@ -69,8 +73,8 @@ Sniper:
     fire-behavior: single
     # this is/are the effect/s which is/are played when the gun shoots
     effects:
-    # In this section you can define your own effects that will occur when you fire the gun, see the Configuration Page on BukkitDev for further explanations
-    # This is just an unique name to differentiate between the effects
+    # In this section you can define your own effects that will perform when you fire the gun, see the Configuration Page on BukkitDev for further explanations
+    # This is an unique name to differentiate between the effects (you can call it whatever you want)
         smoke_effect:
     # The type of the effect
             type: particle

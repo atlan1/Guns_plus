@@ -21,16 +21,17 @@ public class ReloadBinding implements BindingExecutionDelegate {
 
 	@Override
 	public void keyPressed(KeyBindingEvent ev) {
-		if (ev.getScreenType().equals(ScreenType.GAME_SCREEN)) {
+		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)) {
 			SpoutPlayer sp = ev.getPlayer();
-			if (GunUtils.holdsGun(sp)) {
-				PlayerUtils.getPlayerBySpoutPlayer(sp).reload(GunUtils.getGunInHand(sp));
+			if(GunUtils.holdsGun(sp)) {
+				PlayerUtils.getPlayerBySpoutPlayer(sp).reload(GunUtils.getGunInHand(sp), false);
 			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyBindingEvent ev) {
-		//no effect
+		// no effect
 	}
+
 }

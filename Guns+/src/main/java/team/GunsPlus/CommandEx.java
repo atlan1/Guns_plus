@@ -10,7 +10,6 @@ import org.getspout.spoutapi.material.item.GenericCustomItem;
 import team.GunsPlus.Item.Gun;
 
 public class CommandEx implements CommandExecutor {
-
 	private GunsPlus plugin;
 
 	public CommandEx(GunsPlus gunsPlus) {
@@ -21,33 +20,34 @@ public class CommandEx implements CommandExecutor {
 		help[3] = (ChatColor.BLUE + "-   /Guns+ Reload    ~  Reloads Config");
 		help[4] = (ChatColor.BLUE + "-   /Guns+ List      ~  Lists all Loaded Items");
 	}
+
 	String[] help = new String[5];
 
 	@SuppressWarnings("static-access")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args.length == 1) {
+		if(args.length == 1) {
 			String cmd = args[0];
-			if (cmd.equalsIgnoreCase("credits")) {
+			if(cmd.equalsIgnoreCase("credits")) {
 				sender.sendMessage(GunsPlusListener.credit);
 				return true;
-			} else if (cmd.equalsIgnoreCase("reload")) {
-				if (sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.reload")) {
+			} else if(cmd.equalsIgnoreCase("reload")) {
+				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.reload")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					plugin.reload();
 					sender.sendMessage(ChatColor.YELLOW + GunsPlus.PRE + " Configuration files reloaded!");
 				}
 				return true;
-			} else if (cmd.equalsIgnoreCase("help")) {
+			} else if(cmd.equalsIgnoreCase("help")) {
 				sender.sendMessage(help);
 				return true;
-			} else if (cmd.equalsIgnoreCase("list")) {
-				if (sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.list")) {
+			} else if(cmd.equalsIgnoreCase("list")) {
+				if(sender instanceof Player && !((Player) sender).hasPermission("gunsplus.command.list")) {
 					sender.sendMessage(ChatColor.RED + "Permission Denied");
 				} else {
 					sender.sendMessage(ChatColor.BLUE + "---Guns----");
-					for (Gun c : plugin.allGuns) {
+					for(Gun c : plugin.allGuns) {
 						sender.sendMessage(ChatColor.GRAY + "- " + ((GenericCustomItem) c).getName());
 					}
 
@@ -57,4 +57,5 @@ public class CommandEx implements CommandExecutor {
 		}
 		return false;
 	}
+
 }

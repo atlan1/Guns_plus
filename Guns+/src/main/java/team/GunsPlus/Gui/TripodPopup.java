@@ -52,6 +52,7 @@ public class TripodPopup extends GenericPopup {
 	private GenericButton add = new GenericButton("add");
 	private GenericLabel working = new GenericLabel("WORKING");
 	private GenericLabel entered = new GenericLabel("ENTERED");
+
 	private int mode = -1;
 
 	public TripodPopup(GunsPlus plugin, TripodData td) {
@@ -147,7 +148,7 @@ public class TripodPopup extends GenericPopup {
 
 		this.attachWidgets(plugin, title, auto, manu, apply, add, targets, list, nfield, tok, del, edit, combo_type, combo_name, general, working, entered);
 
-		if (data.isAutomatic()) {
+		if(data.isAutomatic()) {
 			auto.setSelected(true);
 			setChooserEnabled();
 		} else {
@@ -156,25 +157,25 @@ public class TripodPopup extends GenericPopup {
 		}
 
 		List<String> ls = new ArrayList<String>();
-		for (TargetType t : TargetType.values()) {
+		for(TargetType t : TargetType.values()) {
 			ls.add(t.name());
 		}
 		combo_type.setItems(ls);
 		setComboNameAnimal();
 
-		for (Target t : data.getTargets()) {
+		for(Target t : data.getTargets()) {
 			list.addItem(new ListWidgetItem(TargetType.getTargetType(t.getClass()).name(), Util.isPlayerTarget(t) ? ((PlayerTarget) t).getName() : t.getEntityType().toString()));
 		}
 		update = new Task(GunsPlus.plugin) {
 			public void run() {
-				if (!(combo_type.getSelectedItem() == null || combo_name.getSelectedItem() == null) && (mode == 0 || mode == 1)) {
-					if (combo_type.getSelectedItem().equalsIgnoreCase("PLAYER")) {
+				if(!(combo_type.getSelectedItem() == null || combo_name.getSelectedItem() == null) && (mode == 0 || mode == 1)) {
+					if(combo_type.getSelectedItem().equalsIgnoreCase("PLAYER")) {
 						setPlayerChooser();
-					} else if (combo_type.getSelectedItem().equalsIgnoreCase("MONSTER")) {
+					} else if(combo_type.getSelectedItem().equalsIgnoreCase("MONSTER")) {
 						setComboNameMonster();
 						removePlayerChooser();
 						setTargetChooser();
-					} else if (combo_type.getSelectedItem().equalsIgnoreCase("ANIMAL")) {
+					} else if(combo_type.getSelectedItem().equalsIgnoreCase("ANIMAL")) {
 						setComboNameAnimal();
 						removePlayerChooser();
 						setTargetChooser();
@@ -184,15 +185,15 @@ public class TripodPopup extends GenericPopup {
 					combo_name.setDirty(true);
 					combo_type.setDirty(true);
 				}
-				if (!(list.getItems().length <= 0)) {
+				if(!(list.getItems().length <= 0)) {
 					list.setVisible(true);
 				} else {
 					list.setVisible(false);
 				}
-				if (data.isWorking()) {
+				if(data.isWorking()) {
 					setEverythingInvisible();
 					working.setVisible(true);
-				} else if (data.isEntered()) {
+				} else if(data.isEntered()) {
 					setEverythingInvisible();
 					entered.setVisible(true);
 				}
@@ -219,15 +220,15 @@ public class TripodPopup extends GenericPopup {
 	}
 
 	public void setTargetChooser() {
-		if (mode == 0) {
+		if(mode == 0) {
 			combo_type.setVisible(true);
 			combo_name.setVisible(true);
 			tok.setVisible(true);
-		} else if (mode == 1) {
-			if (list.getSelectedItem() != null) {
+		} else if(mode == 1) {
+			if(list.getSelectedItem() != null) {
 				String t = list.getSelectedItem().getTitle();
-				for (String s : combo_type.getItems()) {
-					if (s.equalsIgnoreCase(t)) {
+				for(String s : combo_type.getItems()) {
+					if(s.equalsIgnoreCase(t)) {
 						combo_type.setSelection(combo_type.getItems().indexOf(s));
 					}
 				}
@@ -235,7 +236,7 @@ public class TripodPopup extends GenericPopup {
 			combo_type.setVisible(true);
 			combo_name.setVisible(true);
 			tok.setVisible(true);
-		} else if (mode == 2) {
+		} else if(mode == 2) {
 			tok.setVisible(true);
 		} else {
 		}
@@ -243,12 +244,12 @@ public class TripodPopup extends GenericPopup {
 
 	public void applyData() {
 		Set<Target> tars = new HashSet<Target>();
-		for (ListWidgetItem i : list.getItems()) {
+		for(ListWidgetItem i : list.getItems()) {
 			Target t = ConfigParser.parseTarget(i.getTitle(), i.getText());
 			tars.add(t);
 		}
 		data.setTargets(tars);
-		if (auto.isSelected()) {
+		if(auto.isSelected()) {
 			data.setAutomatic(true);
 		} else {
 			data.setAutomatic(false);
@@ -256,13 +257,13 @@ public class TripodPopup extends GenericPopup {
 	}
 
 	public void setEverythingInvisible() {
-		for (Widget w : this.getAttachedWidgets()) {
+		for(Widget w : this.getAttachedWidgets()) {
 			w.setVisible(false);
 		}
 	}
 
 	public void setEverythingVisible() {
-		for (Widget w : this.getAttachedWidgets()) {
+		for(Widget w : this.getAttachedWidgets()) {
 			w.setVisible(true);
 		}
 	}
@@ -307,25 +308,24 @@ public class TripodPopup extends GenericPopup {
 	}
 
 	public void performListAction() {
-		if (mode == 0) {
-			if (combo_type.getSelectedItem() != null && combo_name.getSelectedItem() != null) {
+		if(mode == 0) {
+			if(combo_type.getSelectedItem() != null && combo_name.getSelectedItem() != null) {
 				Target t = ConfigParser.parseTarget(combo_type.getSelectedItem(), combo_type.getSelectedItem().equals("Player") ? nfield.getText() : combo_name.getSelectedItem());
-				if (t != null) {
+				if(t != null) {
 					list.addItem(new ListWidgetItem(TargetType.getTargetType(t.getClass()).name(), (TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class)) ? ((PlayerTarget) t).getName() : t.getEntityType().toString()));
 				}
 			}
-		} else if (mode == 1) {
-			if (combo_type.getSelectedItem() != null && combo_name.getSelectedItem() != null) {
+		} else if(mode == 1) {
+			if(combo_type.getSelectedItem() != null && combo_name.getSelectedItem() != null) {
 				Target t = ConfigParser.parseTarget(combo_type.getSelectedItem(), (combo_type.getSelectedItem().equals("Player")) ? nfield.getText() : combo_name.getSelectedItem());
-				if (t != null && list.getSelectedItem() != null) {
+				if(t != null && list.getSelectedItem() != null) {
 					list.getSelectedItem().setTitle(TargetType.getTargetType(t.getClass()).name());
 					list.getSelectedItem().setText((TargetType.getTargetType(t.getClass()).getTargetClass().equals(PlayerTarget.class)) ? ((PlayerTarget) t).getName() : t.getEntityType().toString());
 				}
 			}
-		} else if (mode == 2) {
-			if (list.getSelectedItem() != null) {
+		} else if(mode == 2) {
+			if(list.getSelectedItem() != null)
 				list.removeItem(list.getSelectedItem());
-			}
 		}
 		setNoMode();
 	}
@@ -337,9 +337,8 @@ public class TripodPopup extends GenericPopup {
 
 	@Override
 	public void onScreenClose(ScreenCloseEvent e) {
-		if (update.isTaskRunning()) {
+		if(update.isTaskRunning())
 			update.stopTask();
-		}
 	}
 
 	public TripodData getData() {
@@ -372,7 +371,7 @@ public class TripodPopup extends GenericPopup {
 
 	public void setComboNameMonster() {
 		List<String> ls = new ArrayList<String>();
-		for (Monster m : Monster.values()) {
+		for(Monster m : Monster.values()) {
 			ls.add(m.toString());
 		}
 		combo_name.setItems(ls);
@@ -380,7 +379,7 @@ public class TripodPopup extends GenericPopup {
 
 	public void setComboNameAnimal() {
 		List<String> ls = new ArrayList<String>();
-		for (Animal m : Animal.values()) {
+		for(Animal m : Animal.values()) {
 			ls.add(m.toString());
 		}
 		combo_name.setItems(ls);

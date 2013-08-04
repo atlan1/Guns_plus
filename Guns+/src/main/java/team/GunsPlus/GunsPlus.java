@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.kellerkindt.scs.ShowCaseStandalone;
+import me.lyneira.MachinaRedstoneBridge.MachinaRedstoneBridge;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -36,16 +39,23 @@ import team.GunsPlus.Util.Metrics.Graph;
 import team.GunsPlus.Util.Util;
 
 public class GunsPlus extends PluginPlus {
-
 	public static String PRE = "[Guns+]";
+
 	public static GunsPlus plugin;
 	public static LWC lwc;
 	public static WorldGuardPlugin wg;
+	public static MachinaRedstoneBridge mrb;
+	public static ShowCaseStandalone showcase;
 	public static boolean useFurnaceAPI = false;
+
 	private static GunsPlusAPI api;
+
 	public static Logger log = Bukkit.getLogger();
+
 	public static List<GunsPlusPlayer> GunsPlusPlayers = new ArrayList<GunsPlusPlayer>();
+
 	public static boolean warnings = true;
+	public static boolean checkVersion = true;
 	public static boolean debug = false;
 	public static boolean notifications = true;
 	public static boolean autoreload = true;
@@ -58,11 +68,13 @@ public class GunsPlus extends PluginPlus {
 	public static KeyType zoomKey = new KeyType("right", true);
 	public static KeyType fireKey = new KeyType("left", false);
 	public static KeyType reloadKey = new KeyType("R", false);
+
 	public static List<Gun> allGuns = new ArrayList<Gun>();
 	public static List<Ammo> allAmmo = new ArrayList<Ammo>();
 	public static List<Addition> allAdditions = new ArrayList<Addition>();
 	public static List<TripodData> allTripodBlocks = Collections.synchronizedList(new ArrayList<TripodData>());
 	public static Tripod tripod;
+
 	public static Map<String, Class<? extends BlockType>> customBlockTypes = new HashMap<String, Class<? extends BlockType>>();
 	public static Map<String, Class<? extends ItemType>> customItemTypes = new HashMap<String, Class<? extends ItemType>>();
 
@@ -75,22 +87,21 @@ public class GunsPlus extends PluginPlus {
 
 	@Override
 	public void onDisable() {
-		if (Tripod.tripodenabled = true) {
-			for (TripodData td : allTripodBlocks) {
+		if(Tripod.tripodenabled = true) {
+			for(TripodData td : allTripodBlocks) {
 				td.destroy();
 			}
 			TripodDataHandler.saveAll();
 		}
 		plugin.resetFields();
-		log.log(Level.INFO, PRE + " version " + getDescription().getVersion()
-				+ " is now disabled.");
+		log.log(Level.INFO, PRE + " version " + getDescription().getVersion() + " is now disabled.");
 	}
 
 	@Override
 	public void onEnable() {
 		plugin = this;
 		ConfigLoader.config();
-		//new team.ApiPlus.Util.VersionChecker(this, "http://dev.bukkit.org/server-mods/guns/files.rss");
+		if(checkVersion) new team.ApiPlus.Util.VersionChecker(this, "http://dev.bukkit.org/server-mods/guns/files.rss");
 		this.registerBlockTypes(customBlockTypes);
 		this.registerItemTypes(customItemTypes);
 		hook();
@@ -109,25 +120,24 @@ public class GunsPlus extends PluginPlus {
 
 	private void init() {
 		ConfigLoader.loadGeneral();
-		if (Tripod.tripodenabled) {
+		if(Tripod.tripodenabled) {
 			tripod = new Tripod(this, Tripod.tripodTexture);
 		}
 		ConfigLoader.loadAdditions();
 		ConfigLoader.loadAmmo();
 		ConfigLoader.loadGuns();
 		ConfigLoader.loadRecipes();
-		if (Tripod.tripodenabled) {
+		if(Tripod.tripodenabled) {
 			initTripod();
 			updateTripods();
 		}
-		if (hudenabled) {
+		if(hudenabled)
 			updateHUD();
-		}
 	}
 
 	private void initTripod() {
 		TripodDataHandler.setNextId(ConfigLoader.dataDB.getKeys(false).size());
-		TripodDataHandler.allowLoading();//uhh ugly hack ;)
+		TripodDataHandler.allowLoading();// uhh ugly hack ;)
 		TripodDataHandler.loadAll();
 		TripodDataHandler.denyLoading();
 	}
@@ -137,31 +147,41 @@ public class GunsPlus extends PluginPlus {
 		Plugin lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		Plugin furnaceAPI = getServer().getPluginManager().getPlugin("FurnaceAPI");
 		Plugin worldguard = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (spout != null) {
+		Plugin machina = getServer().getPluginManager().getPlugin("MachinaRedstoneBridge");
+		Plugin show = getServer().getPluginManager().getPlugin("Showcase");
+		if(spout != null) {
 			log.log(Level.INFO, PRE + " Plugged into Spout!");
 		} else {
-			//disable this, because it would do nothing without spout
+			// disable this, because it would do nothing without spout
 			log.log(Level.INFO, PRE + " disableing because Spout is missing!");
 			this.setEnabled(false);
 		}
-		if (lwcPlugin != null) {
+		if(lwcPlugin != null) {
 			lwc = ((LWCPlugin) lwcPlugin).getLWC();
 			log.log(Level.INFO, PRE + " Plugged into LWC!");
 		}
-		if (furnaceAPI != null) {
+		if(furnaceAPI != null) {
 			useFurnaceAPI = true;
 			log.log(Level.INFO, PRE + " Plugged into FurnaceAPI!");
 		}
-		if (worldguard != null) {
+		if(worldguard != null) {
 			wg = (WorldGuardPlugin) worldguard;
 			log.log(Level.INFO, PRE + " Plugged into WorldGuard!");
+		}
+		if(machina != null) {
+			mrb = (MachinaRedstoneBridge) machina;
+			log.log(Level.INFO, PRE + " Plugged into MachinaRedstoneBridge!");
+		}
+		if(show != null) {
+			showcase = (ShowCaseStandalone) show;
+			log.log(Level.INFO, PRE + " Plugged into Showcase!");
 		}
 	}
 
 	private void updateHUD() {
 		Task update = new Task(this) {
 			public void run() {
-				for (GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
+				for(GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
 					gp.getHUD().update(gp.getPlayer());
 				}
 			}
@@ -170,12 +190,11 @@ public class GunsPlus extends PluginPlus {
 	}
 
 	private void updateTripods() {
-		if (Tripod.tripodenabled == false) {
+		if(Tripod.tripodenabled == false)
 			return;
-		}
 		Task update = new Task(this) {
 			public void run() {
-				for (TripodData td : GunsPlus.allTripodBlocks) {
+				for(TripodData td : GunsPlus.allTripodBlocks) {
 					td.update();
 					TripodDataHandler.save(td);
 				}
@@ -187,7 +206,7 @@ public class GunsPlus extends PluginPlus {
 				try {
 					ConfigLoader.dataDB.save(ConfigLoader.dataFile);
 					ConfigLoader.dataDB.load(ConfigLoader.dataFile);
-				} catch (Exception e) {
+				} catch(Exception e) {
 					Util.debug(e);
 				}
 			}
@@ -207,7 +226,7 @@ public class GunsPlus extends PluginPlus {
 			ConfigLoader.config();
 			resetFields();
 			init();
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Util.debug(e);
 			Util.warn("An error occured during reloading: " + e.getMessage());
 		}
@@ -221,7 +240,7 @@ public class GunsPlus extends PluginPlus {
 	public boolean loadConfig(FileConfiguration con) {
 		try {
 			return ConfigLoader.modify(con);
-		} catch (Exception e) {
+		} catch(Exception e) {
 			return false;
 		}
 	}
@@ -231,15 +250,15 @@ public class GunsPlus extends PluginPlus {
 			Metrics met = new Metrics(this);
 			Graph g = met.createGraph("Weapon Loadouts Used");
 			List<Loadout> list = LoadoutManager.getInstance().getLoadouts(this);
-			if (list == null || list.isEmpty()) {
+			if(list == null || list.isEmpty()) {
 				g.addPlotter(new Metrics.Plotter("None") {
 					@Override
 					public int getValue() {
 						return 1;
 					}
 				});
-			} else {
-				for (Loadout l : list) {
+			} else
+				for(Loadout l : list) {
 					g.addPlotter(new Metrics.Plotter(l.getName()) {
 						@Override
 						public int getValue() {
@@ -247,9 +266,8 @@ public class GunsPlus extends PluginPlus {
 						}
 					});
 				}
-			}
 			met.start();
-		} catch (IOException e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}

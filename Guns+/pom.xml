@@ -2,9 +2,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>me.znickq</groupId>
+	<groupId>team.GunsPlus</groupId>
 	<artifactId>GunsPlus</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.9.3</version>
 	<packaging>jar</packaging>
 
 	<name>GunsPlus</name>
@@ -36,20 +36,9 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.4.6-R0.2-SNAPSHOT</version>
+			<version>1.6.2-R0.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-	 <dependency>
-	  <groupId>com.griefcraft</groupId>
-	  <artifactId>lwc</artifactId>
-	  <version>4.1.1</version>
-	  <type>jar</type>
-	 </dependency>
-	 <dependency>
-	  <groupId>${project.groupId}</groupId>
-	  <artifactId>ApiPlus</artifactId>
-	  <version>${project.version}</version>
-	 </dependency>
-	</dependencies>
+    </dependencies>
 </project>

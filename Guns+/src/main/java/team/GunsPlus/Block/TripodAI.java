@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-
+import team.ApiPlus.API.Property.*;
 import team.ApiPlus.Util.Task;
 import team.ApiPlus.Util.Utils;
 import team.GunsPlus.GunsPlus;
@@ -27,15 +27,14 @@ public class TripodAI {
 	public void startAI() {
 		activity = new Task(GunsPlus.plugin) {
 			public void run() {
-				if (td.getDroppedGun() == null) {
+				if(td.getDroppedGun() == null)
 					return;
-				}
-				if (counter >= 5) {
+				if(counter >= 5) {
 					lastTarget = getNearestTarget();
 					counter = 0;
 				}
-				if (lastTarget != null) {
-					if (Util.canSee(td.getLocation(), lastTarget.getEyeLocation(), (Integer) td.getGun().getProperty("RANGE"))) {
+				if(lastTarget != null) {
+					if(Util.canSee(td.getLocation(), lastTarget.getEyeLocation(), ((NumberProperty) td.getGun().getProperty("RANGE")).getValue().intValue())) {
 						aim();
 						fire();
 					}
@@ -47,7 +46,7 @@ public class TripodAI {
 	}
 
 	public void stopAI() {
-		if (activity != null) {
+		if(activity != null) {
 			activity.stopTask();
 		}
 	}
@@ -61,15 +60,15 @@ public class TripodAI {
 	}
 
 	private LivingEntity getNearestTarget() {
-		int r = (Integer) td.getGun().getProperty("RANGE");
+		int r = ((NumberProperty) td.getGun().getProperty("RANGE")).getValue().intValue();
 		List<Entity> near = new ArrayList<Entity>(Utils.getNearbyEntities(td.getLocation(), r, r, r));
 		List<LivingEntity> les = new ArrayList<LivingEntity>();
 		LivingEntity le = null;
-		for (Target tar : td.getTargets()) {
-			for (Entity e : near) {
-				if (e.getType().equals(tar.getEntityType()) && e instanceof LivingEntity) {
-					if (tar instanceof PlayerTarget) {
-						if (((PlayerTarget) tar).getName().equals(((org.bukkit.entity.Player) e).getName())) {
+		for(Target tar : td.getTargets()) {
+			for(Entity e : near) {
+				if(e.getType().equals(tar.getEntityType()) && e instanceof LivingEntity) {
+					if(tar instanceof PlayerTarget) {
+						if(((PlayerTarget) tar).getName().equals(((org.bukkit.entity.Player) e).getName())) {
 							les.add((LivingEntity) e);
 						}
 					} else {
@@ -78,12 +77,11 @@ public class TripodAI {
 				}
 			}
 		}
-		if (les.isEmpty()) {
+		if(les.isEmpty())
 			return le;
-		}
 		le = les.get(0);
-		for (LivingEntity l : les) {
-			if (l.getLocation().toVector().distance(td.getLocation().toVector()) < le.getLocation().toVector().distance(td.getLocation().toVector())) {
+		for(LivingEntity l : les) {
+			if(l.getLocation().toVector().distance(td.getLocation().toVector()) < le.getLocation().toVector().distance(td.getLocation().toVector())) {
 				le = l;
 			}
 		}

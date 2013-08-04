@@ -5,4 +5,5 @@ import org.bukkit.entity.EntityType;
 public interface Target {
 
 	public EntityType getEntityType();
+
 }

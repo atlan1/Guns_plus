@@ -24,8 +24,6 @@ public class Tripod extends BlockType {
 	public static boolean tripodenabled = true;
 	public static boolean forcezoom = true;
 	public static float hardness = 2.0f;
-	public void Wood(String name, int id, int data) {
-	}
 
 	public Tripod(GunsPlus plugin, String texture) {
 		super(plugin, "Tripod", false);
@@ -33,30 +31,25 @@ public class Tripod extends BlockType {
 		this.setHardness(hardness);
 		this.setLightLevel(MaterialData.cobblestone.getLightLevel());
 		this.setItemDrop(new SpoutItemStack(this, 1));
-		this.setStepSound(SoundEffect.STEP_WOOD);
+		this.setStepSound(SoundEffect.WOOD_CLICK);
 		this.setBlockDesign(new TripodDesign(plugin, texture));
 	}
 
 	@Override
 	public void onBlockPlace(World w, int x, int y, int z, LivingEntity le) {
 		Location l = new Location(w, x, y, z);
-		if (le instanceof SpoutPlayer) {
+		if(le instanceof SpoutPlayer) {
 			SpoutPlayer sp = (SpoutPlayer) le;
-			if (l.getBlock().getRelative(BlockFace.DOWN).getTypeId() == 0 || l.getBlock().getRelative(BlockFace.DOWN).isLiquid()) {
+			if(l.getBlock().getRelative(BlockFace.DOWN).getTypeId() == 0 || l.getBlock().getRelative(BlockFace.DOWN).isLiquid()) {
 				remove(l);
 				return;
 			}
-			if (TripodDataHandler.getIdsByPlayers(sp.getName()).size() < Tripod.maxtripodcount
-					|| Tripod.maxtripodcount < 0) {
-				TripodData td = new TripodData(
-						PlayerUtils.getPlayerBySpoutPlayer(sp), l);
+			if(TripodDataHandler.getIdsByPlayers(sp.getName()).size() < Tripod.maxtripodcount || Tripod.maxtripodcount < 0) {
+				TripodData td = new TripodData(PlayerUtils.getPlayerBySpoutPlayer(sp), l);
 				TripodDataHandler.save(td);
 				GunsPlus.allTripodBlocks.add(td);
 			} else {
-				PlayerUtils.sendNotification(sp, ChatColor.RED
-						+ "You reached the maximum", ChatColor.RED
-						+ "amount of Tripods!", new SpoutItemStack(this),
-						2000);
+				PlayerUtils.sendNotification(sp, ChatColor.RED + "You reached the maximum", ChatColor.RED + "amount of Tripods!", new SpoutItemStack(this), 2000);
 				remove(l);
 			}
 		}
@@ -75,5 +68,6 @@ public class Tripod extends BlockType {
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int changedId) {
+
 	}
 }

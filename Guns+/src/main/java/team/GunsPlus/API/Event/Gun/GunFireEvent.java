@@ -15,12 +15,11 @@ import team.GunsPlus.Util.GunUtils;
 
 /**
  * Guns+ Event called whenever a Gun is fired
- *
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
 public class GunFireEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
 	private Player player = null;
 	private Gun gun = null;
@@ -36,10 +35,10 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public HandlerList getHandlers() {
 		return handlers;
@@ -47,10 +46,10 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -58,7 +57,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get player associated with Event
-	 *
+	 * 
 	 * @return Player who fired Gun
 	 */
 	public Player getPlayer() {
@@ -67,7 +66,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get gun associated with Event
-	 *
+	 * 
 	 * @return Gun fired
 	 */
 	public Gun getGun() {
@@ -76,7 +75,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get list of LivingEntitys targeted
-	 *
+	 * 
 	 * @return Targeted LivingEntitys
 	 */
 	public List<LivingEntity> getTargetEntitys() {
@@ -85,7 +84,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get list of Blocks targeted
-	 *
+	 * 
 	 * @return Targeted Blocks
 	 */
 	public List<Block> getTargetBlocks() {
@@ -94,16 +93,15 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get block Aimed at
-	 *
+	 * 
 	 * @return Targeted Block
 	 */
 	public Block getTargetBlock() {
 		List<Block> bL = GunUtils.getTargetBlocks(eyeLoc, gun);
 		Block b = null;
-		if (bL == null) {
+		if(bL == null)
 			return b;
-		}
-		if (!bL.isEmpty()) {
+		if(!bL.isEmpty()) {
 			b = bL.get(0);
 		}
 		return b;
@@ -111,7 +109,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get Location of Player when Gun was fired
-	 *
+	 * 
 	 * @return Location of Gun shot
 	 */
 	public Location getLocation() {
@@ -120,7 +118,7 @@ public class GunFireEvent extends Event {
 
 	/**
 	 * Get Location of Player's eyes when Gun was fired
-	 *
+	 * 
 	 * @return Location of Eyes
 	 */
 	public Location getEyeLocation() {

@@ -6,12 +6,14 @@ Name: recipes
 
 Sniper:
     # the type can be shaped, shapeless or furnace
+    # "shaped" recipes have a defined shape in which you have to align the ingredients in the crafting grid
     type: 'shaped'
     # this is the amount of snipers in the output 
     amount: 1
-    # the ingredients from the right to the left and from the first to the last row in the crafting grid 
+    # the ingredients from the left to the right and from the first to the last row in the crafting grid 
     ingredients: 20, 20, 0, 265, 265, 265, 5, SniperAmmo, 0
 SniperAmmo:
+    # "shapeless" means you can put the ingredients anywhere in the crafting grid
     type: 'shapeless'
     amount: 8
     # the ingredients you have to put in the grid to get ammo

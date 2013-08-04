@@ -9,12 +9,11 @@ import team.GunsPlus.Item.Gun;
 
 /**
  * Guns+ Event called whenever a Block is Placed via Effect
- *
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
 public class GunBlockPlaceEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
 	private Player player = null;
 	private Gun gun = null;
@@ -28,10 +27,10 @@ public class GunBlockPlaceEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public HandlerList getHandlers() {
 		return handlers;
@@ -39,10 +38,10 @@ public class GunBlockPlaceEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -50,7 +49,7 @@ public class GunBlockPlaceEvent extends Event {
 
 	/**
 	 * Get Player associated with Event
-	 *
+	 * 
 	 * @return Player that tirggered Event
 	 */
 	public Player getPlayer() {
@@ -59,7 +58,7 @@ public class GunBlockPlaceEvent extends Event {
 
 	/**
 	 * Get Gun associated with Event
-	 *
+	 * 
 	 * @return Gun that triggered Event
 	 */
 	public Gun getGun() {
@@ -68,7 +67,7 @@ public class GunBlockPlaceEvent extends Event {
 
 	/**
 	 * Get Block associated with Event
-	 *
+	 * 
 	 * @return Block placed
 	 */
 	public Block getBlock() {

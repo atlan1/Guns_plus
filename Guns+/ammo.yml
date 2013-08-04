@@ -7,6 +7,9 @@ Name: ammo
 SniperAmmo:
     # this is the url of the texture you want to use for this ammo.
     ammo-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/ammo.png'
-    # in here you can put any node you can find in the gun config aswell, for example: damage, accuracy, zoomfactor, ...; the gun which is enchantet with this addition will then be modified like that.
-    # the given number values will be added to the old ones; other values (strings) will be overidden
-    damage: 4
+    # the ammo durability sets the amount of shots contained in one ammo item aka magazine; a negative durability represents infinite ammunition
+    ammo-durability: 8
+    # in here you can put any node you can find in the gun config aswell, for example: damage, accuracy, zoomfactor, ...;
+    #  if a gun shoots this ammo type the properties of the gun will be modified according to this
+    # number values without sign will be set as new value, to add/subtract from the current value of the gun put a +/- together with the value (e.g.'-10'); other values (strings) will be overidden
+    damage: '+4'

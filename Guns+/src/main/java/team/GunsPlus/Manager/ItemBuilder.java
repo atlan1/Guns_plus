@@ -16,7 +16,7 @@ public class ItemBuilder {
 
 	public static Gun buildGun(GunsPlus plugin, String name, String texture) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Gun gun = null;
-		if (GunsPlus.toolholding) {
+		if(GunsPlus.toolholding) {
 			gun = new GunTool(plugin, name, texture);
 		} else {
 			gun = (GunItem) ItemManager.getInstance().buildItem(GunsPlus.plugin, name, texture, "Gun");
@@ -27,7 +27,7 @@ public class ItemBuilder {
 
 	public static Gun buildAdditionGun(GunsPlus plugin, String name, String texture, Addition a, Gun parent) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Gun gun = null;
-		if (GunsPlus.toolholding) {
+		if(GunsPlus.toolholding) {
 			gun = new GunTool(plugin, name, texture);
 		} else {
 			gun = (GunItem) ItemManager.getInstance().buildItem(GunsPlus.plugin, name, texture, "Gun");
@@ -49,4 +49,5 @@ public class ItemBuilder {
 		GunsPlus.allAmmo.add(a);
 		return a;
 	}
+
 }

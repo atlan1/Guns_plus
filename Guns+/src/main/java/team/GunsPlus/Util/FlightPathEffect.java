@@ -24,13 +24,12 @@ public class FlightPathEffect implements Runnable {
 
 	@Override
 	public void run() {
-		if (maxrange <= 0) {
+		if(maxrange <= 0)
 			return;
-		}
 		BlockIterator bitr = new BlockIterator(l, 0d, maxrange);
-		while (bitr.hasNext()) {
+		while(bitr.hasNext()) {
 			Block b = bitr.next();
-			if (Utils.isTransparent(b) && !Util.isTripod(b)) {
+			if(Utils.isTransparent(b) && !Util.isTripod(b)) {
 				effect.performEffect(b.getLocation());
 			} else {
 				break;
@@ -53,4 +52,5 @@ public class FlightPathEffect implements Runnable {
 	public void setStartingPoint(final Location e) {
 		l = e.clone();
 	}
+
 }

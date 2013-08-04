@@ -8,15 +8,15 @@ Name: additions
 Silencer:
     # the texture for this addition
     add-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/Silencer.png'
-    # in here you can put any node you can find in the gun config aswell, for example: damage, accuracy, zoomfactor, ...; the gun which is enchantet with this addition will then be modified like that.
-    # the given number values will be added to the old ones; other values (strings) will be overidden
+    # in here you can put any node you can find in the gun config aswell, for example: damage, accuracy, zoomfactor, ...; the gun that has the addition attached will be modified like by this values.
+    # number values without sign will be set as new value, to add/subtract from the current value of the gun put a +/- together with the value (e.g.'-10'); other values (strings) will be overidden
     shot-sound:
-        volume: -50
+        volume: '-50'
     accuracy:
         spread-angle: '0->0'
 ExtraScope:
     add-texture: 'http://dl.dropbox.com/u/44243469/GunPack/Textures/ExtraScope.png'
-    zoom-factor: 3
+    zoom-factor: '+3'
 Bayonet:
-    add-texture: 'http://dl.dropbox.com/u/1420065/Guns/Bayonet.png'
-    melee-damage: 4
+    add-texture: 'https://dl.dropbox.com/u/44243469/GunPack/Textures/bayonet.png'
+    melee-damage: '+4'

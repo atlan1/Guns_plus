@@ -8,12 +8,11 @@ import team.GunsPlus.Item.Gun;
 
 /**
  * Guns+ Event called whenever a Gun Zooms Out
- *
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
 public class GunZoomOutEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
 	private Player player = null;
 	private Gun gun = null;
@@ -25,10 +24,10 @@ public class GunZoomOutEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public HandlerList getHandlers() {
 		return handlers;
@@ -36,10 +35,10 @@ public class GunZoomOutEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -47,7 +46,7 @@ public class GunZoomOutEvent extends Event {
 
 	/**
 	 * Get Player associated with Event
-	 *
+	 * 
 	 * @return Player that triggered Event
 	 */
 	public Player getPlayer() {
@@ -56,7 +55,7 @@ public class GunZoomOutEvent extends Event {
 
 	/**
 	 * Get Gun associated with Event
-	 *
+	 * 
 	 * @return Gun that triggered Event
 	 */
 	public Gun getGun() {

@@ -15,8 +15,8 @@ import team.GunsPlus.GunsPlusPlayer;
 public class PlayerUtils {
 
 	public static GunsPlusPlayer getPlayerBySpoutPlayer(SpoutPlayer sp) {
-		for (GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
-			if (gp.getPlayer().equals(sp)) {
+		for(GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
+			if(gp.getPlayer().equals(sp)) {
 				return gp;
 			}
 		}
@@ -24,8 +24,8 @@ public class PlayerUtils {
 	}
 
 	public static GunsPlusPlayer getPlayerByName(String sp) {
-		for (GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
-			if (gp.getPlayer().getName().equals(sp)) {
+		for(GunsPlusPlayer gp : GunsPlus.GunsPlusPlayers) {
+			if(gp.getPlayer().getName().equals(sp)) {
 				return gp;
 			}
 		}
@@ -69,9 +69,9 @@ public class PlayerUtils {
 
 	public static void performKnockBack(SpoutPlayer p, float knockback) {
 		Location loc = p.getLocation();
-		if (loc.getPitch() > 5) {
+		if(loc.getPitch() > 5) {
 			loc.setPitch(0);
-		} else if (loc.getPitch() < -5) {
+		} else if(loc.getPitch() < -5) {
 			loc.setPitch(0);
 		}
 		Vector pdir = Utils.getDirection(loc);
@@ -86,14 +86,13 @@ public class PlayerUtils {
 	}
 
 	public static void sendNotification(SpoutPlayer sp, String title, String text, ItemStack icon, int duration) {
-		if (!GunsPlus.notifications) {
+		if(!GunsPlus.notifications)
 			return;
-		}
-		if (title.length() > 26) {
+		if(title.length() > 26) {
 			Util.warn("Too long notification. Check your item names.");
 			title = title.replace(title.substring(25, title.length() - 1), "");
 		}
-		if (text.length() > 26) {
+		if(text.length() > 26) {
 			Util.warn("Too long notification. Check your item names.");
 			text = text.replace(text.substring(25, text.length() - 1), "");
 		}

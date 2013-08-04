@@ -1,5 +1,8 @@
 # This is the general config file. Everything in here will affect all guns and the whole plugin
 
+# If you want a notification if a new version of Guns+ gets released put true in here
+check-for-updates: true
+
 # Write the ids of the custom items so you can copy them and use it in other plugins( e.g. mobarena)
 id-info-guns: true
 id-info-ammo: true
@@ -44,6 +47,7 @@ hud:
     position:
         X: 20
         Y: 20
+# This feature is currently not available
 tripod:
     # enabled/disabled
     enabled: true

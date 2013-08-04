@@ -40,14 +40,12 @@ public class TripodDataHandler {
 	}
 
 	public static TripodData load(int id) {
-		if (stopLoading) {
+		if(stopLoading)
 			return null;
-		}
 		try {
 			FileConfiguration db = ConfigLoader.dataDB;
-			if (id > getNextId() - 1) {
+			if(id > getNextId() - 1)
 				return null;
-			}
 			ConfigurationSection cs = db.getConfigurationSection(id + "");
 			String player = cs.getString("player");
 			UUID world = UUID.fromString(cs.getString("loc.world"));
@@ -57,18 +55,17 @@ public class TripodDataHandler {
 			boolean working = cs.getBoolean("work");
 			ConfigurationSection tars = db.getConfigurationSection(id + ".targets");
 			Set<Target> targets = new HashSet<Target>();
-			if (tars != null && !tars.getKeys(false).isEmpty()) {
-				for (int i = 0; i < tars.getKeys(false).size(); i++) {
+			if(tars != null && !tars.getKeys(false).isEmpty()) {
+				for(int i = 0; i < tars.getKeys(false).size(); i++) {
 					String[] type_name = tars.getString("" + i).split("-");
-					if (type_name.length == 2) {
+					if(type_name.length == 2)
 						targets.add(ConfigParser.parseTarget(type_name[0], type_name[1]));
-					}
 				}
 			}
 			TripodData td = new TripodData(player, l, g, new HashSet<Target>(targets));
 			ConfigurationSection inventory = db.getConfigurationSection(id + ".inventory");
-			if (inventory != null && !inventory.getKeys(false).isEmpty()) {
-				for (int j = 0; j < td.getInventory().getSize(); j++) {
+			if(inventory != null && !inventory.getKeys(false).isEmpty()) {
+				for(int j = 0; j < td.getInventory().getSize(); j++) {
 					td.getInventory().setItem(j, ConfigUtil.parseItem(inventory.getString("" + j)));
 				}
 			}
@@ -87,14 +84,14 @@ public class TripodDataHandler {
 			SpoutBlock sb = (SpoutBlock) b;
 			sb.setCustomBlock(GunsPlus.tripod);
 			return td;
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Util.debug(e);
 		}
 		return null;
 	}
 
 	public static void loadIds(Set<Integer> ids) {
-		for (Integer id : ids) {
+		for(Integer id : ids) {
 			load(id);
 		}
 	}
@@ -102,7 +99,7 @@ public class TripodDataHandler {
 	public static Set<String> getAllRegisteredPlayers() {
 		FileConfiguration db = ConfigLoader.dataDB;
 		Set<String> players = new HashSet<String>();
-		for (int i = 0; i < getNextId(); i++) {
+		for(int i = 0; i < getNextId(); i++) {
 			players.add(db.getString(i + ".player"));
 		}
 		return players;
@@ -111,8 +108,8 @@ public class TripodDataHandler {
 	public static Set<Integer> getIdsByWorld(World w) {
 		Set<Integer> ids = new HashSet<Integer>();
 		FileConfiguration db = ConfigLoader.dataDB;
-		for (int i = 0; i < getNextId(); i++) {
-			if (Bukkit.getWorld(UUID.fromString(db.getString(i + ".loc.world"))).equals(w)) {
+		for(int i = 0; i < getNextId(); i++) {
+			if(Bukkit.getWorld(UUID.fromString(db.getString(i + ".loc.world"))).equals(w)) {
 				ids.add(i);
 			}
 		}
@@ -122,8 +119,8 @@ public class TripodDataHandler {
 	public static Set<Integer> getIdsByPlayers(String player) {
 		Set<Integer> ids = new HashSet<Integer>();
 		FileConfiguration db = ConfigLoader.dataDB;
-		for (int i = 0; i < getNextId(); i++) {
-			if (db.getString(i + ".player").equals(player)) {
+		for(int i = 0; i < getNextId(); i++) {
+			if(db.getString(i + ".player").equals(player)) {
 				ids.add(i);
 			}
 		}
@@ -131,7 +128,7 @@ public class TripodDataHandler {
 	}
 
 	public static void loadAll() {
-		for (int i = 0; i < getNextId(); i++) {
+		for(int i = 0; i < getNextId(); i++) {
 			load(i);
 		}
 	}
@@ -142,14 +139,13 @@ public class TripodDataHandler {
 
 	public static boolean removeId(int id) {
 		FileConfiguration db = ConfigLoader.dataDB;
-		if (!(id > getNextId() - 1)) {
+		if(!(id > getNextId() - 1))
 			db.set(id + "", null);
-		} else {
+		else
 			return false;
-		}
 		--nextID;
-		for (int i = 0; i < getNextId() + 1; i++) {
-			if (i > id) {
+		for(int i = 0; i < getNextId() + 1; i++) {
+			if(i > id) {
 				ConfigurationSection temp = db.getConfigurationSection(i + "");
 				db.set(i + "", null);
 				db.set(i - 1 + "", temp);
@@ -167,8 +163,8 @@ public class TripodDataHandler {
 	public static int getId(Location l) {
 		FileConfiguration db = ConfigLoader.dataDB;
 		int id = -1;
-		for (int i = 0; i < getNextId(); i++) {
-			if (Bukkit.getWorld(UUID.fromString(db.getString(i + ".loc.world"))).equals(l.getWorld()) && db.getVector(i + ".loc.coords").equals(l.toVector())) {
+		for(int i = 0; i < getNextId(); i++) {
+			if(Bukkit.getWorld(UUID.fromString(db.getString(i + ".loc.world"))).equals(l.getWorld()) && db.getVector(i + ".loc.coords").equals(l.toVector())) {
 				id = i;
 				return id;
 			}
@@ -177,7 +173,7 @@ public class TripodDataHandler {
 	}
 
 	public static void saveAll() {
-		for (TripodData td : GunsPlus.allTripodBlocks) {
+		for(TripodData td : GunsPlus.allTripodBlocks) {
 			TripodDataHandler.save(td);
 		}
 	}
@@ -185,11 +181,10 @@ public class TripodDataHandler {
 	public static boolean save(TripodData td) {
 		try {
 			FileConfiguration db = ConfigLoader.dataDB;
-			if (td.getOwner() == null) {
+			if(td.getOwner() == null)
 				return false;
-			}
 			ConfigurationSection cs = null;
-			if (getId(td.getLocation()) != -1) {
+			if(getId(td.getLocation()) != -1) {
 				cs = db.getConfigurationSection("" + getId(td.getLocation()));
 			} else {
 				addId();
@@ -198,24 +193,23 @@ public class TripodDataHandler {
 			cs.set("player", td.getOwnername());
 			cs.set("loc.coords", td.getLocation().toVector());
 			cs.set("loc.world", td.getLocation().getWorld().getUID().toString());
-			if (td.getGun() != null) {
+			if(td.getGun() != null)
 				cs.set("gun", ((GenericCustomItem) td.getGun()).getName());
-			}
 			cs.set("auto", td.isAutomatic());
 			cs.set("work", td.isWorking());
 			cs.createSection("targets");
 			List<Target> tar = new ArrayList<Target>(td.getTargets());
 			int j = 0;
-			for (Target t : tar) {
+			for(Target t : tar) {
 				cs.set("targets." + j, TargetType.getTargetType(t.getClass()).name() + "-" + (Util.isPlayerTarget(t) ? ((team.GunsPlus.Enum.PlayerTarget) t).getName() : t.toString()));
 				j++;
 			}
 			cs.createSection("inventory");
-			for (int k = 0; k < td.getInventory().getSize(); k++) {
+			for(int k = 0; k < td.getInventory().getSize(); k++) {
 				ItemStack item = td.getInventory().getItem(k);
 				cs.set("inventory." + k, item != null ? item.getTypeId() + ":" + item.getDurability() + ":" + item.getAmount() : null);
 			}
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Util.debug(e);
 			return false;
 		}

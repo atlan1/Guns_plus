@@ -4,17 +4,16 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import team.ApiPlus.API.Effect.Effect;
+import team.GunsPlus.API.Classes.Shooter;
 import team.GunsPlus.Item.Gun;
-import team.GunsPlus.Util.Shooter;
 
 /**
  * Guns+ Event called whenever a Gun uses an Effect
- *
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
 public class GunEffectEvent extends Event {
-
 	private static final HandlerList handlers = new HandlerList();
 	private Shooter shooter = null;
 	private Gun gun = null;
@@ -28,10 +27,10 @@ public class GunEffectEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public HandlerList getHandlers() {
 		return handlers;
@@ -39,10 +38,10 @@ public class GunEffectEvent extends Event {
 
 	/**
 	 * Bukkit Event Method
-	 *
+	 * 
 	 * @see <a
-	 * href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
-	 * Event</a>
+	 *      href="http://jd.bukkit.org/apidocs/org/bukkit/event/Event.html">Bukkit
+	 *      Event</a>
 	 */
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -50,7 +49,7 @@ public class GunEffectEvent extends Event {
 
 	/**
 	 * Get Shooter associated with Event
-	 *
+	 * 
 	 * @return Shooter that triggered Event
 	 */
 	public Shooter getShooter() {
@@ -59,7 +58,7 @@ public class GunEffectEvent extends Event {
 
 	/**
 	 * Get Gun associated with Event
-	 *
+	 * 
 	 * @return Gun that triggered Event
 	 */
 	public Gun getGun() {
@@ -68,7 +67,7 @@ public class GunEffectEvent extends Event {
 
 	/**
 	 * Get Effect associated with Event
-	 *
+	 * 
 	 * @return Effect used by Event
 	 */
 	public Effect getEffect() {

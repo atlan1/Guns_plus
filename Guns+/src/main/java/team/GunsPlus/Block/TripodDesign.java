@@ -21,7 +21,7 @@ public class TripodDesign extends GenericBlockDesign {
 		SubTexture surBotTex = texture.getSubTexture(4);
 		SubTexture surSideTex = texture.getSubTexture(5);
 
-		//struts
+		// struts
 
 		Quad strut1face1 = new Quad(0, face1Tex);
 		strut1face1.addVertex(0, 0.5f, 1.0f, 0.5f);
@@ -95,7 +95,7 @@ public class TripodDesign extends GenericBlockDesign {
 		strut4face3.addVertex(2, 0.1f, 0, 1);
 		strut4face3.addVertex(3, 0.0f, 0.0f, 0.9f);
 
-		//the same again but vice-versa due to a render bug :/
+		// the same again but vice-versa due to a render bug :/
 
 		Quad _strut1face1 = new Quad(12, face1Tex);
 		_strut1face1.addVertex(0, 0.0f, 0.1f, 0.0f);
@@ -169,7 +169,7 @@ public class TripodDesign extends GenericBlockDesign {
 		_strut4face3.addVertex(2, 0.5f, 0.9f, 0.5f);
 		_strut4face3.addVertex(3, 0.5f, 1.0f, 0.5f);
 
-		//surface
+		// surface
 
 		Quad surfaceTop = new Quad(24, surTopTex);
 		surfaceTop.addVertex(0, 0.7f, 1, 0.7f);
@@ -243,42 +243,7 @@ public class TripodDesign extends GenericBlockDesign {
 		_surfaceFace4.addVertex(2, 0.3f, 0.9f, 0.3f);
 		_surfaceFace4.addVertex(3, 0.3f, 1, 0.3f);
 
-
-		setQuad(strut1face1)
-				.setQuad(strut2face1)
-				.setQuad(strut3face1)
-				.setQuad(strut4face1)
-				.setQuad(_strut1face1)
-				.setQuad(_strut2face1)
-				.setQuad(_strut3face1)
-				.setQuad(_strut4face1)
-				.setQuad(strut1face2)
-				.setQuad(strut2face2)
-				.setQuad(strut3face2)
-				.setQuad(strut4face2)
-				.setQuad(_strut1face2)
-				.setQuad(_strut2face2)
-				.setQuad(_strut3face2)
-				.setQuad(_strut4face2)
-				.setQuad(strut1face3)
-				.setQuad(strut2face3)
-				.setQuad(strut3face3)
-				.setQuad(strut4face3)
-				.setQuad(_strut1face3)
-				.setQuad(_strut2face3)
-				.setQuad(_strut3face3)
-				.setQuad(_strut4face3)
-				.setQuad(surfaceTop)
-				.setQuad(_surfaceTop)
-				.setQuad(surfaceBottom)
-				.setQuad(_surfaceBottom)
-				.setQuad(surfaceFace1)
-				.setQuad(_surfaceFace1)
-				.setQuad(surfaceFace2)
-				.setQuad(_surfaceFace2)
-				.setQuad(surfaceFace3)
-				.setQuad(_surfaceFace3)
-				.setQuad(surfaceFace4)
-				.setQuad(_surfaceFace4);
+		setQuad(strut1face1).setQuad(strut2face1).setQuad(strut3face1).setQuad(strut4face1).setQuad(_strut1face1).setQuad(_strut2face1).setQuad(_strut3face1).setQuad(_strut4face1).setQuad(strut1face2).setQuad(strut2face2).setQuad(strut3face2).setQuad(strut4face2).setQuad(_strut1face2).setQuad(_strut2face2).setQuad(_strut3face2).setQuad(_strut4face2).setQuad(strut1face3).setQuad(strut2face3).setQuad(strut3face3).setQuad(strut4face3).setQuad(_strut1face3).setQuad(_strut2face3).setQuad(_strut3face3).setQuad(_strut4face3).setQuad(surfaceTop).setQuad(_surfaceTop).setQuad(surfaceBottom).setQuad(_surfaceBottom).setQuad(surfaceFace1).setQuad(_surfaceFace1).setQuad(surfaceFace2).setQuad(_surfaceFace2).setQuad(surfaceFace3).setQuad(_surfaceFace3).setQuad(surfaceFace4).setQuad(_surfaceFace4);
 	}
+
 }

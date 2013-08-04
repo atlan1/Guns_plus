@@ -9,4 +9,5 @@ public class Ammo extends ItemTypeProperty {
 	public Ammo(Plugin plugin, String name, String texture) {
 		super(plugin, name, texture);
 	}
+
 }

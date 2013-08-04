@@ -1,9 +1,9 @@
 name: GunsPlus
 main: team.GunsPlus.GunsPlus
-version: 1.8
+version: 1.9.3
 depend: [ApiPlus, Spout]
 soft-depend: [LWC, FurnaceAPI, WorldGuard, MachinaRedstoneBridge, Showcase]
-authors: [Atlan1, SirTyler]
+authors: [Atlan1, SirTyler, DreTaX]
 website: http://dev.bukkit.org/server-mods/guns/
 description: >
              Guns+ ~ Guns, Guns, Guns Galore!

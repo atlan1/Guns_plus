@@ -23,9 +23,9 @@ public class ZoomBinding implements BindingExecutionDelegate {
 
 	@Override
 	public void keyPressed(KeyBindingEvent ev) {
-		if (ev.getScreenType().equals(ScreenType.GAME_SCREEN)) {
+		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN)) {
 			SpoutPlayer sp = ev.getPlayer();
-			if (GunUtils.holdsGun(sp)) {
+			if(GunUtils.holdsGun(sp)) {
 				PlayerUtils.getPlayerBySpoutPlayer(sp).zoom(GunUtils.getGunInHand(sp));
 			}
 		}
@@ -33,9 +33,9 @@ public class ZoomBinding implements BindingExecutionDelegate {
 
 	@Override
 	public void keyReleased(KeyBindingEvent ev) {
-		if (ev.getScreenType().equals(ScreenType.GAME_SCREEN) && keytype.isHoldKey()) {
+		if(ev.getScreenType().equals(ScreenType.GAME_SCREEN) && keytype.isHoldKey()) {
 			SpoutPlayer sp = ev.getPlayer();
-			if (GunUtils.holdsGun(sp)) {
+			if(GunUtils.holdsGun(sp)) {
 				PlayerUtils.getPlayerBySpoutPlayer(sp).zoom(GunUtils.getGunInHand(sp));
 			}
 		}

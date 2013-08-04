@@ -19,12 +19,12 @@ import team.GunsPlus.Util.PlayerUtils;
 
 /**
  * Guns+ API Class - Contains Methods for use by External plugins.
- *
+ * 
  * @author SirTyler (Tyler Martin)
  * @version 1.2
  */
-public class GunsPlusAPI {
 
+public class GunsPlusAPI {
 	private GunsPlus plugin;
 
 	public GunsPlusAPI(GunsPlus _plus) {
@@ -33,7 +33,7 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get Version of Guns+
-	 *
+	 * 
 	 * @return Version of Guns+
 	 */
 	public String getVersion() {
@@ -42,8 +42,9 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get GunsPlusPlayer that represents Player
-	 *
-	 * @param player Player Object to check
+	 * 
+	 * @param player
+	 *            Player Object to check
 	 * @return Instance of GunsPlusPlayer
 	 */
 	public GunsPlusPlayer getPlayer(Player player) {
@@ -52,7 +53,7 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get list of all loaded Guns
-	 *
+	 * 
 	 * @return List of Guns
 	 */
 	public List<Gun> getAllGuns() {
@@ -61,8 +62,9 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get gun by given Name
-	 *
-	 * @param name String of Name to Check
+	 * 
+	 * @param name
+	 *            String of Name to Check
 	 * @return Found Gun
 	 */
 	public Gun getGunByName(String name) {
@@ -71,8 +73,9 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get gun by given ItemStack
-	 *
-	 * @param itemstack ItemStack to Check
+	 * 
+	 * @param itemstack
+	 *            ItemStack to Check
 	 * @return Found Gun
 	 */
 	public Gun getGunByItemStack(ItemStack itemstack) {
@@ -81,8 +84,9 @@ public class GunsPlusAPI {
 
 	/**
 	 * Checks if the given ItemStack is a Gun
-	 *
-	 * @param itemstack ItemStack to Check
+	 * 
+	 * @param itemstack
+	 *            ItemStack to Check
 	 * @return True if ItemStack is Gun
 	 */
 	public boolean isGun(ItemStack itemstack) {
@@ -91,7 +95,7 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get list of all loaded Ammo
-	 *
+	 * 
 	 * @return List of Ammo
 	 */
 	public List<Ammo> getAllAmmo() {
@@ -100,7 +104,7 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get list of all loaded Additions
-	 *
+	 * 
 	 * @return List of Additions
 	 */
 	public List<Addition> getAllAdditions() {
@@ -109,12 +113,12 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get list of all Tripod Blocks
-	 *
+	 * 
 	 * @return List of Tripod Blocks
 	 */
 	public List<Block> getAllTripodBlocks() {
 		List<Block> blocklist = new ArrayList<Block>();
-		for (TripodData td : GunsPlus.allTripodBlocks) {
+		for(TripodData td : GunsPlus.allTripodBlocks) {
 			blocklist.add(td.getLocation().getBlock());
 		}
 		return blocklist;
@@ -122,10 +126,11 @@ public class GunsPlusAPI {
 
 	/**
 	 * Get list of Online GunsPlusPlayer
-	 *
+	 * 
 	 * @return List of Online GunsPlusPlayer
 	 */
 	public List<GunsPlusPlayer> getOnlineGunsPlusPlayers() {
 		return GunsPlus.GunsPlusPlayers;
 	}
+
 }
